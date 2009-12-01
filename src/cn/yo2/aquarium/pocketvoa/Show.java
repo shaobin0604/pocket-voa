@@ -559,7 +559,7 @@ public class Show extends Activity {
 
 		return s.toString();
 	}
-	
+	 
 	@Override
 	protected void onPause() {
 		mMediaPlayer.pause();
