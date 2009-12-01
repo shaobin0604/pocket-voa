@@ -1,7 +1,6 @@
 package cn.yo2.aquarium.pocketvoa;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -559,6 +558,15 @@ public class Show extends Activity {
 		s.append("</body></html>");
 
 		return s.toString();
+	}
+	
+	@Override
+	protected void onPause() {
+		mMediaPlayer.pause();
+		mIsPlaying = false;
+		mBtnStart.setEnabled(!mIsPlaying);
+		mBtnPause.setEnabled(mIsPlaying);
+		super.onPause();
 	}
 
 	@Override
