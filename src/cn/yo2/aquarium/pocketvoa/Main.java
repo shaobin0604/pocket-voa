@@ -152,7 +152,6 @@ public class Main extends Activity {
 		switch (id) {
 		case PROGRESS_DIALOG:
 			ProgressDialog progressDialog = new ProgressDialog(this);
-			progressDialog.setCancelable(false);
 			progressDialog.setTitle("Loading");
 			progressDialog.setMessage("Loading");
 			return progressDialog;
@@ -338,3 +337,4 @@ class Article {
 	}
 
 }
+

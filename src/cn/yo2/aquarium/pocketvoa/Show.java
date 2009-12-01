@@ -1,9 +1,16 @@
 package cn.yo2.aquarium.pocketvoa;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +21,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
@@ -23,10 +31,14 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
@@ -42,11 +54,24 @@ public class Show extends Activity {
 			+ "<html xmlns=\"http://www.w3.org/1999/xhtml\" >"
 			+ "<head><title>";
 
-	private static final int PROGRESS_DIALOG = 1;
+	private static final int PROGRESS_DIALOG_SPIN = 1;
+	private static final int ALERT_DIALOG = 2;
+	private static final int PROGRESS_DIALOG_BAR = 3;
+
+	private static final int MENU_DOWNLOAD_AUDIO = Menu.FIRST;
+	private static final int MENU_DOWNLOAD_TEXT = Menu.FIRST + 1;
+	private static final int MENU_DOWNLOAD_BOTH = Menu.FIRST + 2;
 
 	protected static final int WHAT_SUCCESS = 0;
 	protected static final int WHAT_FAIL_IO = 1;
-	protected static final int WHAT_PROGRESS = 2;
+	protected static final int WHAT_PLAYER_PROGRESS = 2;
+
+	protected static final int WHAT_DOWNLOAD_PROGRESS = 3;
+	protected static final int WHAT_DOWNLOAD_ERROR = 4;
+	protected static final int WHAT_DOWNLOAD_SUCCESS = 5;
+
+	private ProgressDialog mProgressDialogSpin;
+	private ProgressDialog mProgressDialogBar;
 
 	private WebView mWebView;
 	private ImageButton mBtnStart;
@@ -72,6 +97,28 @@ public class Show extends Activity {
 	private String mAudioUrl;
 	private String mUrl;
 
+	private Handler mDownloadHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_DOWNLOAD_PROGRESS:
+				mProgressDialogBar.setProgress(msg.arg1);
+				break;
+			case WHAT_DOWNLOAD_SUCCESS:
+				dismissDialog(PROGRESS_DIALOG_BAR);
+				Toast.makeText(Show.this, "Download Complete",
+						Toast.LENGTH_SHORT);
+				break;
+			case WHAT_DOWNLOAD_ERROR:
+				dismissDialog(PROGRESS_DIALOG_BAR);
+				showDialog(ALERT_DIALOG);
+				break;
+			default:
+				break;
+			}
+		}
+	};
+
 	private Handler mHandler = new Handler() {
 
 		@Override
@@ -79,26 +126,28 @@ public class Show extends Activity {
 			switch (msg.what) {
 			case WHAT_SUCCESS:
 				updateWebView();
-				dismissDialog(PROGRESS_DIALOG);
+				dismissDialog(PROGRESS_DIALOG_SPIN);
 				break;
 			case WHAT_FAIL_IO:
 				Toast.makeText(Show.this, "FAIL IO", Toast.LENGTH_LONG);
 				break;
 
-			case WHAT_PROGRESS:
+			case WHAT_PLAYER_PROGRESS:
 				if (mIsPlaying) {
 					mEllapsedTime = mMediaPlayer.getCurrentPosition();
 					Log.d(TAG, "playing millis -- " + mEllapsedTime
 							+ " duration -- " + mTotalTime);
 					updateProgressBar();
-					
+
 					mPlayProgress = mEllapsedTime * 100 / mTotalTime;
 					Log.d(TAG, "playing progress -- " + mPlayProgress);
 					updateEllapsedTime();
-					
-					mHandler.sendEmptyMessageDelayed(WHAT_PROGRESS, 1000);
+
+					mHandler
+							.sendEmptyMessageDelayed(WHAT_PLAYER_PROGRESS, 1000);
 				}
 				break;
+
 			default:
 				break;
 			}
@@ -134,7 +183,7 @@ public class Show extends Activity {
 				mIsPlaying = true;
 				mBtnStart.setEnabled(!mIsPlaying);
 				mBtnPause.setEnabled(mIsPlaying);
-				mHandler.sendEmptyMessage(WHAT_PROGRESS);
+				mHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 			}
 
 		}
@@ -165,7 +214,7 @@ public class Show extends Activity {
 			mTotalTime = mp.getDuration();
 			updateTotalTime();
 			mp.start();
-			mHandler.sendEmptyMessage(WHAT_PROGRESS);
+			mHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 		}
 	};
 
@@ -185,7 +234,7 @@ public class Show extends Activity {
 			mBtnPause.setEnabled(mIsPlaying);
 			mEllapsedTime = 0;
 			mPlayProgress = 0;
-			
+
 			updateEllapsedTime();
 			updateProgressBar();
 		}
@@ -210,6 +259,162 @@ public class Show extends Activity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		boolean result = super.onCreateOptionsMenu(menu);
+		menu.add(Menu.NONE, MENU_DOWNLOAD_TEXT, Menu.NONE, "Download Text");
+		menu.add(Menu.NONE, MENU_DOWNLOAD_AUDIO, Menu.NONE, "Download Audio");
+		menu.add(Menu.NONE, MENU_DOWNLOAD_BOTH, Menu.NONE, "Download Both");
+		return result;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_DOWNLOAD_TEXT:
+			saveText();
+			return true;
+		case MENU_DOWNLOAD_AUDIO:
+			asynSaveAudio();
+			return true;
+		case MENU_DOWNLOAD_BOTH:
+			saveText();
+			asynSaveAudio();
+			return true;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void asynSaveAudio() {
+
+		showDialog(PROGRESS_DIALOG_BAR);
+		new Thread() {
+
+			@Override
+			public void run() {
+
+				try {
+					saveAudio();
+				} catch (IOException e) {
+					Log.e(TAG, "Error when save audio.", e);
+					mDownloadHandler.sendEmptyMessage(WHAT_DOWNLOAD_ERROR);
+				}
+
+			}
+
+		}.start();
+	}
+
+	private void saveAudio() throws IOException {
+		File appDir = getAppDir();
+		int timeoutConnection = 3000;
+		int timeoutSocket = 1000 * 10;
+
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(params, timeoutConnection);
+		HttpConnectionParams.setSoTimeout(params, timeoutSocket);
+
+		DefaultHttpClient client = null;
+		FileOutputStream fos = null;
+		InputStream is = null;
+		try {
+			if (appDir == null)
+				throw new IOException("Cannot get app dir");
+			File savedAudio = new File(appDir, extractFilename(mAudioUrl));
+			if (!savedAudio.exists())
+				savedAudio.createNewFile();
+			fos = new FileOutputStream(savedAudio);
+			client = new DefaultHttpClient(params);
+			HttpGet get = new HttpGet("http://www.51voa.com" + mAudioUrl);
+			HttpResponse response = client.execute(get);
+			HttpEntity entity = response.getEntity();
+			long length = entity.getContentLength();
+			Log.d(TAG, "content-length: " + length);
+			is = entity.getContent();
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			int read = 0;
+			while ((len = is.read(buffer)) != -1) {
+				read += len;
+				fos.write(buffer, 0, len);
+				Message message = Message.obtain(mDownloadHandler);
+				message.what = WHAT_DOWNLOAD_PROGRESS;
+				message.arg1 = (int) (read * 100 / length);
+				mDownloadHandler.sendMessage(message);
+			}
+			mDownloadHandler.sendEmptyMessage(WHAT_DOWNLOAD_SUCCESS);
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (fos != null)
+				fos.close();
+			if (is != null)
+				is.close();
+			client.getConnectionManager().shutdown();
+		}
+
+	}
+
+	private String extractFilename(String url) {
+		return url.substring(url.lastIndexOf('/') + 1);
+	}
+
+	private File getAppDir() {
+		if (IsExternalStorageReady()) {
+			File appDir = new File(Environment.getExternalStorageDirectory(),
+					"pocket-voa");
+			if (appDir.exists()) {
+				return appDir;
+
+			} else {
+				if (appDir.mkdir())
+					return appDir;
+				else
+					return null;
+			}
+		} else
+			return null;
+	}
+
+	private boolean IsExternalStorageReady() {
+		return (Environment.getExternalStorageState()
+				.equals(Environment.MEDIA_MOUNTED));
+	}
+
+	private void saveText() {
+		if (TextUtils.isEmpty(mHtml)) {
+			Log.e(TAG, "mHtml is empty");
+			showDialog(ALERT_DIALOG);
+		} else {
+			FileWriter fos = null;
+			File appDir = getAppDir();
+			try {
+				if (appDir == null)
+					throw new IOException("Cannot get App dir");
+				File downloadFile = new File(appDir, extractFilename(mUrl));
+
+				if (!downloadFile.exists())
+					if (!downloadFile.createNewFile())
+						throw new IOException("Cannot create file");
+
+				fos = new FileWriter(downloadFile);
+				fos.write(mHtml);
+			} catch (IOException e) {
+				Log.e(TAG, "Error when save text.", e);
+				showDialog(ALERT_DIALOG);
+			} finally {
+				if (fos != null)
+					try {
+						fos.close();
+					} catch (IOException e) {
+						Log.e(TAG, "Error when close fos", e);
+					}
+			}
+		}
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show);
@@ -221,7 +426,6 @@ public class Show extends Activity {
 
 		mBtnPause = (ImageButton) findViewById(R.id.btn_pause);
 		mBtnPause.setOnClickListener(mPauseButtonClickListener);
-
 
 		mTvEllapsedTime = (TextView) findViewById(R.id.tv_ellapsed_time);
 		mTvTotalTime = (TextView) findViewById(R.id.tv_total_time);
@@ -244,7 +448,7 @@ public class Show extends Activity {
 	}
 
 	private void refreshWebView() {
-		showDialog(PROGRESS_DIALOG);
+		showDialog(PROGRESS_DIALOG_SPIN);
 		new Thread() {
 			@Override
 			public void run() {
@@ -262,12 +466,22 @@ public class Show extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case PROGRESS_DIALOG:
-			ProgressDialog progressDialog = new ProgressDialog(this);
-			progressDialog.setCancelable(false);
-			progressDialog.setTitle("Loading");
-			progressDialog.setMessage("Loading");
-			return progressDialog;
+		case PROGRESS_DIALOG_SPIN:
+			mProgressDialogSpin = new ProgressDialog(this);
+			mProgressDialogSpin.setCancelable(false);
+			mProgressDialogSpin.setTitle("Loading");
+			mProgressDialogSpin.setMessage("Loading");
+			return mProgressDialogSpin;
+		case PROGRESS_DIALOG_BAR:
+			mProgressDialogBar = new ProgressDialog(this);
+			mProgressDialogBar.setTitle("Downloading audio file");
+			mProgressDialogBar
+					.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			return mProgressDialogBar;
+		case ALERT_DIALOG:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Alert");
+			return builder.create();
 		default:
 			break;
 		}
@@ -353,3 +567,4 @@ public class Show extends Activity {
 		super.onDestroy();
 	}
 }
+
