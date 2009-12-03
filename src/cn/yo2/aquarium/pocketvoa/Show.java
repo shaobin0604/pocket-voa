@@ -47,7 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Show extends Activity {
-	private static final String TAG = Show.class.getSimpleName();
+	private static final String CLASSTAG = Show.class.getSimpleName();
 
 	private static final String HTML_DEC = "<!DOCTYPE html PUBliC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\" >"
 			+ "<html xmlns=\"http://www.w3.org/1999/xhtml\" >"
@@ -134,12 +134,12 @@ public class Show extends Activity {
 			case WHAT_PLAYER_PROGRESS:
 				if (mIsPlaying) {
 					mEllapsedTime = mMediaPlayer.getCurrentPosition();
-					Log.d(TAG, "playing millis -- " + mEllapsedTime
+					Log.d(CLASSTAG, "playing millis -- " + mEllapsedTime
 							+ " duration -- " + mTotalTime);
 					updateProgressBar();
 
 					mPlayProgress = mEllapsedTime * 100 / mTotalTime;
-					Log.d(TAG, "playing progress -- " + mPlayProgress);
+					Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
 					updateEllapsedTime();
 
 					mHandler
@@ -159,7 +159,7 @@ public class Show extends Activity {
 		public void onClick(View v) {
 			if (mIsIdle) {
 				Uri uri = Uri.parse("http://www.51voa.com" + mAudioUrl);
-				Log.d(TAG, "mp3 url -- " + uri);
+				Log.d(CLASSTAG, "mp3 url -- " + uri);
 				try {
 					mMediaPlayer.setDataSource(Show.this, uri);
 					mIsIdle = false;
@@ -168,13 +168,13 @@ public class Show extends Activity {
 					mBtnStart.setEnabled(!mIsPlaying);
 					mBtnPause.setEnabled(mIsPlaying);
 				} catch (IllegalArgumentException e) {
-					Log.e(TAG, "mp3 url -- " + uri, e);
+					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 				} catch (SecurityException e) {
-					Log.e(TAG, "mp3 url -- " + uri, e);
+					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 				} catch (IllegalStateException e) {
-					Log.e(TAG, "mp3 url -- " + uri, e);
+					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 				} catch (IOException e) {
-					Log.e(TAG, "mp3 url -- " + uri, e);
+					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 				}
 
 			} else {
@@ -201,7 +201,7 @@ public class Show extends Activity {
 	private OnErrorListener mErrorListener = new OnErrorListener() {
 
 		public boolean onError(MediaPlayer mp, int what, int extra) {
-			Log.e(TAG, "what -- " + what + " extra -- " + extra);
+			Log.e(CLASSTAG, "what -- " + what + " extra -- " + extra);
 			return false;
 		}
 	};
@@ -209,7 +209,7 @@ public class Show extends Activity {
 	private OnPreparedListener mPreparedListener = new OnPreparedListener() {
 
 		public void onPrepared(MediaPlayer mp) {
-			Log.d(TAG, "media prepared");
+			Log.d(CLASSTAG, "media prepared");
 			mTotalTime = mp.getDuration();
 			updateTotalTime();
 			mp.start();
@@ -227,7 +227,7 @@ public class Show extends Activity {
 	private OnCompletionListener mCompletionListener = new OnCompletionListener() {
 
 		public void onCompletion(MediaPlayer mp) {
-			Log.d(TAG, "complete");
+			Log.d(CLASSTAG, "complete");
 			mIsPlaying = false;
 			mBtnStart.setEnabled(!mIsPlaying);
 			mBtnPause.setEnabled(mIsPlaying);
@@ -296,7 +296,7 @@ public class Show extends Activity {
 				try {
 					saveAudio();
 				} catch (IOException e) {
-					Log.e(TAG, "Error when save audio.", e);
+					Log.e(CLASSTAG, "Error when save audio.", e);
 					mDownloadHandler.sendEmptyMessage(WHAT_DOWNLOAD_ERROR);
 				}
 
@@ -329,7 +329,7 @@ public class Show extends Activity {
 			HttpResponse response = client.execute(get);
 			HttpEntity entity = response.getEntity();
 			long length = entity.getContentLength();
-			Log.d(TAG, "content-length: " + length);
+			Log.d(CLASSTAG, "content-length: " + length);
 			is = entity.getContent();
 			byte[] buffer = new byte[1024];
 			int len = 0;
@@ -383,7 +383,7 @@ public class Show extends Activity {
 
 	private void saveText() {
 		if (TextUtils.isEmpty(mHtml)) {
-			Log.e(TAG, "mHtml is empty");
+			Log.e(CLASSTAG, "mHtml is empty");
 			showDialog(ALERT_DIALOG);
 		} else {
 			FileWriter fos = null;
@@ -400,14 +400,14 @@ public class Show extends Activity {
 				fos = new FileWriter(downloadFile);
 				fos.write(mHtml);
 			} catch (IOException e) {
-				Log.e(TAG, "Error when save text.", e);
+				Log.e(CLASSTAG, "Error when save text.", e);
 				showDialog(ALERT_DIALOG);
 			} finally {
 				if (fos != null)
 					try {
 						fos.close();
 					} catch (IOException e) {
-						Log.e(TAG, "Error when close fos", e);
+						Log.e(CLASSTAG, "Error when close fos", e);
 					}
 			}
 		}
@@ -440,8 +440,8 @@ public class Show extends Activity {
 
 		Bundle bundle = getIntent().getExtras();
 
-		mTitle = bundle.getString(Article.KEY_TITLE);
-		mUrl = bundle.getString(Article.KEY_URL);
+		mTitle = bundle.getString(DatabaseHelper.C_TITLE);
+		mUrl = bundle.getString(DatabaseHelper.C_URL);
 
 		refreshWebView();
 	}
@@ -504,10 +504,10 @@ public class Show extends Activity {
 		try {
 			parse(client.execute(get, handler));
 		} catch (ClientProtocolException e) {
-			Log.e(TAG, "Error when execute http get.", e);
+			Log.e(CLASSTAG, "Error when execute http get.", e);
 			throw e;
 		} catch (IOException e) {
-			Log.e(TAG, "Error when execute http get.", e);
+			Log.e(CLASSTAG, "Error when execute http get.", e);
 			throw e;
 		} finally {
 			get.abort();

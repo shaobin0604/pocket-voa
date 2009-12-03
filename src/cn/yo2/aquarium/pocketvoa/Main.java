@@ -37,7 +37,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class Main extends Activity {
-	private static final String TAG = Main.class.getSimpleName();
+	private static final String CLASSTAG = Main.class.getSimpleName();
 
 	private static final String HOST = "http://www.51voa.com";
 	private static final String LIST_URL = HOST + "/VOA_Standard_English/";
@@ -109,8 +109,8 @@ public class Main extends Activity {
 					int position, long id) {
 				Article article = mList.get(position);
 				Intent intent = new Intent(Main.this, Show.class);
-				intent.putExtra(Article.KEY_TITLE, article.title);
-				intent.putExtra(Article.KEY_URL, article.url);
+				intent.putExtra(DatabaseHelper.C_TITLE, article.title);
+				intent.putExtra(DatabaseHelper.C_URL, article.url);
 				startActivity(intent);
 			}
 			
@@ -129,10 +129,6 @@ public class Main extends Activity {
 		tvSpecial = (TextView)findViewById(R.id.empty_special);
 		lvSpecial = (ListView)findViewById(R.id.list_special);
 		lvSpecial.setEmptyView(tvSpecial);
-		
-		
-		
-		
 		
 		mList = (ArrayList<Article>)getLastNonConfigurationInstance();
 		
@@ -200,10 +196,10 @@ public class Main extends Activity {
 		try {
 			mList = parse(client.execute(get, handler));
 		} catch (ClientProtocolException e) {
-			Log.e(TAG, "Error when execute http get.", e);
+			Log.e(CLASSTAG, "Error when execute http get.", e);
 			throw e;
 		} catch (IOException e) {
-			Log.e(TAG, "Error when execute http get.", e);
+			Log.e(CLASSTAG, "Error when execute http get.", e);
 			throw e;
 		} finally {
 			get.abort();
@@ -220,8 +216,10 @@ public class Main extends Activity {
 		while (matcher.find()) {
 			String url = matcher.group(1);
 			String title = matcher.group(2);
-			Log.d(TAG, "url -- " + url + " title -- " + title);
-			Article article = new Article(url, title);
+			Log.d(CLASSTAG, "url -- " + url + " title -- " + title);
+			Article article = new Article();
+			article.url = url;
+			article.title = title;
 			list.add(article);
 		}
 		return list;
@@ -287,54 +285,5 @@ class ViewWraper {
 	}
 }
 
-class Article {
-	static final String KEY_TITLE = "title";
-	static final String KEY_URL = "url";
 
-	public Article(String url, String title) {
-		super();
-		this.url = url;
-		this.title = title;
-	}
-
-	String url;
-	String title;
-
-	@Override
-	public String toString() {
-		return "Article [title=" + title + ", url=" + url + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Article other = (Article) obj;
-		if (title == null) {
-			if (other.title != null)
-				return false;
-		} else if (!title.equals(other.title))
-			return false;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		} else if (!url.equals(other.url))
-			return false;
-		return true;
-	}
-
-}
 
