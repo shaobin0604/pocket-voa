@@ -95,6 +95,8 @@ public class Show extends Activity {
 	private String mHtml;
 	private String mAudioUrl;
 	private String mUrl;
+	
+	private DatabaseHelper mDatabaseHelper;
 
 	private Handler mDownloadHandler = new Handler() {
 		@Override
@@ -268,6 +270,7 @@ public class Show extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		mDatabaseHelper.createArticle(mTitle, "20091203", "Standard English", "Standard English", mUrl, mAudioUrl);
 		switch (item.getItemId()) {
 		case MENU_DOWNLOAD_TEXT:
 			saveText();
@@ -417,6 +420,9 @@ public class Show extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show);
+		
+		mDatabaseHelper = new DatabaseHelper(this);
+		mDatabaseHelper.open();
 
 		mWebView = (WebView) findViewById(R.id.webview);
 
@@ -572,6 +578,7 @@ public class Show extends Activity {
 	@Override
 	protected void onDestroy() {
 		mMediaPlayer.release();
+		mDatabaseHelper.close();
 		super.onDestroy();
 	}
 }

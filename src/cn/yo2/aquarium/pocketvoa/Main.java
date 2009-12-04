@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -41,6 +42,9 @@ public class Main extends Activity {
 
 	private static final String HOST = "http://www.51voa.com";
 	private static final String LIST_URL = HOST + "/VOA_Standard_English/";
+	
+	private static final int MENU_REMOTE = Menu.FIRST;
+	private static final int MENU_LOCAL = Menu.FIRST + 1;
 
 	private static final int PROGRESS_DIALOG = 1;
 
@@ -141,6 +145,14 @@ public class Main extends Activity {
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		return mList;
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(Menu.NONE, MENU_REMOTE, Menu.NONE, "Remote").setEnabled(false);
+		menu.add(Menu.NONE, MENU_LOCAL, Menu.NONE, "Local").setIntent(new Intent(this, Local.class));
+		
+		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
