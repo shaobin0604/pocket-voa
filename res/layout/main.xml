@@ -18,11 +18,15 @@
       			android:id="@+id/tab_standard" 
 				android:orientation="vertical" 
 				android:layout_width="fill_parent"
-				android:layout_height="fill_parent">
+				android:layout_height="fill_parent"
+				android:paddingTop="2sp">
+				<Spinner
+					android:id="@+id/spinner_standard"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:entries="@array/standard_english"/>
 				<ListView 
 					android:id="@+id/list_standard"
-					android:paddingLeft="5sp"
-					android:paddingRight="5sp"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content" 
 					android:layout_weight="1.0" 
@@ -38,19 +42,21 @@
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_gravity="bottom"
-					android:text="Refresh" 
-					android:paddingLeft="5sp"
-					android:paddingRight="5sp"/>
+					android:text="Refresh" />
 			</LinearLayout>
 			<LinearLayout 
 				android:id="@+id/tab_special"
 				android:orientation="vertical" 
 				android:layout_width="fill_parent"
-				android:layout_height="fill_parent">
+				android:layout_height="fill_parent"
+				android:paddingTop="2sp">
+				<Spinner
+					android:id="@+id/spinner_special"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:entries="@array/special_english"/>
 				<ListView 
 					android:id="@+id/list_special"
-					android:paddingLeft="5sp"
-					android:paddingRight="5sp"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content" 
 					android:layout_weight="1.0" 
@@ -63,6 +69,41 @@
 		
 				<Button
 					android:id="@+id/btn_refresh_special"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="bottom"
+					android:text="Refresh" />
+			</LinearLayout>
+			
+			<LinearLayout 
+				android:id="@+id/tab_learning"
+				android:orientation="vertical" 
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:paddingTop="2sp">
+				<Spinner
+					android:id="@+id/spinner_learning"
+					android:paddingLeft="5sp"
+					android:paddingRight="5sp"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:entries="@array/english_learning"/>
+				<ListView 
+					android:id="@+id/list_learning"
+					android:paddingLeft="5sp"
+					android:paddingRight="5sp"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:layout_weight="1.0" 
+					android:drawSelectorOnTop="false" />
+
+				<TextView 
+					android:id="@+id/empty_learning" 
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content" />
+		
+				<Button
+					android:id="@+id/btn_refresh_learning"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_gravity="bottom"

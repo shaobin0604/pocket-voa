@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -91,11 +92,15 @@ public class Show extends Activity {
 	private boolean mIsIdle = true;
 	private boolean mIsPlaying = false;
 
+	private Long mId;
 	private String mTitle;
-	private String mHtml;
-	private String mAudioUrl;
+	private String mText;
+	private String mMp3;
 	private String mUrl;
-	
+	private String mType;
+	private String mSubtype;
+	private String mDate;
+
 	private DatabaseHelper mDatabaseHelper;
 
 	private Handler mDownloadHandler = new Handler() {
@@ -120,19 +125,11 @@ public class Show extends Activity {
 		}
 	};
 
-	private Handler mHandler = new Handler() {
+	private Handler mPlayerHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case WHAT_SUCCESS:
-				updateWebView();
-				dismissDialog(PROGRESS_DIALOG_SPIN);
-				break;
-			case WHAT_FAIL_IO:
-				Toast.makeText(Show.this, "FAIL IO", Toast.LENGTH_LONG);
-				break;
-
 			case WHAT_PLAYER_PROGRESS:
 				if (mIsPlaying) {
 					mEllapsedTime = mMediaPlayer.getCurrentPosition();
@@ -144,7 +141,7 @@ public class Show extends Activity {
 					Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
 					updateEllapsedTime();
 
-					mHandler
+					mPlayerHandler
 							.sendEmptyMessageDelayed(WHAT_PLAYER_PROGRESS, 1000);
 				}
 				break;
@@ -160,7 +157,7 @@ public class Show extends Activity {
 
 		public void onClick(View v) {
 			if (mIsIdle) {
-				Uri uri = Uri.parse("http://www.51voa.com" + mAudioUrl);
+				Uri uri = Uri.parse("http://www.51voa.com" + mMp3);
 				Log.d(CLASSTAG, "mp3 url -- " + uri);
 				try {
 					mMediaPlayer.setDataSource(Show.this, uri);
@@ -184,7 +181,7 @@ public class Show extends Activity {
 				mIsPlaying = true;
 				mBtnStart.setEnabled(!mIsPlaying);
 				mBtnPause.setEnabled(mIsPlaying);
-				mHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+				mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 			}
 
 		}
@@ -215,7 +212,7 @@ public class Show extends Activity {
 			mTotalTime = mp.getDuration();
 			updateTotalTime();
 			mp.start();
-			mHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+			mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 		}
 	};
 
@@ -255,10 +252,6 @@ public class Show extends Activity {
 				mTotalTime / 1000));
 	}
 
-	private void updateWebView() {
-		mWebView.loadData(mHtml, "text/html", "utf-8");
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
@@ -270,7 +263,8 @@ public class Show extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		mDatabaseHelper.createArticle(mTitle, "20091203", "Standard English", "Standard English", mUrl, mAudioUrl);
+		mDatabaseHelper.createArticle(mTitle, "20091203", "Standard English",
+				"Standard English", mUrl, mMp3);
 		switch (item.getItemId()) {
 		case MENU_DOWNLOAD_TEXT:
 			saveText();
@@ -323,12 +317,12 @@ public class Show extends Activity {
 		try {
 			if (appDir == null)
 				throw new IOException("Cannot get app dir");
-			File savedAudio = new File(appDir, extractFilename(mAudioUrl));
+			File savedAudio = new File(appDir, extractFilename(mMp3));
 			if (!savedAudio.exists())
 				savedAudio.createNewFile();
 			fos = new FileOutputStream(savedAudio);
 			client = new DefaultHttpClient(params);
-			HttpGet get = new HttpGet("http://www.51voa.com" + mAudioUrl);
+			HttpGet get = new HttpGet("http://www.51voa.com" + mMp3);
 			HttpResponse response = client.execute(get);
 			HttpEntity entity = response.getEntity();
 			long length = entity.getContentLength();
@@ -385,7 +379,7 @@ public class Show extends Activity {
 	}
 
 	private void saveText() {
-		if (TextUtils.isEmpty(mHtml)) {
+		if (TextUtils.isEmpty(mText)) {
 			Log.e(CLASSTAG, "mHtml is empty");
 			showDialog(ALERT_DIALOG);
 		} else {
@@ -401,7 +395,7 @@ public class Show extends Activity {
 						throw new IOException("Cannot create file");
 
 				fos = new FileWriter(downloadFile);
-				fos.write(mHtml);
+				fos.write(mText);
 			} catch (IOException e) {
 				Log.e(CLASSTAG, "Error when save text.", e);
 				showDialog(ALERT_DIALOG);
@@ -421,10 +415,11 @@ public class Show extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show);
 		
-		mDatabaseHelper = new DatabaseHelper(this);
-		mDatabaseHelper.open();
-
+		getIntentExtras();
+		
+		// set up controls
 		mWebView = (WebView) findViewById(R.id.webview);
+		mWebView.loadData(mText, "text/html", "utf-8");
 
 		mBtnStart = (ImageButton) findViewById(R.id.btn_start);
 		mBtnStart.setOnClickListener(mStartButtonClickListener);
@@ -443,29 +438,22 @@ public class Show extends Activity {
 		mMediaPlayer.setOnPreparedListener(mPreparedListener);
 		mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
 		mMediaPlayer.setOnCompletionListener(mCompletionListener);
-
-		Bundle bundle = getIntent().getExtras();
-
-		mTitle = bundle.getString(DatabaseHelper.C_TITLE);
-		mUrl = bundle.getString(DatabaseHelper.C_URL);
-
-		refreshWebView();
+		
+		// set up database
+		mDatabaseHelper = new DatabaseHelper(this);
+		mDatabaseHelper.open();
 	}
-
-	private void refreshWebView() {
-		showDialog(PROGRESS_DIALOG_SPIN);
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					loadPage("http://www.51voa.com" + mUrl);
-					mHandler.sendEmptyMessage(WHAT_SUCCESS);
-				} catch (IOException e) {
-					mHandler.sendEmptyMessage(WHAT_FAIL_IO);
-				}
-			}
-
-		}.start();
+	
+	private void getIntentExtras() {
+		Intent intent = getIntent();
+		mId = intent.getLongExtra(Article.K_ID, -1);
+		mTitle = intent.getStringExtra(Article.K_TITLE);
+		mText = intent.getStringExtra(Article.K_TEXT);
+		mUrl = intent.getStringExtra(Article.K_URL);
+		mMp3 = intent.getStringExtra(Article.K_MP3);
+		mDate = intent.getStringExtra(Article.K_DATE);
+		mType = intent.getStringExtra(Article.K_TYPE);
+		mSubtype = intent.getStringExtra(Article.K_SUBTYPE);
 	}
 
 	@Override
@@ -528,13 +516,12 @@ public class Show extends Activity {
 
 		String content = body.substring(contentStart, listadsStart);
 
-		Pattern audioPattern = Pattern.compile(
-				"Player\\(\"(/path.asp\\?url=[-_/\\d\\w]+\\.mp3)\"\\);",
+		Pattern audioPattern = Pattern.compile("Player\\(\"([^\\s]+)\"\\)",
 				Pattern.CASE_INSENSITIVE);
 
 		Matcher audioMatcher = audioPattern.matcher(content);
 		if (audioMatcher.find()) {
-			mAudioUrl = audioMatcher.group(1);
+			mMp3 = audioMatcher.group(1);
 		}
 
 		int textStart = 0;
@@ -548,10 +535,10 @@ public class Show extends Activity {
 		}
 
 		String text = content.substring(textStart).replaceAll(
-				"<img\\s+src=\"?([-_/\\d\\w]+\\.jpg)\"?\\s*>",
-				"<img src=\"" + "http://www.51voa.com" + "$1\">");
+				"src=([\"\']?)(/[^\\s\'\">]+(?:\\.jpg|\\.png|\\.bmp|\\.gif))\\1?",
+				"src=\"" + "http://www.51voa.com" + "$2\"");
 
-		mHtml = buildHtml(mTitle, text);
+		mText = buildHtml(mTitle, text);
 	}
 
 	private String buildHtml(String title, String text) {
@@ -565,7 +552,7 @@ public class Show extends Activity {
 
 		return s.toString();
 	}
-	 
+
 	@Override
 	protected void onPause() {
 		mMediaPlayer.pause();
@@ -582,4 +569,3 @@ public class Show extends Activity {
 		super.onDestroy();
 	}
 }
-
