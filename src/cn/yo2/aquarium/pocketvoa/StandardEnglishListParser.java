@@ -25,7 +25,7 @@ public class StandardEnglishListParser implements
 		ArrayList<Article> list = new ArrayList<Article>();
 		// int ulStart = body.indexOf("id=\"list\"");
 		Pattern pattern = Pattern
-				.compile("<a href=\"(/VOA_Standard_English/VOA_Standard_English_\\d+\\.html)\" target=_blank>([^<]+)</a>\\s*\\((\\d+-\\d+-\\d+)\\)");
+				.compile("<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>\\s*\\((\\d+-\\d+-\\d+)\\)");
 		Matcher matcher = pattern.matcher(body);
 		while (matcher.find()) {
 			String url = matcher.group(1);

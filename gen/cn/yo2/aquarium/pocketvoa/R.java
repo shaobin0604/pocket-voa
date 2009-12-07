@@ -17,38 +17,36 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int hd=0x7f020000;
+        public static final int icon=0x7f020001;
+        public static final int web=0x7f020002;
     }
     public static final class id {
-        public static final int btn_pause=0x7f060013;
-        public static final int btn_refresh_learning=0x7f060010;
-        public static final int btn_refresh_special=0x7f060009;
-        public static final int btn_refresh_standard=0x7f060005;
-        public static final int btn_start=0x7f060012;
-        public static final int empty_learning=0x7f06000f;
-        public static final int empty_special=0x7f060008;
-        public static final int empty_standard=0x7f060004;
-        public static final int list_learning=0x7f06000e;
-        public static final int list_special=0x7f060007;
-        public static final int list_standard=0x7f060003;
-        public static final int pb_audio=0x7f060016;
-        public static final int spinner_learning=0x7f06000d;
-        public static final int spinner_special=0x7f06000b;
-        public static final int spinner_standard=0x7f06000a;
-        public static final int tab_learning=0x7f06000c;
-        public static final int tab_special=0x7f060006;
-        public static final int tab_standard=0x7f060002;
+        public static final int btn_pause=0x7f060010;
+        public static final int btn_refresh_local=0x7f060007;
+        public static final int btn_refresh_remote=0x7f06000d;
+        public static final int btn_start=0x7f06000f;
+        public static final int empty_local=0x7f060006;
+        public static final int empty_remote=0x7f06000c;
+        public static final int list_local=0x7f060005;
+        public static final int list_remote=0x7f06000b;
+        public static final int pb_audio=0x7f060013;
+        public static final int spinner_subtype_local=0x7f060004;
+        public static final int spinner_subtype_remote=0x7f06000a;
+        public static final int spinner_type_local=0x7f060003;
+        public static final int spinner_type_remote=0x7f060009;
+        public static final int tab_local=0x7f060002;
+        public static final int tab_remote=0x7f060008;
         public static final int tabhost=0x7f060001;
-        public static final int tv_ellapsed_time=0x7f060014;
+        public static final int tv_ellapsed_time=0x7f060011;
         public static final int tv_title=0x7f060000;
-        public static final int tv_total_time=0x7f060015;
-        public static final int webview=0x7f060011;
+        public static final int tv_total_time=0x7f060012;
+        public static final int webview=0x7f06000e;
     }
     public static final class layout {
         public static final int list_item=0x7f030000;
-        public static final int local=0x7f030001;
-        public static final int main=0x7f030002;
-        public static final int show=0x7f030003;
+        public static final int main=0x7f030001;
+        public static final int show=0x7f030002;
     }
     public static final class string {
         public static final int app_name=0x7f050001;

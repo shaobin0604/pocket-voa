@@ -14,102 +14,90 @@
       		android:layout_width="fill_parent"
       		android:layout_height="fill_parent"
       		android:paddingTop="62px">
+      		<!-- tab 0, local -->
       		<LinearLayout
-      			android:id="@+id/tab_standard" 
+      			android:id="@+id/tab_local" 
 				android:orientation="vertical" 
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 				android:paddingTop="2sp">
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
 				<Spinner
-					android:id="@+id/spinner_standard"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:entries="@array/standard_english"/>
-				<ListView 
-					android:id="@+id/list_standard"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_weight="1.0" 
-					android:drawSelectorOnTop="false" />
-
-				<TextView 
-					android:id="@+id/empty_standard" 
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-		
-				<Button
-					android:id="@+id/btn_refresh_standard"
+					android:id="@+id/spinner_type_local"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="bottom"
-					android:text="Refresh" />
-			</LinearLayout>
-			<LinearLayout 
-				android:id="@+id/tab_special"
-				android:orientation="vertical" 
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:paddingTop="2sp">
+					android:layout_weight="1.0"
+					android:entries="@array/type" />
 				<Spinner
-					android:id="@+id/spinner_special"
+					android:id="@+id/spinner_subtype_local"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content" 
-					android:entries="@array/special_english"/>
+					android:layout_weight="1.0 "/>
+				</LinearLayout>
 				<ListView 
-					android:id="@+id/list_special"
+					android:id="@+id/list_local"
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
+					android:layout_height="fill_parent" 
 					android:layout_weight="1.0" 
 					android:drawSelectorOnTop="false" />
 
 				<TextView 
-					android:id="@+id/empty_special" 
+					android:id="@+id/empty_local" 
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content" />
 		
 				<Button
-					android:id="@+id/btn_refresh_special"
+					android:id="@+id/btn_refresh_local"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_gravity="bottom"
 					android:text="Refresh" />
 			</LinearLayout>
 			
-			<LinearLayout 
-				android:id="@+id/tab_learning"
+			<!-- tab 1, remote -->
+			<LinearLayout
+      			android:id="@+id/tab_remote" 
 				android:orientation="vertical" 
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 				android:paddingTop="2sp">
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
 				<Spinner
-					android:id="@+id/spinner_learning"
-					android:paddingLeft="5sp"
-					android:paddingRight="5sp"
+					android:id="@+id/spinner_type_remote"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1.0"
+					android:entries="@array/type" />
+				<Spinner
+					android:id="@+id/spinner_subtype_remote"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content" 
-					android:entries="@array/english_learning"/>
+					android:layout_weight="1.0" />
+				</LinearLayout>
 				<ListView 
-					android:id="@+id/list_learning"
-					android:paddingLeft="5sp"
-					android:paddingRight="5sp"
+					android:id="@+id/list_remote"
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
+					android:layout_height="fill_parent" 
 					android:layout_weight="1.0" 
 					android:drawSelectorOnTop="false" />
 
 				<TextView 
-					android:id="@+id/empty_learning" 
+					android:id="@+id/empty_remote" 
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content" />
 		
 				<Button
-					android:id="@+id/btn_refresh_learning"
+					android:id="@+id/btn_refresh_remote"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_gravity="bottom"
-					android:text="Refresh" 
-					android:paddingLeft="5sp"
-					android:paddingRight="5sp"/>
+					android:text="Refresh" />
 			</LinearLayout>
 		</FrameLayout>
 	</TabHost>
