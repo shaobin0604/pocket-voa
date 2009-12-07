@@ -2,26 +2,29 @@ package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -31,35 +34,16 @@ import android.widget.AdapterView.OnItemClickListener;
 public class Main extends Activity {
 	private static final String CLASSTAG = Main.class.getSimpleName();
 
-	private static final String HOST = "http://www.51voa.com";
-	private static final String STANDARD_ENGLISH_LIST_URL = HOST
-			+ "/VOA_Standard_1.html";
-	private static final String DEVELOPMENT_REPORT_LIST_URL = HOST
-			+ "/Development_Report_1.html";
-	private static final String THIS_IS_AMERICA_LIST_URL = HOST
-			+ "/This_is_America_1.html";
-
-	private static final HashMap<String, String> LIST_URLS = new HashMap<String, String>();
-
-	static {
-		LIST_URLS.put("Standard English_Standard English",
-				STANDARD_ENGLISH_LIST_URL);
-		LIST_URLS.put("Special English_Development Report",
-				DEVELOPMENT_REPORT_LIST_URL);
-		LIST_URLS.put("Special English_This is America",
-				THIS_IS_AMERICA_LIST_URL);
-	}
-
 	private static final int MENU_REMOTE = Menu.FIRST;
 	private static final int MENU_LOCAL = Menu.FIRST + 1;
 
 	private static final int PROGRESS_DIALOG = 1;
 
-	protected static final int WHAT_SUCCESS = 0;
-	protected static final int WHAT_FAIL_IO = 1;
-	protected static final int WHAT_FAIL_PARSE = 2;
+	private static final int WHAT_SUCCESS = 0;
+	private static final int WHAT_FAIL_IO = 1;
+	private static final int WHAT_FAIL_PARSE = 2;
 
-	private boolean mIsLocal;
+	private boolean mIsRemote;
 
 	private String[] mTypes;
 	private String[][] mSubtypes;
@@ -67,19 +51,10 @@ public class Main extends Activity {
 	private String mType;
 	private String mSubtype;
 
-	// Article type_subtype ->
-	private HashMap<String, ListParser> mListParsers = new HashMap<String, ListParser>();
-
-	// Article type_subtype ->
-	private HashMap<String, PageParser> mPageParsers = new HashMap<String, PageParser>();
-
 	private ArrayList<Article> mList;
 
-	private Article mArticle;
-
-	private ListGenerator mListGenerator = new ListGenerator();
-
-	private PageGenerator mPageGenerator = new PageGenerator();
+	private Cursor mCursor;
+	private DatabaseHelper mDatabaseHelper;
 
 	private Handler mListHandler = new Handler() {
 
@@ -91,40 +66,11 @@ public class Main extends Activity {
 				dismissDialog(PROGRESS_DIALOG);
 				break;
 			case WHAT_FAIL_IO:
-				Toast.makeText(Main.this, "FAIL IO", Toast.LENGTH_LONG);
+				Toast.makeText(Main.this, "FAIL IO", Toast.LENGTH_LONG).show();
 				break;
 			case WHAT_FAIL_PARSE:
-				Toast.makeText(Main.this, "FAIL PARSE", Toast.LENGTH_LONG);
-				break;
-			default:
-				break;
-			}
-		}
-
-	};
-
-	private Handler mPageHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case WHAT_SUCCESS:
-				dismissDialog(PROGRESS_DIALOG);
-				Intent intent = new Intent(Main.this, Show.class);
-				intent.putExtra(Article.K_TITLE, mArticle.title);
-				intent.putExtra(Article.K_TEXT, mArticle.text);
-				intent.putExtra(Article.K_URL, mArticle.url);
-				intent.putExtra(Article.K_MP3, mArticle.mp3);
-				intent.putExtra(Article.K_SUBTYPE, mArticle.subtype);
-				intent.putExtra(Article.K_TYPE, mArticle.type);
-				intent.putExtra(Article.K_DATE, mArticle.date);
-				startActivity(intent);
-				break;
-			case WHAT_FAIL_IO:
-				Toast.makeText(Main.this, "FAIL IO", Toast.LENGTH_LONG);
-				break;
-			case WHAT_FAIL_PARSE:
-				Toast.makeText(Main.this, "FAIL PARSE", Toast.LENGTH_LONG);
+				Toast.makeText(Main.this, "FAIL PARSE", Toast.LENGTH_LONG)
+						.show();
 				break;
 			default:
 				break;
@@ -160,11 +106,8 @@ public class Main extends Activity {
 
 		setupTabs();
 
-		mListParsers.put("Standard English_Standard English",
-				new StandardEnglishListParser("Standard English",
-						"Standard English"));
-		mPageParsers.put("Standard English_Standard English",
-				new StandardEnglishPageParser());
+		mDatabaseHelper = new DatabaseHelper(this);
+		mDatabaseHelper.open();
 
 		spnStandard = (Spinner) findViewById(R.id.spinner_standard);
 		btnRefreshStandard = (Button) findViewById(R.id.btn_refresh_standard);
@@ -176,8 +119,13 @@ public class Main extends Activity {
 
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mArticle = mList.get(position);
-				getPage();
+				if (mIsRemote)
+					App.article = mList.get(position);
+				else
+					App.article = mDatabaseHelper.queryArticle(id);
+
+				Intent intent = new Intent(Main.this, Show.class);
+				startActivity(intent);
 			}
 
 		});
@@ -246,12 +194,37 @@ public class Main extends Activity {
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_REMOTE:
+			mIsRemote = true;
+			refreshList();
+			break;
+		case MENU_LOCAL:
+			mIsRemote = false;
+			refreshList();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, MENU_REMOTE, Menu.NONE, "Remote").setEnabled(false);
-		menu.add(Menu.NONE, MENU_LOCAL, Menu.NONE, "Local").setIntent(
-				new Intent(this, Local.class));
+		menu.add(Menu.NONE, MENU_REMOTE, Menu.NONE, "Remote");
+		menu.add(Menu.NONE, MENU_LOCAL, Menu.NONE, "Local");
 
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+
+		menu.getItem(0).setEnabled(!mIsRemote);
+		menu.getItem(1).setEnabled(mIsRemote);
+
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -268,46 +241,25 @@ public class Main extends Activity {
 		return super.onCreateDialog(id);
 	}
 
-	private void bindList() {
-		RowAdapter adapter = new RowAdapter(this, mList);
-		lvStandard.setAdapter(adapter);
+	@Override
+	protected void onDestroy() {
+		if (null != mCursor && !mCursor.isClosed())
+			mCursor.close();
+		mDatabaseHelper.close();
+
+		super.onDestroy();
 	}
 
-	private void getPage() {
-		showDialog(PROGRESS_DIALOG);
-		new Thread() {
-
-			@Override
-			public void run() {
-				try {
-					int tabIndex = mTabHost.getCurrentTab();
-					int spinIndex = 0;
-					switch (tabIndex) {
-					case 0:
-						spinIndex = spnStandard.getSelectedItemPosition();
-						break;
-					case 1:
-						spinIndex = spnSpecial.getSelectedItemPosition();
-						break;
-					case 2:
-						spinIndex = spnLearning.getSelectedItemPosition();
-						break;
-					default:
-						break;
-					}
-					String key = mTypes[tabIndex] + "_" + mSubtypes[tabIndex][spinIndex];
-					Log.d(CLASSTAG, "key -- " + key);
-					mPageGenerator.mParser = mPageParsers.get(key);
-					mPageGenerator.getArticle(HOST + mArticle.url, mArticle);
-					mPageHandler.sendEmptyMessage(WHAT_SUCCESS);
-				} catch (IOException e) {
-					mPageHandler.sendEmptyMessage(WHAT_FAIL_IO);
-				} catch (IllegalContentFormatException e) {
-					mPageHandler.sendEmptyMessage(WHAT_FAIL_PARSE);
-				}
-			}
-
-		}.start();
+	private void bindList() {
+		ListAdapter adapter;
+		if (mIsRemote)
+			adapter = new RowAdapter(this, mList);
+		else {
+			adapter = new SimpleCursorAdapter(this, R.layout.list_item,
+					mCursor, new String[] { DatabaseHelper.C_TITLE },
+					new int[] { R.id.tv_title });
+		}
+		lvStandard.setAdapter(adapter);
 	}
 
 	private void refreshList() {
@@ -316,31 +268,41 @@ public class Main extends Activity {
 
 			@Override
 			public void run() {
-				try {
-					int tabIndex = mTabHost.getCurrentTab();
-					int spinIndex = 0;
-					switch (tabIndex) {
-					case 0:
-						spinIndex = spnStandard.getSelectedItemPosition();
-						break;
-					case 1:
-						spinIndex = spnSpecial.getSelectedItemPosition();
-						break;
-					case 2:
-						spinIndex = spnLearning.getSelectedItemPosition();
-						break;
-					default:
-						break;
-					}
-					String key = mTypes[tabIndex] + "_" + mSubtypes[tabIndex][spinIndex];
+				int tabIndex = mTabHost.getCurrentTab();
+				int spinIndex = 0;
+				switch (tabIndex) {
+				case 0:
+					spinIndex = spnStandard.getSelectedItemPosition();
+					break;
+				case 1:
+					spinIndex = spnSpecial.getSelectedItemPosition();
+					break;
+				case 2:
+					spinIndex = spnLearning.getSelectedItemPosition();
+					break;
+				default:
+					break;
+				}
+				if (mIsRemote) {
+					String key = mTypes[tabIndex] + "_"
+							+ mSubtypes[tabIndex][spinIndex];
 					Log.d(CLASSTAG, "key -- " + key);
-					mListGenerator.mParser = mListParsers.get(key);
-					mList = mListGenerator.getArticleList(LIST_URLS.get(key));
+					App.LIST_GENERATOR.mParser = App.LIST_PARSERS.get(key);
+					try {
+						mList = App.LIST_GENERATOR.getArticleList(App.LIST_URLS
+								.get(key));
+						mListHandler.sendEmptyMessage(WHAT_SUCCESS);
+					} catch (IOException e) {
+						mListHandler.sendEmptyMessage(WHAT_FAIL_IO);
+					} catch (IllegalContentFormatException e) {
+						mListHandler.sendEmptyMessage(WHAT_FAIL_PARSE);
+					}
+				} else {
+					if (null != mCursor && !mCursor.isClosed())
+						mCursor.close();
+					mCursor = mDatabaseHelper.queryArticles(mTypes[tabIndex],
+							mSubtypes[tabIndex][spinIndex]);
 					mListHandler.sendEmptyMessage(WHAT_SUCCESS);
-				} catch (IOException e) {
-					mListHandler.sendEmptyMessage(WHAT_FAIL_IO);
-				} catch (IllegalContentFormatException e) {
-					mListHandler.sendEmptyMessage(WHAT_FAIL_PARSE);
 				}
 			}
 

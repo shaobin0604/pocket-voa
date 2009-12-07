@@ -18,7 +18,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 		Matcher audioMatcher = audioPattern.matcher(content);
 		
 		if (audioMatcher.find()) {
-			article.mp3 = audioMatcher.group(1);
+			article.mp3 = App.HOST + audioMatcher.group(1);
 		}
 
 		int textStart = 0;
@@ -33,7 +33,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 
 		String text = content.substring(textStart).replaceAll(
 				"src=([\"\']?)(/[^\\s\'\">]+(?:\\.jpg|\\.png|\\.bmp|\\.gif))\\1?",
-				"src=\"" + "http://www.51voa.com" + "$2\"");
+				"src=\"" + App.HOST + "$2\"");
 
 		article.text = buildHtml(article.title, text);
 	}

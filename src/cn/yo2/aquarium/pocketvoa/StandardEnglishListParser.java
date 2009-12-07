@@ -35,7 +35,7 @@ public class StandardEnglishListParser implements
 			Log.d(CLASSTAG, "url -- " + url + " title -- " + title + " date -- " + date);
 			
 			Article article = new Article();
-			article.url = url;
+			article.url = App.HOST + url;
 			article.title = title;
 			article.date = date;
 			article.type = mType;

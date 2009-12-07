@@ -52,7 +52,7 @@ public class Local extends Activity {
 				break;
 			case WHAT_FAIL_DB:
 				dismissDialog(PROGRESS_DIALOG);
-				Toast.makeText(Local.this, "Query DB fail.", Toast.LENGTH_LONG);
+				Toast.makeText(Local.this, "Query DB fail.", Toast.LENGTH_LONG).show();
 			default:
 				break;
 			}

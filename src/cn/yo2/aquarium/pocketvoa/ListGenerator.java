@@ -8,7 +8,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 
 import android.util.Log;
 
-public class ListGenerator extends Generator {
+public class ListGenerator extends HttpUtil {
 	private static final String CLASSTAG = ListGenerator.class
 			.getSimpleName();
 
