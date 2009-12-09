@@ -26,10 +26,6 @@ public class Downloader extends HttpUtil {
 
 	Handler mDownloadHandler;
 
-	private String extractFilename(String url) {
-		return url.substring(url.lastIndexOf('/') + 1);
-	}
-
 	private File getAppDir() {
 		if (isExternalStorageReady()) {
 			File appDir = new File(Environment.getExternalStorageDirectory(),
@@ -63,7 +59,8 @@ public class Downloader extends HttpUtil {
 		InputStream is = null;
 		HttpGet get = new HttpGet(article.mp3);
 		try {
-			File savedAudio = new File(appDir, extractFilename(article.mp3));
+			File savedAudio = new File(appDir, Utils
+					.extractFilename(article.mp3));
 			if (!savedAudio.exists())
 				savedAudio.createNewFile();
 			fos = new FileOutputStream(savedAudio);
@@ -96,7 +93,7 @@ public class Downloader extends HttpUtil {
 
 	public String loadText(Article article) throws IOException {
 		File appDir = getAppDir();
-		File downloadFile = new File(appDir, extractFilename(article.url));
+		File downloadFile = new File(appDir, Utils.extractFilename(article.url));
 		FileReader fr = new FileReader(downloadFile);
 		StringBuilder text = new StringBuilder();
 		char[] buf = new char[1024];
@@ -108,7 +105,7 @@ public class Downloader extends HttpUtil {
 
 	public File localMp3File(Article article) {
 		File appDir = getAppDir();
-		return new File(appDir, extractFilename(article.mp3));
+		return new File(appDir, Utils.extractFilename(article.mp3));
 	}
 
 	public void downloadText(Article article) throws IOException {
@@ -120,8 +117,8 @@ public class Downloader extends HttpUtil {
 			try {
 				if (appDir == null)
 					throw new IOException("Cannot get App dir");
-				File downloadFile = new File(appDir,
-						extractFilename(article.url));
+				File downloadFile = new File(appDir, Utils
+						.extractFilename(article.url));
 
 				if (!downloadFile.exists())
 					if (!downloadFile.createNewFile())

@@ -4,23 +4,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 
 import android.util.Log;
+import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class ListGenerator extends HttpUtil {
 	private static final String CLASSTAG = ListGenerator.class
 			.getSimpleName();
 
-	ListParser mParser;
+	IListParser mParser;
 
 
 	public ArrayList<Article> getArticleList(String url) throws IOException,
 			IllegalContentFormatException {
 		HttpGet get = new HttpGet(url);
-		BasicResponseHandler handler = new BasicResponseHandler();
 		try {
-			String body = mClient.execute(get, handler);
+			String body = mClient.execute(get, mResponseHandler);
 			return mParser.parse(body);
 		} catch (IOException e) {
 			get.abort();

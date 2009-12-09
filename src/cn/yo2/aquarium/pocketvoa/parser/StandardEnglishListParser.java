@@ -1,4 +1,4 @@
-package cn.yo2.aquarium.pocketvoa;
+package cn.yo2.aquarium.pocketvoa.parser;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -6,17 +6,20 @@ import java.util.regex.Pattern;
 
 import android.text.TextUtils;
 import android.util.Log;
+import cn.yo2.aquarium.pocketvoa.App;
+import cn.yo2.aquarium.pocketvoa.Article;
+import cn.yo2.aquarium.pocketvoa.IllegalContentFormatException;
+import cn.yo2.aquarium.pocketvoa.Utils;
 
-public class StandardEnglishListParser implements
-		ListParser {
+public class StandardEnglishListParser extends AbstractListParser {
 	private static final String CLASSTAG = StandardEnglishListParser.class.getSimpleName();
 	
-	private String mType;
-	private String mSubtype;
-	
 	public StandardEnglishListParser(String type, String subtype) {
-		this.mType = type;
-		this.mSubtype = subtype;
+		super(type, subtype);
+	}
+
+	public StandardEnglishListParser(String type, String subtype, int maxCount) {
+		super(type, subtype, maxCount);
 	}
 
 	public ArrayList<Article> parse(String body) throws IllegalContentFormatException {
@@ -27,7 +30,11 @@ public class StandardEnglishListParser implements
 		Pattern pattern = Pattern
 				.compile("<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>\\s*\\((\\d+-\\d+-\\d+)\\)");
 		Matcher matcher = pattern.matcher(body);
-		while (matcher.find()) {
+		int count = 0;
+		while (matcher.find() && count < this.mMaxCount) {
+			
+			count++;
+			
 			String url = matcher.group(1);
 			String title = matcher.group(2);
 			String date = matcher.group(3);
@@ -35,9 +42,9 @@ public class StandardEnglishListParser implements
 			Log.d(CLASSTAG, "url -- " + url + " title -- " + title + " date -- " + date);
 			
 			Article article = new Article();
-			article.url = App.HOST + url;
+			article.url = App.HOST + (url.startsWith("/") ? url : "/" + url);
 			article.title = title;
-			article.date = date;
+			article.date = Utils.formatDateString(date);
 			article.type = mType;
 			article.subtype = mSubtype;
 			list.add(article);

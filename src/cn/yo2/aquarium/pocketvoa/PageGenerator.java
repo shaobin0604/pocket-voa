@@ -3,16 +3,16 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 
 import android.text.TextUtils;
 import android.util.Log;
+import cn.yo2.aquarium.pocketvoa.parser.IPageParser;
 
 public class PageGenerator extends HttpUtil {
 	private static final String CLASSTAG = PageGenerator.class
 			.getSimpleName();
 
-	PageParser mParser;
+	IPageParser mParser;
 
 	public void getArticle(Article article) throws IOException,
 			IllegalContentFormatException {
@@ -20,9 +20,8 @@ public class PageGenerator extends HttpUtil {
 			throw new IllegalArgumentException("article's url should not be blank.");
 		
 		HttpGet get = new HttpGet(article.url);
-		BasicResponseHandler handler = new BasicResponseHandler();
 		try {
-			String body = mClient.execute(get, handler);
+			String body = mClient.execute(get, mResponseHandler);
 			mParser.parse(article, body);
 		} catch (IOException e) {
 			get.abort();

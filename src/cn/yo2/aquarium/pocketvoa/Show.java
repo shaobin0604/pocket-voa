@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -31,12 +33,11 @@ public class Show extends Activity {
 	private static final String CLASSTAG = Show.class.getSimpleName();
 
 	private static final int PROGRESS_DIALOG_SPIN = 1;
-	private static final int ALERT_DIALOG = 2;
+	private static final int ERROR_ALERT_DIALOG = 2;
 	private static final int PROGRESS_DIALOG_BAR = 3;
+	private static final int INFO_ALERT_DIALOG = 4;
 
-	private static final int MENU_DOWNLOAD_AUDIO = Menu.FIRST;
-	private static final int MENU_DOWNLOAD_TEXT = Menu.FIRST + 1;
-	private static final int MENU_DOWNLOAD_BOTH = Menu.FIRST + 2;
+	private static final int MENU_DOWNLOAD = Menu.FIRST;
 
 	protected static final int WHAT_LOAD_PAGE_SUCCESS = 0;
 	protected static final int WHAT_LOAD_PAGE_FAIL_IO = 1;
@@ -44,9 +45,17 @@ public class Show extends Activity {
 
 	protected static final int WHAT_PLAYER_PROGRESS = 3;
 
-	enum MediaPlayerState {
+	private enum MediaPlayerState {
 		Idle, Initialized, Preparing, Prepared, Started, Paused, Stopped, PlaybackCompleted, End, Error,
 	}
+
+	private enum Error {
+		LoadPageError, DownloadAudioError, PlayAudioError, DownloadTextError,
+	}
+
+	private Error mLastError;
+
+	private App mApp;
 
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
@@ -76,15 +85,15 @@ public class Show extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case WHAT_LOAD_PAGE_SUCCESS:
-				mWebView.loadData(App.article.text, "text/html", "utf-8");
+				mWebView.loadDataWithBaseURL("", mApp.article.text,
+						"text/html", "utf-8", "");
 				dismissDialog(PROGRESS_DIALOG_SPIN);
 				break;
 			case WHAT_LOAD_PAGE_FAIL_IO:
-				Toast.makeText(Show.this, "Fail IO", Toast.LENGTH_SHORT).show();
-				break;
 			case WHAT_LOAD_PAGE_FAIL_PARSE:
-				Toast.makeText(Show.this, "Fail PARSE", Toast.LENGTH_SHORT)
-						.show();
+				dismissDialog(PROGRESS_DIALOG_SPIN);
+				mLastError = Error.LoadPageError;
+				showDialog(ERROR_ALERT_DIALOG);
 				break;
 			default:
 				break;
@@ -93,21 +102,24 @@ public class Show extends Activity {
 
 	};
 
-	private Handler mDownloadHandler = new Handler() {
+	private Handler mDownloadMp3Handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case Downloader.WHAT_DOWNLOAD_PROGRESS:
+				// msg.arg1 store progress
 				mProgressDialogBar.setProgress(msg.arg1);
 				break;
 			case Downloader.WHAT_DOWNLOAD_SUCCESS:
 				dismissDialog(PROGRESS_DIALOG_BAR);
-				Toast.makeText(Show.this, "Download Complete",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(Show.this,
+						R.string.toast_download_audio_complete,
+						Toast.LENGTH_LONG).show();
 				break;
 			case Downloader.WHAT_DOWNLOAD_ERROR:
 				dismissDialog(PROGRESS_DIALOG_BAR);
-				showDialog(ALERT_DIALOG);
+				mLastError = Error.DownloadAudioError;
+				showDialog(ERROR_ALERT_DIALOG);
 				break;
 			default:
 				break;
@@ -148,10 +160,11 @@ public class Show extends Activity {
 		public void onClick(View v) {
 			if (mMediaPlayerState == MediaPlayerState.Idle) {
 				Uri uri = null;
-				if (App.article.id == null) 
-					uri = Uri.parse(App.article.mp3);
-				else 
-					uri = Uri.fromFile(App.DOWNLOADER.localMp3File(App.article));
+				if (mApp.article.id == null)
+					uri = Uri.parse(mApp.article.mp3);
+				else
+					uri = Uri.fromFile(mApp.mDownloader
+							.localMp3File(mApp.article));
 				Log.d(CLASSTAG, "mp3 url -- " + uri);
 				try {
 
@@ -165,12 +178,20 @@ public class Show extends Activity {
 
 				} catch (IllegalArgumentException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
+					mLastError = Error.PlayAudioError;
+					showDialog(ERROR_ALERT_DIALOG);
 				} catch (SecurityException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
+					mLastError = Error.PlayAudioError;
+					showDialog(ERROR_ALERT_DIALOG);
 				} catch (IllegalStateException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
+					mLastError = Error.PlayAudioError;
+					showDialog(ERROR_ALERT_DIALOG);
 				} catch (IOException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
+					mLastError = Error.PlayAudioError;
+					showDialog(ERROR_ALERT_DIALOG);
 				}
 
 			} else {
@@ -197,6 +218,11 @@ public class Show extends Activity {
 
 		public boolean onError(MediaPlayer mp, int what, int extra) {
 			Log.e(CLASSTAG, "what -- " + what + " extra -- " + extra);
+
+			mLastError = Error.PlayAudioError;
+
+			showDialog(ERROR_ALERT_DIALOG);
+
 			mMediaPlayer.reset();
 			mMediaPlayerState = MediaPlayerState.Idle;
 			return true;
@@ -232,7 +258,7 @@ public class Show extends Activity {
 	private OnCompletionListener mCompletionListener = new OnCompletionListener() {
 
 		public void onCompletion(MediaPlayer mp) {
-			Log.d(CLASSTAG, "complete");
+			Log.d(CLASSTAG, "playback completed");
 			mMediaPlayerState = MediaPlayerState.PlaybackCompleted;
 
 			updatePalyerButton();
@@ -284,35 +310,33 @@ public class Show extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, MENU_DOWNLOAD_TEXT, Menu.NONE, "Download Text");
-		menu.add(Menu.NONE, MENU_DOWNLOAD_AUDIO, Menu.NONE, "Download Audio");
-		menu.add(Menu.NONE, MENU_DOWNLOAD_BOTH, Menu.NONE, "Download Both");
+		menu.add(Menu.NONE, MENU_DOWNLOAD, Menu.NONE, R.string.menu_download)
+				.setIcon(R.drawable.download);
 		return result;
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.getItem(0).setEnabled(App.article.id == null);
-		menu.getItem(1).setEnabled(App.article.id == null);
-		menu.getItem(2).setEnabled(App.article.id == null);
+		menu.getItem(0).setEnabled(mApp.article.id == null);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		mDatabaseHelper.createArticle(App.article.title, App.article.date,
-				App.article.type, App.article.subtype, App.article.url,
-				App.article.mp3);
 		switch (item.getItemId()) {
-		case MENU_DOWNLOAD_TEXT:
-			saveText();
-			return true;
-		case MENU_DOWNLOAD_AUDIO:
-			saveMp3();
-			return true;
-		case MENU_DOWNLOAD_BOTH:
-			saveText();
-			saveMp3();
+		case MENU_DOWNLOAD:
+			// TODO check if the article has been downloaded
+			if (mDatabaseHelper.isArticleExist(mApp.article)) {
+				showDialog(INFO_ALERT_DIALOG);
+			} else {
+				mDatabaseHelper.createArticle(mApp.article.title,
+						mApp.article.date, mApp.article.type,
+						mApp.article.subtype, mApp.article.url,
+						mApp.article.mp3);
+				saveText();
+				saveMp3();
+				
+			}
 			return true;
 		default:
 			break;
@@ -322,11 +346,12 @@ public class Show extends Activity {
 
 	private void saveText() {
 		try {
-			App.DOWNLOADER.downloadText(App.article);
-			Toast.makeText(this, "Download Text complete.", Toast.LENGTH_SHORT)
-					.show();
+			mApp.mDownloader.downloadText(mApp.article);
+			Toast.makeText(this, R.string.toast_download_text_complete,
+					Toast.LENGTH_LONG).show();
 		} catch (IOException e) {
-			showDialog(ALERT_DIALOG);
+			mLastError = Error.DownloadTextError;
+			showDialog(ERROR_ALERT_DIALOG);
 		}
 	}
 
@@ -339,13 +364,13 @@ public class Show extends Activity {
 			public void run() {
 
 				try {
-					App.DOWNLOADER.mDownloadHandler = Show.this.mDownloadHandler;
-					App.DOWNLOADER.downloadMp3(App.article);
-					mDownloadHandler
+					mApp.mDownloader.mDownloadHandler = mDownloadMp3Handler;
+					mApp.mDownloader.downloadMp3(mApp.article);
+					mDownloadMp3Handler
 							.sendEmptyMessage(Downloader.WHAT_DOWNLOAD_SUCCESS);
 				} catch (IOException e) {
 					Log.e(CLASSTAG, "Error when save audio.", e);
-					mDownloadHandler
+					mDownloadMp3Handler
 							.sendEmptyMessage(Downloader.WHAT_DOWNLOAD_ERROR);
 				}
 
@@ -359,7 +384,28 @@ public class Show extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show);
 
+		mApp = (App) getApplication();
+		
+		setTitle(mApp.article.title);
+
 		// set up controls
+		setupWidgets();
+
+		// set up media player
+		setupMediaPlayer();
+
+		// set up database
+		mDatabaseHelper = new DatabaseHelper(this);
+		mDatabaseHelper.open();
+
+		// load page
+		if (mApp.article.id == null)
+			loadRemotePage();
+		else
+			loadLocalPage();
+	}
+
+	private void setupWidgets() {
 		mWebView = (WebView) findViewById(R.id.webview);
 
 		mBtnStart = (ImageButton) findViewById(R.id.btn_start);
@@ -372,7 +418,9 @@ public class Show extends Activity {
 		mTvTotalTime = (TextView) findViewById(R.id.tv_total_time);
 
 		mProgressBar = (ProgressBar) findViewById(R.id.pb_audio);
+	}
 
+	private void setupMediaPlayer() {
 		mMediaPlayer = new MediaPlayer();
 		mMediaPlayerState = MediaPlayerState.Idle;
 
@@ -380,16 +428,6 @@ public class Show extends Activity {
 		mMediaPlayer.setOnPreparedListener(mPreparedListener);
 		mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
 		mMediaPlayer.setOnCompletionListener(mCompletionListener);
-
-		// set up database
-		mDatabaseHelper = new DatabaseHelper(this);
-		mDatabaseHelper.open();
-
-		// load page
-		if (App.article.id == null)
-			loadRemotePage();
-		else
-			loadLocalPage();
 	}
 
 	private void loadLocalPage() {
@@ -399,7 +437,7 @@ public class Show extends Activity {
 			@Override
 			public void run() {
 				try {
-					App.article.text = App.DOWNLOADER.loadText(App.article);
+					mApp.article.text = mApp.mDownloader.loadText(mApp.article);
 					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_SUCCESS);
 				} catch (IOException e) {
 					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_FAIL_IO);
@@ -415,10 +453,10 @@ public class Show extends Activity {
 
 			@Override
 			public void run() {
-				App.PAGE_GENERATOR.mParser = App.PAGE_PARSERS
-						.get(App.article.type + "_" + App.article.subtype);
+				mApp.mPageGenerator.mParser = mApp.mPageParsers
+						.get(mApp.article.type + "_" + mApp.article.subtype);
 				try {
-					App.PAGE_GENERATOR.getArticle(App.article);
+					mApp.mPageGenerator.getArticle(mApp.article);
 					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_SUCCESS);
 				} catch (IOException e) {
 					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_FAIL_IO);
@@ -432,27 +470,89 @@ public class Show extends Activity {
 	}
 
 	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		// TODO Auto-generated method stub
+		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case PROGRESS_DIALOG_SPIN:
 			mProgressDialogSpin = new ProgressDialog(this);
-			mProgressDialogSpin.setTitle("Loading");
-			mProgressDialogSpin.setMessage("Loading");
+			mProgressDialogSpin
+					.setMessage(getString(R.string.progressspin_loadpage_msg));
 			return mProgressDialogSpin;
 		case PROGRESS_DIALOG_BAR:
 			mProgressDialogBar = new ProgressDialog(this);
-			mProgressDialogBar.setTitle("Downloading audio file");
+			mProgressDialogBar.setTitle(R.string.progressbar_download_title);
 			mProgressDialogBar
 					.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			return mProgressDialogBar;
-		case ALERT_DIALOG:
+		case ERROR_ALERT_DIALOG:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Alert");
+			builder.setTitle(R.string.alert_title_error);
 			return builder.create();
+		case INFO_ALERT_DIALOG:
+			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+			builder2.setTitle(R.string.alert_title_confirm_download);
+			builder2.setMessage(getString(R.string.alert_msg_confirm_download));
+			builder2.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+					saveText();
+					saveMp3();
+				}
+			});
+			
+			builder2.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+					
+				}
+			});
+			
+			return builder2.create();
 		default:
 			break;
 		}
 		return super.onCreateDialog(id);
+	}
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		switch (id) {
+		case ERROR_ALERT_DIALOG:
+			AlertDialog alertDialog = (AlertDialog) dialog;
+			switch (mLastError) {
+			case LoadPageError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_loadpage_error));
+				break;
+			case PlayAudioError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_play_audio_error));
+				break;
+			case DownloadAudioError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_download_audio_error));
+				break;
+			case DownloadTextError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_download_text_error));
+				break;
+			default:
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+		super.onPrepareDialog(id, dialog);
 	}
 
 	@Override

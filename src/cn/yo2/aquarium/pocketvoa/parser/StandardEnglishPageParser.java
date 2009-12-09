@@ -1,7 +1,11 @@
-package cn.yo2.aquarium.pocketvoa;
+package cn.yo2.aquarium.pocketvoa.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cn.yo2.aquarium.pocketvoa.App;
+import cn.yo2.aquarium.pocketvoa.Article;
+import cn.yo2.aquarium.pocketvoa.IllegalContentFormatException;
 
 public class StandardEnglishPageParser extends AbstractPageParser {
 	

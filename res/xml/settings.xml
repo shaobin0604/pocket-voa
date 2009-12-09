@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+ 	<ListPreference
+ 		android:key="@string/prefs_list_count_key"
+ 		android:title="@string/prefs_list_count_title"
+ 		android:summary="@string/prefs_list_count_summary"
+ 		android:dialogTitle="@string/prefs_list_count_dialog_title"
+ 		android:entries="@array/prefs_list_count"
+ 		android:entryValues="@array/prefs_list_count"
+ 		/>
+</PreferenceScreen>
