@@ -40,15 +40,18 @@
 				<ListView 
 					android:id="@+id/list_local"
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent" 
+					android:layout_height="wrap_content" 
 					android:layout_weight="1.0" 
 					android:drawSelectorOnTop="false" />
 
 				<TextView 
 					android:id="@+id/empty_local" 
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-		
+					android:layout_height="wrap_content"
+					android:text="@string/no_data"
+					android:gravity="center"
+					android:layout_weight="1.0" />
+
 				<Button
 					android:id="@+id/btn_refresh_local"
 					android:layout_width="fill_parent"
@@ -83,15 +86,19 @@
 				<ListView 
 					android:id="@+id/list_remote"
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent" 
+					android:layout_height="wrap_content" 
 					android:layout_weight="1.0" 
 					android:drawSelectorOnTop="false" />
+
 
 				<TextView 
 					android:id="@+id/empty_remote" 
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" />
-		
+					android:layout_height="wrap_content"
+					android:text="@string/no_data"
+					android:gravity="center"
+					android:layout_weight="1.0" />
+	
 				<Button
 					android:id="@+id/btn_refresh_remote"
 					android:layout_width="fill_parent"
