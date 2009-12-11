@@ -32,10 +32,10 @@ import android.widget.Toast;
 public class Show extends Activity {
 	private static final String CLASSTAG = Show.class.getSimpleName();
 
-	private static final int PROGRESS_DIALOG_SPIN = 1;
-	private static final int ERROR_ALERT_DIALOG = 2;
-	private static final int PROGRESS_DIALOG_BAR = 3;
-	private static final int INFO_ALERT_DIALOG = 4;
+	private static final int DLG_PROGRESS_SPIN = 1;
+	private static final int DLG_ERROR_ALERT = 2;
+	private static final int DLG_PROGRESS_BAR = 3;
+	private static final int DLG_CONFIRM_DOWNLOAD = 4;
 
 	private static final int MENU_DOWNLOAD = Menu.FIRST;
 
@@ -87,13 +87,13 @@ public class Show extends Activity {
 			case WHAT_LOAD_PAGE_SUCCESS:
 				mWebView.loadDataWithBaseURL("", mApp.article.text,
 						"text/html", "utf-8", "");
-				dismissDialog(PROGRESS_DIALOG_SPIN);
+				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
 			case WHAT_LOAD_PAGE_FAIL_IO:
 			case WHAT_LOAD_PAGE_FAIL_PARSE:
-				dismissDialog(PROGRESS_DIALOG_SPIN);
+				dismissDialog(DLG_PROGRESS_SPIN);
 				mLastError = Error.LoadPageError;
-				showDialog(ERROR_ALERT_DIALOG);
+				showDialog(DLG_ERROR_ALERT);
 				break;
 			default:
 				break;
@@ -111,15 +111,15 @@ public class Show extends Activity {
 				mProgressDialogBar.setProgress(msg.arg1);
 				break;
 			case Downloader.WHAT_DOWNLOAD_SUCCESS:
-				dismissDialog(PROGRESS_DIALOG_BAR);
+				dismissDialog(DLG_PROGRESS_BAR);
 				Toast.makeText(Show.this,
 						R.string.toast_download_audio_complete,
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_SHORT).show();
 				break;
 			case Downloader.WHAT_DOWNLOAD_ERROR:
-				dismissDialog(PROGRESS_DIALOG_BAR);
+				dismissDialog(DLG_PROGRESS_BAR);
 				mLastError = Error.DownloadAudioError;
-				showDialog(ERROR_ALERT_DIALOG);
+				showDialog(DLG_ERROR_ALERT);
 				break;
 			default:
 				break;
@@ -179,19 +179,19 @@ public class Show extends Activity {
 				} catch (IllegalArgumentException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 					mLastError = Error.PlayAudioError;
-					showDialog(ERROR_ALERT_DIALOG);
+					showDialog(DLG_ERROR_ALERT);
 				} catch (SecurityException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 					mLastError = Error.PlayAudioError;
-					showDialog(ERROR_ALERT_DIALOG);
+					showDialog(DLG_ERROR_ALERT);
 				} catch (IllegalStateException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 					mLastError = Error.PlayAudioError;
-					showDialog(ERROR_ALERT_DIALOG);
+					showDialog(DLG_ERROR_ALERT);
 				} catch (IOException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
 					mLastError = Error.PlayAudioError;
-					showDialog(ERROR_ALERT_DIALOG);
+					showDialog(DLG_ERROR_ALERT);
 				}
 
 			} else {
@@ -221,7 +221,7 @@ public class Show extends Activity {
 
 			mLastError = Error.PlayAudioError;
 
-			showDialog(ERROR_ALERT_DIALOG);
+			showDialog(DLG_ERROR_ALERT);
 
 			mMediaPlayer.reset();
 			mMediaPlayerState = MediaPlayerState.Idle;
@@ -311,7 +311,7 @@ public class Show extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, MENU_DOWNLOAD, Menu.NONE, R.string.menu_download)
-				.setIcon(R.drawable.download);
+				.setIcon(R.drawable.file_download);
 		return result;
 	}
 
@@ -327,7 +327,7 @@ public class Show extends Activity {
 		case MENU_DOWNLOAD:
 			// TODO check if the article has been downloaded
 			if (mDatabaseHelper.isArticleExist(mApp.article)) {
-				showDialog(INFO_ALERT_DIALOG);
+				showDialog(DLG_CONFIRM_DOWNLOAD);
 			} else {
 				mDatabaseHelper.createArticle(mApp.article.title,
 						mApp.article.date, mApp.article.type,
@@ -348,16 +348,16 @@ public class Show extends Activity {
 		try {
 			mApp.mDownloader.downloadText(mApp.article);
 			Toast.makeText(this, R.string.toast_download_text_complete,
-					Toast.LENGTH_LONG).show();
+					Toast.LENGTH_SHORT).show();
 		} catch (IOException e) {
 			mLastError = Error.DownloadTextError;
-			showDialog(ERROR_ALERT_DIALOG);
+			showDialog(DLG_ERROR_ALERT);
 		}
 	}
 
 	private void saveMp3() {
 
-		showDialog(PROGRESS_DIALOG_BAR);
+		showDialog(DLG_PROGRESS_BAR);
 		new Thread() {
 
 			@Override
@@ -431,7 +431,7 @@ public class Show extends Activity {
 	}
 
 	private void loadLocalPage() {
-		showDialog(PROGRESS_DIALOG_SPIN);
+		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
 			@Override
@@ -448,7 +448,7 @@ public class Show extends Activity {
 	}
 
 	private void loadRemotePage() {
-		showDialog(PROGRESS_DIALOG_SPIN);
+		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
 			@Override
@@ -478,25 +478,37 @@ public class Show extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case PROGRESS_DIALOG_SPIN:
+		case DLG_PROGRESS_SPIN:
 			mProgressDialogSpin = new ProgressDialog(this);
 			mProgressDialogSpin
 					.setMessage(getString(R.string.progressspin_loadpage_msg));
 			return mProgressDialogSpin;
-		case PROGRESS_DIALOG_BAR:
+		case DLG_PROGRESS_BAR:
 			mProgressDialogBar = new ProgressDialog(this);
 			mProgressDialogBar.setTitle(R.string.progressbar_download_title);
 			mProgressDialogBar
 					.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			return mProgressDialogBar;
-		case ERROR_ALERT_DIALOG:
+		case DLG_ERROR_ALERT:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
+			// without this statement, you would not be able to change AlertDialog's message in onPreparedDialog
+			builder.setMessage("");
+			builder.setNeutralButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			return builder.create();
-		case INFO_ALERT_DIALOG:
+		case DLG_CONFIRM_DOWNLOAD:
 			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+			builder2.setIcon(android.R.drawable.ic_dialog_alert);
 			builder2.setTitle(R.string.alert_title_confirm_download);
-			builder2.setMessage(getString(R.string.alert_msg_confirm_download));
+			// without this statement, you would not be able to change AlertDialog's message in onPreparedDialog
+			builder2.setMessage("");
 			builder2.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
 				
 				public void onClick(DialogInterface dialog, int which) {
@@ -524,8 +536,9 @@ public class Show extends Activity {
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
+		super.onPrepareDialog(id, dialog);
 		switch (id) {
-		case ERROR_ALERT_DIALOG:
+		case DLG_ERROR_ALERT:
 			AlertDialog alertDialog = (AlertDialog) dialog;
 			switch (mLastError) {
 			case LoadPageError:
@@ -548,11 +561,13 @@ public class Show extends Activity {
 				break;
 			}
 			break;
-
+		case DLG_CONFIRM_DOWNLOAD:
+			AlertDialog alertDialog2 = (AlertDialog) dialog;
+			alertDialog2.setMessage(getString(R.string.alert_msg_confirm_download, mApp.article.title));
+			break;
 		default:
 			break;
 		}
-		super.onPrepareDialog(id, dialog);
 	}
 
 	@Override

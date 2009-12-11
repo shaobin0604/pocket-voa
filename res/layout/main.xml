@@ -30,7 +30,7 @@
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1.0"
-					android:entries="@array/type" />
+					android:entries="@array/type_local" />
 				<Spinner
 					android:id="@+id/spinner_subtype_local"
 					android:layout_width="fill_parent"
@@ -43,20 +43,17 @@
 					android:layout_height="wrap_content" 
 					android:layout_weight="1.0" 
 					android:drawSelectorOnTop="false" />
-
-				<TextView 
-					android:id="@+id/empty_local" 
-					android:layout_width="fill_parent"
+				<ImageView 
+					android:id="@+id/empty_local"
+					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
-					android:text="@string/no_data"
-					android:gravity="center"
-					android:layout_weight="1.0" />
-
+					android:src="@drawable/blank" 
+					android:layout_gravity="center"
+					android:layout_weight="1.5" />
 				<Button
 					android:id="@+id/btn_refresh_local"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="bottom"
 					android:text="@string/btn_refresh" />
 			</LinearLayout>
 			
@@ -90,20 +87,18 @@
 					android:layout_weight="1.0" 
 					android:drawSelectorOnTop="false" />
 
-
-				<TextView 
-					android:id="@+id/empty_remote" 
-					android:layout_width="fill_parent"
+				<ImageView 
+					android:id="@+id/empty_remote"
+					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
-					android:text="@string/no_data"
-					android:gravity="center"
-					android:layout_weight="1.0" />
+					android:src="@drawable/blank" 
+					android:layout_gravity="center"
+					android:layout_weight="1.5" />
 	
 				<Button
 					android:id="@+id/btn_refresh_remote"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:layout_gravity="bottom"
 					android:text="@string/btn_refresh" />
 			</LinearLayout>
 		</FrameLayout>

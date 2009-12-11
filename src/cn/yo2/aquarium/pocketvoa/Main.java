@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -42,16 +43,15 @@ public class Main extends Activity {
 	private static final String CLASSTAG = Main.class.getSimpleName();
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
-	private static final int MENU_EXIT = Menu.FIRST + 1;
+	private static final int MENU_ABOUT = Menu.FIRST + 1;
+	private static final int MENU_EXIT = Menu.FIRST + 2;
 
-	private static final int MENU_LOCAL_VIEW = Menu.FIRST + 2;
-	private static final int MENU_DELETE = Menu.FIRST + 3;
-
-	private static final int ERROR_ALERT_DIALOG = 0;
-	private static final int PROGRESS_DIALOG = 1;
-	private static final int LOCAL_LIST_ACTION_DIALOG = 2;
-	private static final int REMOTE_LIST_ACTION_DIALOG = 3;
-	private static final int DELETE_CONFIRM_DIALOG = 4;
+	private static final int DLG_ERROR_ALERT = 0;
+	private static final int DLG_PROGRESS = 1;
+	private static final int DLG_LOCAL_LIST_ACTION = 2;
+	private static final int DLG_REMOTE_LIST_ACTION = 3;
+	private static final int DLG_DELETE_CONFIRM = 4;
+	private static final int DLG_ABOUT = 5;
 
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
@@ -67,10 +67,13 @@ public class Main extends Activity {
 
 	private Article mLongClickArticle;
 
-	private String[] mTypes;
-	private String[][] mSubtypes;
+	private String[] mTypesRemote;
+	private String[][] mSubtypesRemote;
+	private ArrayAdapter<CharSequence>[] mAdaptersRemote;
 
-	private ArrayAdapter<CharSequence>[] mAdapters;
+	private String[] mTypesLocal;
+	private String[][] mSubtypesLocal;
+	private ArrayAdapter<CharSequence>[] mAdaptersLocal;
 
 	private ArrayList<Article> mList;
 
@@ -84,14 +87,14 @@ public class Main extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case WHAT_SUCCESS:
-				dismissDialog(PROGRESS_DIALOG);
+				dismissDialog(DLG_PROGRESS);
 				bindRemoteList();
 				break;
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
-				dismissDialog(PROGRESS_DIALOG);
+				dismissDialog(DLG_PROGRESS);
 				mLastError = Error.LoadListError;
-				showDialog(ERROR_ALERT_DIALOG);
+				showDialog(DLG_ERROR_ALERT);
 				break;
 			default:
 				break;
@@ -106,14 +109,14 @@ public class Main extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case WHAT_SUCCESS:
-				dismissDialog(PROGRESS_DIALOG);
+				dismissDialog(DLG_PROGRESS);
 				bindLocalList();
 				break;
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
-				dismissDialog(PROGRESS_DIALOG);
+				dismissDialog(DLG_PROGRESS);
 				mLastError = Error.LoadListError;
-				showDialog(ERROR_ALERT_DIALOG);
+				showDialog(DLG_ERROR_ALERT);
 				break;
 			default:
 				break;
@@ -125,13 +128,13 @@ public class Main extends Activity {
 	private TabHost mTabHost;
 
 	private Button btnRefreshLocal;
-	private TextView tvLocal;
+	private ImageView tvLocalEmpty;
 	private ListView lvLocal;
 	private Spinner spnTypeLocal;
 	private Spinner spnSubtypeLocal;
 
 	private Button btnRefreshRemote;
-	private TextView tvRemote;
+	private ImageView tvRemoteEmpty;
 	private ListView lvRemote;
 	private Spinner spnTypeRemote;
 	private Spinner spnSubtypeRemote;
@@ -150,7 +153,8 @@ public class Main extends Activity {
 
 		mApp = (App) getApplication();
 
-		extractTypes();
+		extractTypesLocal();
+		extractTypesRemote();
 
 		setupTabs();
 
@@ -172,7 +176,7 @@ public class Main extends Activity {
 
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				spnSubtypeRemote.setAdapter(mAdapters[position]);
+				spnSubtypeRemote.setAdapter(mAdaptersRemote[position]);
 			}
 
 			public void onNothingSelected(AdapterView<?> parent) {
@@ -193,9 +197,9 @@ public class Main extends Activity {
 			}
 		});
 
-		tvRemote = (TextView) findViewById(R.id.empty_remote);
+		tvRemoteEmpty = (ImageView) findViewById(R.id.empty_remote);
 		lvRemote = (ListView) findViewById(R.id.list_remote);
-		lvRemote.setEmptyView(tvRemote);
+		lvRemote.setEmptyView(tvRemoteEmpty);
 
 		lvRemote.setOnItemClickListener(new OnItemClickListener() {
 
@@ -205,16 +209,16 @@ public class Main extends Activity {
 			}
 
 		});
-		
+
 		lvRemote.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mLongClickArticle = mList.get(position);
-				showDialog(REMOTE_LIST_ACTION_DIALOG);
+				showDialog(DLG_REMOTE_LIST_ACTION);
 				return true;
 			}
-			
+
 		});
 	}
 
@@ -224,7 +228,7 @@ public class Main extends Activity {
 
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				spnSubtypeLocal.setAdapter(mAdapters[position]);
+				spnSubtypeLocal.setAdapter(mAdaptersLocal[position]);
 
 			}
 
@@ -245,9 +249,9 @@ public class Main extends Activity {
 			}
 		});
 
-		tvLocal = (TextView) findViewById(R.id.empty_local);
+		tvLocalEmpty = (ImageView) findViewById(R.id.empty_local);
 		lvLocal = (ListView) findViewById(R.id.list_local);
-		lvLocal.setEmptyView(tvLocal);
+		lvLocal.setEmptyView(tvLocalEmpty);
 		lvLocal.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -262,7 +266,7 @@ public class Main extends Activity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mLongClickArticle = mDatabaseHelper.queryArticle(id);
-				showDialog(LOCAL_LIST_ACTION_DIALOG);
+				showDialog(DLG_LOCAL_LIST_ACTION);
 				return true;
 			}
 
@@ -293,10 +297,10 @@ public class Main extends Activity {
 		mTabHost.setCurrentTab(0);
 	}
 
-	private void extractTypes() {
-		mTypes = getResources().getStringArray(R.array.type);
+	private void extractTypesRemote() {
+		mTypesRemote = getResources().getStringArray(R.array.type);
 
-		mSubtypes = new String[][] {
+		mSubtypesRemote = new String[][] {
 				getResources().getStringArray(R.array.standard_english),
 				getResources().getStringArray(R.array.special_english),
 				getResources().getStringArray(R.array.english_learning), };
@@ -319,33 +323,72 @@ public class Main extends Activity {
 		elAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		mAdapters = new ArrayAdapter[] { stAdapter, spAdapter, elAdapter, };
+		mAdaptersRemote = new ArrayAdapter[] { stAdapter, spAdapter, elAdapter, };
+
+	}
+
+	private void extractTypesLocal() {
+		// local types: add all option
+		mTypesLocal = getResources().getStringArray(R.array.type_local);
+
+		mSubtypesLocal = new String[][] {
+				getResources().getStringArray(R.array.standard_english_local),
+				getResources().getStringArray(R.array.special_english_local),
+				getResources().getStringArray(R.array.english_learning_local), };
+
+		ArrayAdapter<CharSequence> stAdapterLocal = ArrayAdapter
+				.createFromResource(this, R.array.standard_english_local,
+						android.R.layout.simple_spinner_item);
+		stAdapterLocal
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		ArrayAdapter<CharSequence> spAdapterLocal = ArrayAdapter
+				.createFromResource(this, R.array.special_english_local,
+						android.R.layout.simple_spinner_item);
+		spAdapterLocal
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		ArrayAdapter<CharSequence> elAdapterLocal = ArrayAdapter
+				.createFromResource(this, R.array.english_learning_local,
+						android.R.layout.simple_spinner_item);
+		elAdapterLocal
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		mAdaptersLocal = new ArrayAdapter[] { stAdapterLocal, spAdapterLocal,
+				elAdapterLocal, };
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings)
-				.setIcon(R.drawable.settings);
+				.setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(Menu.NONE, MENU_ABOUT, Menu.NONE, R.string.menu_about)
+				.setIcon(android.R.drawable.ic_menu_info_details);
 		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(
-				R.drawable.stop);
+				android.R.drawable.ic_menu_close_clear_cancel);
 
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean result = super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
 		case MENU_SETTINGS:
 			Intent intent = new Intent(this, Settings.class);
 			startActivity(intent);
-			break;
+			return true;
+		case MENU_ABOUT:
+			showDialog(DLG_ABOUT);
+			return true;
 		case MENU_EXIT:
 			finish();
-			break;
+			return true;
+
 		default:
 			break;
 		}
-		return super.onOptionsItemSelected(item);
+		return result;
 	}
 
 	// @Override
@@ -381,17 +424,29 @@ public class Main extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case ERROR_ALERT_DIALOG:
+		case DLG_ERROR_ALERT:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
+			// without this statement, you would not be able to change
+			// AlertDialog's message in onPreparedDialog
+			builder.setMessage("");
+			builder.setNeutralButton(R.string.btn_ok,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+
+						}
+					});
 			return builder.create();
 
-		case PROGRESS_DIALOG:
+		case DLG_PROGRESS:
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog
 					.setMessage(getString(R.string.progressspin_loadlist_msg));
 			return progressDialog;
-		case LOCAL_LIST_ACTION_DIALOG:
+		case DLG_LOCAL_LIST_ACTION:
 			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
 			builder2.setTitle(R.string.alert_title_select_action);
 			builder2.setItems(R.array.local_list_action,
@@ -404,7 +459,7 @@ public class Main extends Activity {
 								startShowActivity(mLongClickArticle);
 								break;
 							case 1:
-								showDialog(DELETE_CONFIRM_DIALOG);
+								showDialog(DLG_DELETE_CONFIRM);
 								break;
 							default:
 								break;
@@ -413,7 +468,7 @@ public class Main extends Activity {
 						}
 					});
 			return builder2.create();
-		case REMOTE_LIST_ACTION_DIALOG:
+		case DLG_REMOTE_LIST_ACTION:
 			AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
 			builder3.setTitle(R.string.alert_title_select_action);
 			builder3.setItems(R.array.remote_list_action,
@@ -427,7 +482,7 @@ public class Main extends Activity {
 								break;
 							case 1:
 								Toast.makeText(Main.this, "Download start",
-										Toast.LENGTH_LONG).show();
+										Toast.LENGTH_SHORT).show();
 								break;
 							default:
 								break;
@@ -436,10 +491,13 @@ public class Main extends Activity {
 						}
 					});
 			return builder3.create();
-		case DELETE_CONFIRM_DIALOG:
+		case DLG_DELETE_CONFIRM:
 			AlertDialog.Builder builder4 = new AlertDialog.Builder(this);
+			builder4.setIcon(android.R.drawable.ic_dialog_alert);
 			builder4.setTitle(R.string.alert_title_confirm_delete);
-			builder4.setMessage(getString(R.string.alert_msg_confirm_delete));
+			// without this statement, you would not be able to change
+			// AlertDialog's message in onPreparedDialog
+			builder4.setMessage("");
 			builder4.setPositiveButton(R.string.btn_yes,
 					new DialogInterface.OnClickListener() {
 
@@ -456,7 +514,7 @@ public class Main extends Activity {
 							mDatabaseHelper.deleteArticle(mLongClickArticle.id);
 							Toast.makeText(Main.this,
 									R.string.toast_article_deleted,
-									Toast.LENGTH_LONG).show();
+									Toast.LENGTH_SHORT).show();
 						}
 					});
 
@@ -468,6 +526,22 @@ public class Main extends Activity {
 						}
 					});
 			return builder4.create();
+		case DLG_ABOUT:
+			AlertDialog.Builder builder5 = new AlertDialog.Builder(this);
+			LayoutInflater inflater = LayoutInflater.from(this);
+			View layout = inflater.inflate(R.layout.about,
+					(ViewGroup) findViewById(R.id.root_about));
+			builder5.setView(layout);
+			builder5.setTitle(R.string.alert_title_about);
+			builder5.setNeutralButton(R.string.btn_ok,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+
+						}
+					});
+			return builder5.create();
 		default:
 			break;
 		}
@@ -477,7 +551,7 @@ public class Main extends Activity {
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		switch (id) {
-		case ERROR_ALERT_DIALOG:
+		case DLG_ERROR_ALERT:
 			AlertDialog alertDialog = (AlertDialog) dialog;
 			switch (mLastError) {
 			case LoadListError:
@@ -489,7 +563,12 @@ public class Main extends Activity {
 				break;
 			}
 			break;
-
+		case DLG_DELETE_CONFIRM:
+			AlertDialog alertDialog2 = (AlertDialog) dialog;
+			alertDialog2
+					.setMessage(getString(R.string.alert_msg_confirm_delete,
+							mLongClickArticle.title));
+			break;
 		default:
 			break;
 		}
@@ -542,7 +621,7 @@ public class Main extends Activity {
 	}
 
 	private void refreshLocalList() {
-		showDialog(PROGRESS_DIALOG);
+		showDialog(DLG_PROGRESS);
 
 		new Thread() {
 
@@ -557,8 +636,9 @@ public class Main extends Activity {
 				Log.d(CLASSTAG, "typeIndex -- " + typeIndex);
 				Log.d(CLASSTAG, "subtypeIndex -- " + subtypeIndex);
 
-				mCursor = mDatabaseHelper.queryArticles(mTypes[typeIndex],
-						mSubtypes[typeIndex][subtypeIndex]);
+				mCursor = mDatabaseHelper.queryArticles(mTypesLocal[typeIndex],
+						subtypeIndex == 0 ? null
+								: mSubtypesLocal[typeIndex][subtypeIndex]);
 				mLocalListHandler.sendEmptyMessage(WHAT_SUCCESS);
 			}
 
@@ -566,7 +646,7 @@ public class Main extends Activity {
 	}
 
 	private void refreshRemoteList() {
-		showDialog(PROGRESS_DIALOG);
+		showDialog(DLG_PROGRESS);
 		new Thread() {
 
 			@Override
@@ -578,8 +658,8 @@ public class Main extends Activity {
 					subtypeIndex = 0;
 				}
 
-				String key = mTypes[typeIndex] + "_"
-						+ mSubtypes[typeIndex][subtypeIndex];
+				String key = mTypesRemote[typeIndex] + "_"
+						+ mSubtypesRemote[typeIndex][subtypeIndex];
 				Log.d(CLASSTAG, "key -- " + key);
 				mApp.mListGenerator.mParser = mApp.mListParsers.get(key);
 				try {
