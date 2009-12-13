@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
@@ -32,30 +33,42 @@ import android.widget.Toast;
 public class Show extends Activity {
 	private static final String CLASSTAG = Show.class.getSimpleName();
 
+	// Activity managed Dialogs
 	private static final int DLG_PROGRESS_SPIN = 1;
-	private static final int DLG_ERROR_ALERT = 2;
-	private static final int DLG_PROGRESS_BAR = 3;
+	private static final int DLG_PROGRESS_BAR = 2;
+	private static final int DLG_ERROR = 3;
 	private static final int DLG_CONFIRM_DOWNLOAD = 4;
 
+	// Option Menus
 	private static final int MENU_DOWNLOAD = Menu.FIRST;
 
-	protected static final int WHAT_LOAD_PAGE_SUCCESS = 0;
-	protected static final int WHAT_LOAD_PAGE_FAIL_IO = 1;
-	protected static final int WHAT_LOAD_PAGE_FAIL_PARSE = 2;
+	// Load remote page handler message type
+	private static final int WHAT_LOAD_REMOTE_PAGE_SUCCESS = 0;
+	private static final int WHAT_LOAD_REMOTE_PAGE_FAIL_IO = 1;
+	private static final int WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE = 2;
 
-	protected static final int WHAT_PLAYER_PROGRESS = 3;
+	// Load local page handler message type
+	private static final int WHAT_LOAD_LOCAL_PAGE_SUCCESS = 3;
+	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_IO = 4;
+	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE = 5;
+
+	// MediaPlayer handler message type
+	private static final int WHAT_PLAYER_PROGRESS = 6;
 
 	private enum MediaPlayerState {
 		Idle, Initialized, Preparing, Prepared, Started, Paused, Stopped, PlaybackCompleted, End, Error,
 	}
 
 	private enum Error {
-		LoadPageError, DownloadAudioError, PlayAudioError, DownloadTextError,
+		LoadRemotePageError, LoadLocalPageError, PlayRemoteAudioError, PlayLocalAudioError, DownloadAudioError, DownloadTextError,
 	}
 
 	private Error mLastError;
 
 	private App mApp;
+
+	// Article current shown 
+	private Article mArticle;
 
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
@@ -79,21 +92,44 @@ public class Show extends Activity {
 
 	private DatabaseHelper mDatabaseHelper;
 
-	private Handler mLoadPageHandler = new Handler() {
+	private Handler mLoadRemotePageHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case WHAT_LOAD_PAGE_SUCCESS:
-				mWebView.loadDataWithBaseURL("", mApp.article.text,
-						"text/html", "utf-8", "");
+			case WHAT_LOAD_REMOTE_PAGE_SUCCESS:
+				mWebView.loadDataWithBaseURL("", mArticle.text, "text/html",
+						"utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
-			case WHAT_LOAD_PAGE_FAIL_IO:
-			case WHAT_LOAD_PAGE_FAIL_PARSE:
+			case WHAT_LOAD_REMOTE_PAGE_FAIL_IO:
+			case WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS_SPIN);
-				mLastError = Error.LoadPageError;
-				showDialog(DLG_ERROR_ALERT);
+				mLastError = Error.LoadRemotePageError;
+				showDialog(DLG_ERROR);
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
+
+	private Handler mLoadLocalPageHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_LOAD_LOCAL_PAGE_SUCCESS:
+				mWebView.loadDataWithBaseURL("", mArticle.text, "text/html",
+						"utf-8", "");
+				dismissDialog(DLG_PROGRESS_SPIN);
+				break;
+			case WHAT_LOAD_LOCAL_PAGE_FAIL_IO:
+			case WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				mLastError = Error.LoadLocalPageError;
+				showDialog(DLG_ERROR);
 				break;
 			default:
 				break;
@@ -106,20 +142,31 @@ public class Show extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case Downloader.WHAT_DOWNLOAD_PROGRESS:
+			case HandlerProgressListener.WHAT_DOWNLOAD_PROGRESS:
 				// msg.arg1 store progress
 				mProgressDialogBar.setProgress(msg.arg1);
 				break;
-			case Downloader.WHAT_DOWNLOAD_SUCCESS:
-				dismissDialog(DLG_PROGRESS_BAR);
-				Toast.makeText(Show.this,
-						R.string.toast_download_audio_complete,
-						Toast.LENGTH_SHORT).show();
+			case HandlerProgressListener.WHAT_DOWNLOAD_SUCCESS:
+				if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_TEXT)
+					Toast.makeText(Show.this,
+							R.string.toast_download_text_complete,
+							Toast.LENGTH_SHORT).show();
+				else if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_MP3) {
+					dismissDialog(DLG_PROGRESS_BAR);
+					Toast.makeText(Show.this,
+							R.string.toast_download_audio_complete,
+							Toast.LENGTH_SHORT).show();
+				}
 				break;
-			case Downloader.WHAT_DOWNLOAD_ERROR:
-				dismissDialog(DLG_PROGRESS_BAR);
-				mLastError = Error.DownloadAudioError;
-				showDialog(DLG_ERROR_ALERT);
+			case HandlerProgressListener.WHAT_DOWNLOAD_ERROR:
+				if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_TEXT) {
+					mLastError = Error.DownloadTextError;
+					showDialog(DLG_ERROR);
+				} else if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_MP3) {
+					dismissDialog(DLG_PROGRESS_BAR);
+					mLastError = Error.DownloadAudioError;
+					showDialog(DLG_ERROR);
+				}
 				break;
 			default:
 				break;
@@ -160,11 +207,10 @@ public class Show extends Activity {
 		public void onClick(View v) {
 			if (mMediaPlayerState == MediaPlayerState.Idle) {
 				Uri uri = null;
-				if (mApp.article.id == null)
-					uri = Uri.parse(mApp.article.mp3);
+				if (mArticle.id == -1)
+					uri = Uri.parse(mArticle.mp3);
 				else
-					uri = Uri.fromFile(mApp.mDownloader
-							.localMp3File(mApp.article));
+					uri = Uri.fromFile(Utils.localMp3File(mArticle));
 				Log.d(CLASSTAG, "mp3 url -- " + uri);
 				try {
 
@@ -178,20 +224,20 @@ public class Show extends Activity {
 
 				} catch (IllegalArgumentException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayAudioError;
-					showDialog(DLG_ERROR_ALERT);
+					mLastError = Error.PlayRemoteAudioError;
+					showDialog(DLG_ERROR);
 				} catch (SecurityException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayAudioError;
-					showDialog(DLG_ERROR_ALERT);
+					mLastError = Error.PlayRemoteAudioError;
+					showDialog(DLG_ERROR);
 				} catch (IllegalStateException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayAudioError;
-					showDialog(DLG_ERROR_ALERT);
+					mLastError = Error.PlayRemoteAudioError;
+					showDialog(DLG_ERROR);
 				} catch (IOException e) {
 					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayAudioError;
-					showDialog(DLG_ERROR_ALERT);
+					mLastError = Error.PlayRemoteAudioError;
+					showDialog(DLG_ERROR);
 				}
 
 			} else {
@@ -219,9 +265,9 @@ public class Show extends Activity {
 		public boolean onError(MediaPlayer mp, int what, int extra) {
 			Log.e(CLASSTAG, "what -- " + what + " extra -- " + extra);
 
-			mLastError = Error.PlayAudioError;
+			mLastError = Error.PlayRemoteAudioError;
 
-			showDialog(DLG_ERROR_ALERT);
+			showDialog(DLG_ERROR);
 
 			mMediaPlayer.reset();
 			mMediaPlayerState = MediaPlayerState.Idle;
@@ -317,7 +363,7 @@ public class Show extends Activity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.getItem(0).setEnabled(mApp.article.id == null);
+		menu.getItem(0).setEnabled(mArticle.id == -1);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -326,16 +372,11 @@ public class Show extends Activity {
 		switch (item.getItemId()) {
 		case MENU_DOWNLOAD:
 			// TODO check if the article has been downloaded
-			if (mDatabaseHelper.isArticleExist(mApp.article)) {
+			if (mDatabaseHelper.isArticleExist(mArticle)) {
 				showDialog(DLG_CONFIRM_DOWNLOAD);
 			} else {
-				mDatabaseHelper.createArticle(mApp.article.title,
-						mApp.article.date, mApp.article.type,
-						mApp.article.subtype, mApp.article.url,
-						mApp.article.mp3);
-				saveText();
-				saveMp3();
-				
+				downloadArticleInService(mArticle);
+
 			}
 			return true;
 		default:
@@ -344,39 +385,21 @@ public class Show extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void saveText() {
-		try {
-			mApp.mDownloader.downloadText(mApp.article);
-			Toast.makeText(this, R.string.toast_download_text_complete,
-					Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			mLastError = Error.DownloadTextError;
-			showDialog(DLG_ERROR_ALERT);
-		}
+	private void downloadArticleModal() {
+		showDialog(DLG_PROGRESS_BAR);
+		DownloadTask task = new DownloadTask(mApp.mHttpClient, mDatabaseHelper,
+				mArticle);
+		task.addProgressListener(new HandlerProgressListener(
+				mDownloadMp3Handler));
+		new Thread(task).start();
 	}
 
-	private void saveMp3() {
+	private void downloadArticleInService(Article article) {
+		Intent intent = new Intent(this, DownloadService.class);
 
-		showDialog(DLG_PROGRESS_BAR);
-		new Thread() {
+		Utils.putArticleToIntent(article, intent);
 
-			@Override
-			public void run() {
-
-				try {
-					mApp.mDownloader.mDownloadHandler = mDownloadMp3Handler;
-					mApp.mDownloader.downloadMp3(mApp.article);
-					mDownloadMp3Handler
-							.sendEmptyMessage(Downloader.WHAT_DOWNLOAD_SUCCESS);
-				} catch (IOException e) {
-					Log.e(CLASSTAG, "Error when save audio.", e);
-					mDownloadMp3Handler
-							.sendEmptyMessage(Downloader.WHAT_DOWNLOAD_ERROR);
-				}
-
-			}
-
-		}.start();
+		startService(intent);
 	}
 
 	@Override
@@ -385,8 +408,10 @@ public class Show extends Activity {
 		setContentView(R.layout.show);
 
 		mApp = (App) getApplication();
-		
-		setTitle(mApp.article.title);
+
+		mArticle = Utils.getArticleFromIntent(getIntent());
+
+		setTitle(mArticle.title);
 
 		// set up controls
 		setupWidgets();
@@ -399,7 +424,7 @@ public class Show extends Activity {
 		mDatabaseHelper.open();
 
 		// load page
-		if (mApp.article.id == null)
+		if (mArticle.id == -1)
 			loadRemotePage();
 		else
 			loadLocalPage();
@@ -437,10 +462,12 @@ public class Show extends Activity {
 			@Override
 			public void run() {
 				try {
-					mApp.article.text = mApp.mDownloader.loadText(mApp.article);
-					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_SUCCESS);
+					mArticle.text = Utils.loadText(mArticle);
+					mLoadLocalPageHandler
+							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_SUCCESS);
 				} catch (IOException e) {
-					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_FAIL_IO);
+					mLoadLocalPageHandler
+							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_FAIL_IO);
 				}
 			}
 
@@ -453,16 +480,18 @@ public class Show extends Activity {
 
 			@Override
 			public void run() {
-				mApp.mPageGenerator.mParser = mApp.mPageParsers
-						.get(mApp.article.type + "_" + mApp.article.subtype);
+				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
+						.get(mArticle.type + "_" + mArticle.subtype);
 				try {
-					mApp.mPageGenerator.getArticle(mApp.article);
-					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_SUCCESS);
+					mApp.mPageGenerator.getArticle(mArticle);
+					mLoadRemotePageHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_SUCCESS);
 				} catch (IOException e) {
-					mLoadPageHandler.sendEmptyMessage(WHAT_LOAD_PAGE_FAIL_IO);
+					mLoadRemotePageHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_FAIL_IO);
 				} catch (IllegalContentFormatException e) {
-					mLoadPageHandler
-							.sendEmptyMessage(WHAT_LOAD_PAGE_FAIL_PARSE);
+					mLoadRemotePageHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE);
 				}
 			}
 
@@ -489,44 +518,47 @@ public class Show extends Activity {
 			mProgressDialogBar
 					.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			return mProgressDialogBar;
-		case DLG_ERROR_ALERT:
+		case DLG_ERROR:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
-			// without this statement, you would not be able to change AlertDialog's message in onPreparedDialog
+			// without this statement, you would not be able to change
+			// AlertDialog's message in onPreparedDialog
 			builder.setMessage("");
-			builder.setNeutralButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-				
-				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
+			builder.setNeutralButton(R.string.btn_ok,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+
+						}
+					});
 			return builder.create();
 		case DLG_CONFIRM_DOWNLOAD:
 			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
 			builder2.setIcon(android.R.drawable.ic_dialog_alert);
 			builder2.setTitle(R.string.alert_title_confirm_download);
-			// without this statement, you would not be able to change AlertDialog's message in onPreparedDialog
+			// without this statement, you would not be able to change
+			// AlertDialog's message in onPreparedDialog
 			builder2.setMessage("");
-			builder2.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
-				
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					
-					saveText();
-					saveMp3();
-				}
-			});
-			
-			builder2.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
-				
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-					
-				}
-			});
-			
+			builder2.setPositiveButton(R.string.btn_yes,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							downloadArticleInService(mArticle);
+						}
+					});
+
+			builder2.setNegativeButton(R.string.btn_no,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+
+						}
+					});
+
 			return builder2.create();
 		default:
 			break;
@@ -538,16 +570,24 @@ public class Show extends Activity {
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		super.onPrepareDialog(id, dialog);
 		switch (id) {
-		case DLG_ERROR_ALERT:
+		case DLG_ERROR:
 			AlertDialog alertDialog = (AlertDialog) dialog;
 			switch (mLastError) {
-			case LoadPageError:
+			case LoadRemotePageError:
 				alertDialog
-						.setMessage(getString(R.string.alert_msg_loadpage_error));
+						.setMessage(getString(R.string.alert_msg_load_remote_page_error));
 				break;
-			case PlayAudioError:
+			case LoadLocalPageError:
 				alertDialog
-						.setMessage(getString(R.string.alert_msg_play_audio_error));
+						.setMessage(getString(R.string.alert_msg_load_local_page_error));
+				break;
+			case PlayRemoteAudioError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_play_remote_audio_error));
+				break;
+			case PlayLocalAudioError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_play_local_audio_error));
 				break;
 			case DownloadAudioError:
 				alertDialog
@@ -563,7 +603,8 @@ public class Show extends Activity {
 			break;
 		case DLG_CONFIRM_DOWNLOAD:
 			AlertDialog alertDialog2 = (AlertDialog) dialog;
-			alertDialog2.setMessage(getString(R.string.alert_msg_confirm_download, mApp.article.title));
+			alertDialog2.setMessage(getString(
+					R.string.alert_msg_confirm_download, mArticle.title));
 			break;
 		default:
 			break;

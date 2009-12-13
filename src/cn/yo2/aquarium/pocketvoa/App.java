@@ -1,145 +1,135 @@
 package cn.yo2.aquarium.pocketvoa;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.IOException;
+
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpVersion;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HttpContext;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
+import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 import cn.yo2.aquarium.pocketvoa.parser.IListParser;
-import cn.yo2.aquarium.pocketvoa.parser.IPageParser;
-import cn.yo2.aquarium.pocketvoa.parser.PopularAmericanListParser;
-import cn.yo2.aquarium.pocketvoa.parser.PopularAmericanPageParser;
-import cn.yo2.aquarium.pocketvoa.parser.StandardEnglishListParser;
-import cn.yo2.aquarium.pocketvoa.parser.StandardEnglishPageParser;
 
 public class App extends Application {
 	private static final String CLASSTAG = App.class.getSimpleName();
 
-	private SharedPreferences mSharedPreferences;
+	private static final int CONN_TIME_OUT = 1000 * 3; // millis
+	private static final int READ_TIME_OUT = 1000 * 10; // millis
+	private static final int MAX_TOTAL_CONN = 10;
 
-	private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+	private static final String DEFAULT_CHARSET = "utf-8";
 
-		public void onSharedPreferenceChanged(
-				SharedPreferences sharedPreferences, String key) {
-
-			if (getString(R.string.prefs_list_count_key).equals(key)) {
-
-				int maxCount = getMaxCountFromPrefs();
-				Log.d(CLASSTAG, "max count: " + maxCount);
-				for (Iterator<IListParser> i = mListParsers.values().iterator(); i
-						.hasNext();) {
-					i.next().setMaxCount(maxCount);
-				}
-			}
-		}
-	};
-
-	private void setupPreferenceChangeListener() {
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		mSharedPreferences
-				.registerOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
-	}
+	public SharedPreferences mSharedPreferences;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		setupPreferenceChangeListener();
-
-		setupListUrls();
-
-		setupListParsers();
-
-		setupPageParsers();
+		mSharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		mDataSource = getDataSourceFromPrefs(mSharedPreferences);
 	}
 
-	public Article article;
+	public final DefaultHttpClient mHttpClient = setupHttpClient();
 
-	public static final String HOST = "http://www.51voa.com";
+	public final ResponseHandler mResponseHandler = new ResponseHandler(
+			DEFAULT_CHARSET);
 
-	// standard english
-	public static final String STANDARD_ENGLISH_LIST_URL = HOST
-			+ "/VOA_Standard_1.html";
+	public final ListGenerator mListGenerator = new ListGenerator(
+			mResponseHandler, mHttpClient);
 
-	// special english
-	public static final String DEVELOPMENT_REPORT_LIST_URL = HOST
-			+ "/Development_Report_1.html";
-	public static final String THIS_IS_AMERICA_LIST_URL = HOST
-			+ "/This_is_America_1.html";
+	public final PageGenerator mPageGenerator = new PageGenerator(
+			mResponseHandler, mHttpClient);
 
-	// english learning
-	public static final String POPULAR_AMERICAN_LIST_URL = HOST
-			+ "/Popular_American_1.html";
+	public IDataSource mDataSource;
 
-	public final HashMap<String, String> mListUrls = new HashMap<String, String>();
-
-	public final Downloader mDownloader = new Downloader();
-
-	public final ListGenerator mListGenerator = new ListGenerator();
-
-	public final PageGenerator mPageGenerator = new PageGenerator();
-
-	// Article type_subtype ->
-	public final HashMap<String, IListParser> mListParsers = new HashMap<String, IListParser>();
-
-	// Article type_subtype ->
-	public final HashMap<String, IPageParser> mPageParsers = new HashMap<String, IPageParser>();
-
-	private void setupListUrls() {
-		// standard english
-		mListUrls.put("Standard English_Standard English",
-				STANDARD_ENGLISH_LIST_URL);
-
-		// special english
-		mListUrls.put("Special English_Development Report",
-				DEVELOPMENT_REPORT_LIST_URL);
-		mListUrls.put("Special English_This is America",
-				THIS_IS_AMERICA_LIST_URL);
-
-		// english learning
-		mListUrls.put("English Learning_Popular American",
-				POPULAR_AMERICAN_LIST_URL);
-	}
-
-	private void setupListParsers() {
-		int maxCount = getMaxCountFromPrefs();
-
-		mListParsers.put("Standard English_Standard English",
-				new StandardEnglishListParser("Standard English",
-						"Standard English", maxCount));
-
-		mListParsers.put("Special English_Development Report",
-				new StandardEnglishListParser("Special English",
-						"Development Report", maxCount));
-		mListParsers.put("Special English_This is America",
-				new StandardEnglishListParser("Special English",
-						"This is America"));
-
-		mListParsers.put("English Learning_Popular American",
-				new PopularAmericanListParser("English Learning",
-						"Popular American", maxCount));
-	}
-
-	private Integer getMaxCountFromPrefs() {
-		return Integer.valueOf(mSharedPreferences.getString(
+	public Integer getMaxCountFromPrefs(SharedPreferences sharedPreferences) {
+		return Integer.valueOf(sharedPreferences.getString(
 				getString(R.string.prefs_list_count_key), String
 						.valueOf(IListParser.DEFAULT_MAX_COUNT)));
 	}
 
-	private void setupPageParsers() {
-		mPageParsers.put("Standard English_Standard English",
-				new StandardEnglishPageParser());
-
-		mPageParsers.put("Special English_Development Report",
-				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_This is America",
-				new StandardEnglishPageParser());
-
-		mPageParsers.put("English Learning_Popular American",
-				new PopularAmericanPageParser());
+	private IDataSource getDefaultDataSource() {
+		return new cn.yo2.aquarium.pocketvoa.parser.iciba.DataSource();
 	}
+
+	public IDataSource getDataSourceFromPrefs(
+			SharedPreferences sharedPreferences) {
+		String datasourceStr = sharedPreferences.getString(
+				getString(R.string.prefs_datasource_key), "");
+		Log.d(CLASSTAG, "datasource prefs -- " + datasourceStr);
+		IDataSource dataSource = null;
+		if (TextUtils.isEmpty(datasourceStr)) {
+			dataSource = getDefaultDataSource();
+
+		} else {
+			try {
+				dataSource = (IDataSource) Class.forName(datasourceStr)
+						.newInstance();
+			} catch (IllegalAccessException e) {
+				Log.e(CLASSTAG, "Error in create DataSource", e);
+				dataSource = getDefaultDataSource();
+			} catch (InstantiationException e) {
+				Log.e(CLASSTAG, "Error in create DataSource", e);
+				dataSource = getDefaultDataSource();
+			} catch (ClassNotFoundException e) {
+				Log.e(CLASSTAG, "Error in create DataSource", e);
+				dataSource = getDefaultDataSource();
+			}
+		}
+
+		dataSource.init(getMaxCountFromPrefs(mSharedPreferences));
+
+		return dataSource;
+	}
+
+	private DefaultHttpClient setupHttpClient() {
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(params, CONN_TIME_OUT);
+		HttpConnectionParams.setSoTimeout(params, READ_TIME_OUT);
+		ConnManagerParams.setMaxTotalConnections(params, MAX_TOTAL_CONN);
+		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+
+		SchemeRegistry schemeRegistry = new SchemeRegistry();
+		schemeRegistry.register(new Scheme("http", PlainSocketFactory
+				.getSocketFactory(), 80));
+		schemeRegistry.register(new Scheme("https", SSLSocketFactory
+				.getSocketFactory(), 443));
+
+		ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(
+				params, schemeRegistry);
+
+		DefaultHttpClient client = new DefaultHttpClient(cm, params);
+
+		client.addRequestInterceptor(new HttpRequestInterceptor() {
+
+			public void process(HttpRequest request, HttpContext context)
+					throws HttpException, IOException {
+				request
+						.addHeader(
+								"User-Agent",
+								"Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 GTB6 (.NET CLR 3.5.30729)");
+
+			}
+		});
+		return client;
+	}
+
 }

@@ -21,10 +21,17 @@
 	<string name="alert_msg_confirm_download">You have already downloaded this article \"%1$s\" before, are you sure you want to redownload it?</string>
 	
 	<string name="alert_title_error">Error Occurred</string>
-	<string name="alert_msg_play_audio_error">Cannot play audio</string>
+	
+	<string name="alert_msg_load_remote_page_error">Cannot load remote webpage</string>
+	<string name="alert_msg_load_local_page_error">Cannot load lcoal webpage</string>
+	
+	<string name="alert_msg_play_remote_audio_error">Cannot play remote audio</string>
+	<string name="alert_msg_play_local_audio_error">Cannot play local audio</string>
+	
+	<string name="alert_msg_download_error">Cannot download article</string>
 	<string name="alert_msg_download_audio_error">Cannot download audio</string>
 	<string name="alert_msg_download_text_error">Cannot download text</string>
-	<string name="alert_msg_loadpage_error">Cannot load webpage</string>
+	
 	<string name="alert_msg_loadlist_error">Cannot load list</string>
 	
 	<string name="progressbar_download_title">Downloading audio file</string>
@@ -32,6 +39,7 @@
 	<string name="progressspin_loadlist_msg">Loading...</string>
 	
 	<string name="toast_article_deleted">Article deleted</string>
+	<string name="toast_download_start">Download start...</string>
 	<string name="toast_download_audio_complete">Download audio complete</string>
 	<string name="toast_download_text_complete">Download text complete</string>
 	
@@ -54,4 +62,22 @@
 	<string name="prefs_list_count_title">Number of entries to display</string>
 	<string name="prefs_list_count_summary">Click to pop up a list to choose from</string>
 	<string name="prefs_list_count_dialog_title">Choose a count</string>
+	
+	<string name="prefs_datasource_key">data_source</string>
+	<string name="prefs_datasource_title">Data Source</string>
+	<string name="prefs_datasource_summary">Click to pop up a list to choose from (require restart)</string>
+	<string name="prefs_datasource_dialog_title">Choose a data source</string>
+	
+	<string name="notification_download_text_error_ticker">Download Text Error</string>
+	<string name="notification_download_audio_error_ticker">Download MP3 Error</string>
+	
+	<string name="notification_download_text_success_ticker">Download Text Complete</string>
+	<string name="notification_download_audio_success_ticker">Download MP3 Complete</string>
+	
+	<string name="notification_download_text_progress_ticker">Downloading Text</string>
+	<string name="notification_download_audio_progress_ticker">Downloading MP3</string>
+	
+	<string name="notification_download_text_progress_content">Downloading Text %1$d%% [%2$d/%3$d]KB</string>
+	<string name="notification_download_audio_progress_content">Downloading MP3 %1$d%% [%2$d/%3$d]KB</string>
+	
 </resources>

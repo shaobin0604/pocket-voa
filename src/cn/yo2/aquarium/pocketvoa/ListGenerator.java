@@ -3,23 +3,37 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.util.Log;
 import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
-public class ListGenerator extends HttpUtil {
+public class ListGenerator {
 	private static final String CLASSTAG = ListGenerator.class
 			.getSimpleName();
 
 	IListParser mParser;
 
+	private ResponseHandler<String> mResponseHandler;
+	
+	private DefaultHttpClient mHttpClient;
+	
+	public ListGenerator(ResponseHandler<String> responseHandler,
+			DefaultHttpClient httpClient) {
+		super();
+		this.mResponseHandler = responseHandler;
+		this.mHttpClient = httpClient;
+	}
 
 	public ArrayList<Article> getArticleList(String url) throws IOException,
 			IllegalContentFormatException {
+		if (mParser == null) 
+			throw new IllegalStateException("You should set a IListParser first.");
 		HttpGet get = new HttpGet(url);
 		try {
-			String body = mClient.execute(get, mResponseHandler);
+			String body = mHttpClient.execute(get, mResponseHandler);
 			return mParser.parse(body);
 		} catch (IOException e) {
 			get.abort();
@@ -30,9 +44,5 @@ public class ListGenerator extends HttpUtil {
 			Log.e(CLASSTAG, "Content format Error when get list from " + url, e);
 			throw e;
 		} 
-	}
-
-	public void release() {
-		mClient.getConnectionManager().shutdown();
 	}
 }

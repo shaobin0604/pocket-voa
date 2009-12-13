@@ -20,7 +20,8 @@
 			android:configChanges="keyboardHidden|orientation">
 		</activity>
 
-	</application>
+	<service android:name="DownloadService"></service>
+</application>
 	<uses-sdk android:minSdkVersion="3" />
 
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>

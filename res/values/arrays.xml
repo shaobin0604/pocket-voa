@@ -44,9 +44,16 @@
 		<item>10</item>
 		<item>15</item>
 		<item>20</item>
-		<item>30</item>
-		<item>40</item>
-		<item>50</item>
+	</string-array>
+	
+	<string-array name="prefs_datasource">
+		<item>www.51voa.com</item>
+		<item>www.iciba.com</item>
+	</string-array>
+	
+	<string-array name="prefs_datasource_value">
+		<item>cn.yo2.aquarium.pocketvoa.parser.voa51.DataSource</item>
+		<item>cn.yo2.aquarium.pocketvoa.parser.iciba.DataSource</item>
 	</string-array>
 	
 	<string-array name="local_list_action">

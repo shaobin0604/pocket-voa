@@ -1,15 +1,14 @@
-package cn.yo2.aquarium.pocketvoa.parser;
+package cn.yo2.aquarium.pocketvoa.parser.voa51;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.util.Log;
-import cn.yo2.aquarium.pocketvoa.App;
 import cn.yo2.aquarium.pocketvoa.Article;
 import cn.yo2.aquarium.pocketvoa.IllegalContentFormatException;
+import cn.yo2.aquarium.pocketvoa.parser.AbstractListParser;
 
 public class PopularAmericanListParser extends AbstractListParser {
 	private static final String CLASSTAG = PopularAmericanListParser.class.getSimpleName();
@@ -51,7 +50,8 @@ public class PopularAmericanListParser extends AbstractListParser {
 			
 			Article article = new Article();
 			
-			article.url = App.HOST + (url.startsWith("/") ? url : "/" + url);
+			article.id = -1;
+			article.url = Constant.HOST + (url.startsWith("/") ? url : "/" + url);
 			article.title = title;
 			article.type = this.mType;
 			article.subtype = this.mSubtype;

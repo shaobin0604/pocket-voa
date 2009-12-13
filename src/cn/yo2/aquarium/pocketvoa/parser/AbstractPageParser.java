@@ -8,9 +8,9 @@ public abstract class AbstractPageParser implements IPageParser {
 	protected String buildHtml(String title, String text) {
 		StringBuilder s = new StringBuilder(HTML_DEC);
 		s.append(title);
-		s.append("</title></head><body><h1>");
+		s.append("</title></head><body><h2>");
 		s.append(title);
-		s.append("</h1><div id=\"content\">");
+		s.append("</h2><div id=\"content\">");
 		s.append(text);
 		s.append("</body></html>");
 

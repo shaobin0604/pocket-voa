@@ -138,6 +138,19 @@ public class DatabaseHelper {
 
 		return mDb.insert(T_ARTICLES, null, values);
 	}
+	
+	public long createArticle(Article article) {
+		ContentValues values = new ContentValues();
+
+		values.put(C_TITLE, article.title);
+		values.put(C_DATE, article.date);
+		values.put(C_TYPE, article.type);
+		values.put(C_SUBTYPE, article.subtype);
+		values.put(C_URL, article.url);
+		values.put(C_MP3, article.mp3);
+
+		return mDb.insert(T_ARTICLES, null, values);
+	}
 
 	public int deleteArticle(long id) {
 		return mDb.delete(T_ARTICLES, C_ID + "=?", new String[] { String

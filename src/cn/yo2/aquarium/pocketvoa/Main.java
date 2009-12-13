@@ -2,6 +2,7 @@ package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +11,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -38,6 +41,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.SimpleCursorAdapter.ViewBinder;
+import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class Main extends Activity {
 	private static final String CLASSTAG = Main.class.getSimpleName();
@@ -46,19 +50,20 @@ public class Main extends Activity {
 	private static final int MENU_ABOUT = Menu.FIRST + 1;
 	private static final int MENU_EXIT = Menu.FIRST + 2;
 
-	private static final int DLG_ERROR_ALERT = 0;
+	private static final int DLG_ERROR = 0;
 	private static final int DLG_PROGRESS = 1;
-	private static final int DLG_LOCAL_LIST_ACTION = 2;
-	private static final int DLG_REMOTE_LIST_ACTION = 3;
-	private static final int DLG_DELETE_CONFIRM = 4;
-	private static final int DLG_ABOUT = 5;
+	private static final int DLG_MENU_LOCAL_LIST_ = 2;
+	private static final int DLG_MENU_REMOTE_LIST = 3;
+	private static final int DLG_CONFIRM_DELETE = 4;
+	private static final int DLG_CONFIRM_DOWNLOAD = 5;
+	private static final int DLG_ABOUT = 6;
 
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
 	private static final int WHAT_FAIL_PARSE = 2;
 
 	private enum Error {
-		LoadListError,
+		LoadListError, DownloadError,
 	}
 
 	private Error mLastError;
@@ -81,6 +86,57 @@ public class Main extends Activity {
 	private SimpleCursorAdapter mSimpleCursorAdapter;
 	private DatabaseHelper mDatabaseHelper;
 
+	private OnSharedPreferenceChangeListener mSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener() {
+
+		public void onSharedPreferenceChanged(
+				SharedPreferences sharedPreferences, String key) {
+
+			if (getString(R.string.prefs_list_count_key).equals(key)) {
+
+				int maxCount = mApp.getMaxCountFromPrefs(sharedPreferences);
+				Log.d(CLASSTAG, "max count: " + maxCount);
+				for (Iterator<IListParser> i = mApp.mDataSource
+						.getListParsers().values().iterator(); i.hasNext();) {
+					i.next().setMaxCount(maxCount);
+				}
+			} else if (getString(R.string.prefs_datasource_key).equals(key)) {
+				mApp.mDataSource = mApp
+						.getDataSourceFromPrefs(sharedPreferences);
+				updateTitle();
+			}
+		}
+	};
+
+	private Handler mDownloadHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_SUCCESS:
+				dismissDialog(DLG_PROGRESS);
+				// TODO check if the article has been downloaded
+				if (mDatabaseHelper.isArticleExist(mLongClickArticle)) {
+					showDialog(DLG_CONFIRM_DOWNLOAD);
+				} else {
+					downloadArticleInService(mLongClickArticle);
+					Toast.makeText(Main.this, R.string.toast_download_start,
+							Toast.LENGTH_SHORT).show();
+				}
+
+				break;
+			case WHAT_FAIL_IO:
+			case WHAT_FAIL_PARSE:
+				dismissDialog(DLG_PROGRESS);
+				mLastError = Error.DownloadError;
+				showDialog(DLG_ERROR);
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
+
 	private Handler mRemoteListHandler = new Handler() {
 
 		@Override
@@ -94,7 +150,7 @@ public class Main extends Activity {
 			case WHAT_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS);
 				mLastError = Error.LoadListError;
-				showDialog(DLG_ERROR_ALERT);
+				showDialog(DLG_ERROR);
 				break;
 			default:
 				break;
@@ -116,7 +172,7 @@ public class Main extends Activity {
 			case WHAT_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS);
 				mLastError = Error.LoadListError;
-				showDialog(DLG_ERROR_ALERT);
+				showDialog(DLG_ERROR);
 				break;
 			default:
 				break;
@@ -141,7 +197,6 @@ public class Main extends Activity {
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
 	}
 
@@ -152,6 +207,11 @@ public class Main extends Activity {
 		setContentView(R.layout.main);
 
 		mApp = (App) getApplication();
+
+		mApp.mSharedPreferences
+				.registerOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
+
+		updateTitle();
 
 		extractTypesLocal();
 		extractTypesRemote();
@@ -170,6 +230,11 @@ public class Main extends Activity {
 		refreshLocalList();
 	}
 
+	private void updateTitle() {
+		setTitle(getString(R.string.app_name) + " - "
+				+ mApp.mDataSource.getName());
+	}
+
 	private void setupRemoteTabWidgets() {
 		spnTypeRemote = (Spinner) findViewById(R.id.spinner_type_remote);
 		spnTypeRemote.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -180,7 +245,7 @@ public class Main extends Activity {
 			}
 
 			public void onNothingSelected(AdapterView<?> parent) {
-				// TODO Auto-generated method stub
+				// 
 
 			}
 
@@ -215,7 +280,7 @@ public class Main extends Activity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mLongClickArticle = mList.get(position);
-				showDialog(DLG_REMOTE_LIST_ACTION);
+				showDialog(DLG_MENU_REMOTE_LIST);
 				return true;
 			}
 
@@ -233,7 +298,7 @@ public class Main extends Activity {
 			}
 
 			public void onNothingSelected(AdapterView<?> parent) {
-				// TODO Auto-generated method stub
+				// 
 
 			}
 
@@ -266,7 +331,7 @@ public class Main extends Activity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mLongClickArticle = mDatabaseHelper.queryArticle(id);
-				showDialog(DLG_LOCAL_LIST_ACTION);
+				showDialog(DLG_MENU_LOCAL_LIST_);
 				return true;
 			}
 
@@ -382,6 +447,7 @@ public class Main extends Activity {
 			showDialog(DLG_ABOUT);
 			return true;
 		case MENU_EXIT:
+			stopService(new Intent(this, DownloadService.class));
 			finish();
 			return true;
 
@@ -424,7 +490,7 @@ public class Main extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case DLG_ERROR_ALERT:
+		case DLG_ERROR:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
@@ -435,7 +501,7 @@ public class Main extends Activity {
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
+							// 
 
 						}
 					});
@@ -446,7 +512,7 @@ public class Main extends Activity {
 			progressDialog
 					.setMessage(getString(R.string.progressspin_loadlist_msg));
 			return progressDialog;
-		case DLG_LOCAL_LIST_ACTION:
+		case DLG_MENU_LOCAL_LIST_:
 			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
 			builder2.setTitle(R.string.alert_title_select_action);
 			builder2.setItems(R.array.local_list_action,
@@ -459,7 +525,7 @@ public class Main extends Activity {
 								startShowActivity(mLongClickArticle);
 								break;
 							case 1:
-								showDialog(DLG_DELETE_CONFIRM);
+								showDialog(DLG_CONFIRM_DELETE);
 								break;
 							default:
 								break;
@@ -468,7 +534,7 @@ public class Main extends Activity {
 						}
 					});
 			return builder2.create();
-		case DLG_REMOTE_LIST_ACTION:
+		case DLG_MENU_REMOTE_LIST:
 			AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
 			builder3.setTitle(R.string.alert_title_select_action);
 			builder3.setItems(R.array.remote_list_action,
@@ -481,8 +547,7 @@ public class Main extends Activity {
 								startShowActivity(mLongClickArticle);
 								break;
 							case 1:
-								Toast.makeText(Main.this, "Download start",
-										Toast.LENGTH_SHORT).show();
+								loadRemoteArticle(mLongClickArticle);
 								break;
 							default:
 								break;
@@ -491,7 +556,7 @@ public class Main extends Activity {
 						}
 					});
 			return builder3.create();
-		case DLG_DELETE_CONFIRM:
+		case DLG_CONFIRM_DELETE:
 			AlertDialog.Builder builder4 = new AlertDialog.Builder(this);
 			builder4.setIcon(android.R.drawable.ic_dialog_alert);
 			builder4.setTitle(R.string.alert_title_confirm_delete);
@@ -503,18 +568,15 @@ public class Main extends Activity {
 
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
-							Utils
-									.delete("/sdcard/pocket-voa/"
-											+ Utils
-													.extractFilename(mLongClickArticle.url));
-							Utils
-									.delete("/sdcard/pocket-voa/"
-											+ Utils
-													.extractFilename(mLongClickArticle.mp3));
+							Utils.delete(Utils.localTextFile(mLongClickArticle)
+									.getAbsolutePath());
+							Utils.delete(Utils.localMp3File(mLongClickArticle)
+									.getAbsolutePath());
 							mDatabaseHelper.deleteArticle(mLongClickArticle.id);
 							Toast.makeText(Main.this,
 									R.string.toast_article_deleted,
 									Toast.LENGTH_SHORT).show();
+							refreshLocalList();
 						}
 					});
 
@@ -537,11 +599,40 @@ public class Main extends Activity {
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
+							// 
 
 						}
 					});
 			return builder5.create();
+		case DLG_CONFIRM_DOWNLOAD:
+			AlertDialog.Builder builder6 = new AlertDialog.Builder(this);
+			builder6.setIcon(android.R.drawable.ic_dialog_alert);
+			builder6.setTitle(R.string.alert_title_confirm_download);
+			// without this statement, you would not be able to change
+			// AlertDialog's message in onPreparedDialog
+			builder6.setMessage("");
+			builder6.setPositiveButton(R.string.btn_yes,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							downloadArticleInService(mLongClickArticle);
+							Toast.makeText(Main.this,
+									R.string.toast_download_start,
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+
+			builder6.setNegativeButton(R.string.btn_no,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+
+						}
+					});
+
+			return builder6.create();
 		default:
 			break;
 		}
@@ -551,19 +642,21 @@ public class Main extends Activity {
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		switch (id) {
-		case DLG_ERROR_ALERT:
+		case DLG_ERROR:
 			AlertDialog alertDialog = (AlertDialog) dialog;
 			switch (mLastError) {
 			case LoadListError:
 				alertDialog
 						.setMessage(getString(R.string.alert_msg_loadlist_error));
 				break;
-
+			case DownloadError:
+				alertDialog
+						.setMessage(getString(R.string.alert_msg_download_error));
 			default:
 				break;
 			}
 			break;
-		case DLG_DELETE_CONFIRM:
+		case DLG_CONFIRM_DELETE:
 			AlertDialog alertDialog2 = (AlertDialog) dialog;
 			alertDialog2
 					.setMessage(getString(R.string.alert_msg_confirm_delete,
@@ -661,10 +754,11 @@ public class Main extends Activity {
 				String key = mTypesRemote[typeIndex] + "_"
 						+ mSubtypesRemote[typeIndex][subtypeIndex];
 				Log.d(CLASSTAG, "key -- " + key);
-				mApp.mListGenerator.mParser = mApp.mListParsers.get(key);
+				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
+						.get(key);
 				try {
-					mList = mApp.mListGenerator.getArticleList(mApp.mListUrls
-							.get(key));
+					mList = mApp.mListGenerator.getArticleList(mApp.mDataSource
+							.getListUrls().get(key));
 					mRemoteListHandler.sendEmptyMessage(WHAT_SUCCESS);
 				} catch (IOException e) {
 					mRemoteListHandler.sendEmptyMessage(WHAT_FAIL_IO);
@@ -678,10 +772,48 @@ public class Main extends Activity {
 	}
 
 	private void startShowActivity(Article article) {
-		mApp.article = article;
-
 		Intent intent = new Intent(Main.this, Show.class);
+		Utils.putArticleToIntent(article, intent);
 		startActivity(intent);
+	}
+
+	private void downloadArticleInService(Article article) {
+		Intent intent = new Intent(this, DownloadService.class);
+		Utils.putArticleToIntent(article, intent);
+		startService(intent);
+	}
+
+	private void loadRemoteArticle(final Article article) {
+		showDialog(DLG_PROGRESS);
+		new Thread() {
+
+			@Override
+			public void run() {
+
+				int typeIndex = spnTypeRemote.getSelectedItemPosition();
+				int subtypeIndex = spnSubtypeRemote.getSelectedItemPosition();
+
+				if (subtypeIndex == -1) {
+					subtypeIndex = 0;
+				}
+
+				String key = mTypesRemote[typeIndex] + "_"
+						+ mSubtypesRemote[typeIndex][subtypeIndex];
+				Log.d(CLASSTAG, "key -- " + key);
+				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
+						.get(key);
+
+				try {
+					mApp.mPageGenerator.getArticle(article);
+					mDownloadHandler.sendEmptyMessage(WHAT_SUCCESS);
+				} catch (IOException e) {
+					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_IO);
+				} catch (IllegalContentFormatException e) {
+					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_PARSE);
+				}
+			}
+
+		}.start();
 	}
 }
 
