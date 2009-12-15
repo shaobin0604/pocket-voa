@@ -12,7 +12,7 @@ public class DataSource implements IDataSource {
 	static final String HOST = "http://news.iciba.com";
 
 	// standard English
-	static final String STANDARD_ENGLISH = HOST + "/1598/index_1.html";
+	static final String ENGLISH_NEWS = HOST + "/1598/index_1.html";
 
 	// special English
 	static final String DEVELOPMENT_REPORT = HOST
@@ -69,7 +69,7 @@ public class DataSource implements IDataSource {
 
 	private void setupListUrls() {
 		// standard English
-		mListUrls.put("Standard English_Standard English", STANDARD_ENGLISH);
+		mListUrls.put("Standard English_English News", ENGLISH_NEWS);
 
 		// special English
 		mListUrls.put("Special English_Development Report", DEVELOPMENT_REPORT);
@@ -97,9 +97,9 @@ public class DataSource implements IDataSource {
 
 	private void setupListParsers(int maxCount) {
 		// standard English
-		mListParsers.put("Standard English_Standard English",
+		mListParsers.put("Standard English_English News",
 				new StandardEnglishListParser("Standard English",
-						"Standard English", maxCount));
+						"English News", maxCount));
 		// special English
 		mListParsers.put("Special English_Development Report",
 				new StandardEnglishListParser("Special English",
@@ -151,7 +151,7 @@ public class DataSource implements IDataSource {
 
 	private void setupPageParsers() {
 		// standard English
-		mPageParsers.put("Standard English_Standard English",
+		mPageParsers.put("Standard English_English News",
 				new StandardEnglishPageParser());
 
 		// special English
