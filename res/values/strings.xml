@@ -10,6 +10,10 @@
 	
 	<string name="no_data">No Data :-(</string>
 	
+	<string name="alert_title_internet_status">Internet Connection Status</string>
+	<string name="alert_msg_internet_status_connected">Connected</string>
+	<string name="alert_msg_internet_status_disconnected">Disconnected</string>
+	
 	<string name="alert_title_about">About</string>
 	
 	<string name="alert_title_select_action">Please choose an action</string>
@@ -38,11 +42,13 @@
 	<string name="progressspin_loadpage_msg">Loading...</string>
 	<string name="progressspin_loadlist_msg">Loading...</string>
 	
+	<string name="toast_open_context_menu">Long click list item to open context menu</string>
 	<string name="toast_article_deleted">Article deleted</string>
 	<string name="toast_download_start">Download start...</string>
 	<string name="toast_download_audio_complete">Download audio complete</string>
 	<string name="toast_download_text_complete">Download text complete</string>
 	
+	<string name="menu_internet_status">Internet Status</string>
 	<string name="menu_download">Download</string>
 	<string name="menu_about">About</string>
 	<string name="menu_settings">Settings</string>
@@ -59,13 +65,13 @@
 	<string name="tab_remote">Remote</string>
 	
 	<string name="prefs_list_count_key">list_count</string>
-	<string name="prefs_list_count_title">Number of entries to display</string>
-	<string name="prefs_list_count_summary">Click to pop up a list to choose from</string>
-	<string name="prefs_list_count_dialog_title">Choose a count</string>
+	<string name="prefs_list_count_title">Max Count</string>
+	<string name="prefs_list_count_summary">Select max number of entries to display in remote article list</string>
+	<string name="prefs_list_count_dialog_title">Choose a max count</string>
 	
 	<string name="prefs_datasource_key">data_source</string>
 	<string name="prefs_datasource_title">Data Source</string>
-	<string name="prefs_datasource_summary">Click to pop up a list to choose from (require restart)</string>
+	<string name="prefs_datasource_summary">Select the data source where the articles come from</string>
 	<string name="prefs_datasource_dialog_title">Choose a data source</string>
 	
 	<string name="notification_download_text_error_ticker">Download Text Error</string>

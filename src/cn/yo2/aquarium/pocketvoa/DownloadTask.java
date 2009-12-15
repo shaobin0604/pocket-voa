@@ -68,7 +68,7 @@ public class DownloadTask implements Runnable {
 			HttpResponse response = mClient.execute(get);
 			HttpEntity entity = response.getEntity();
 			long length = entity.getContentLength();
-			Log.d(CLASSTAG, "content-length: " + length);
+//			Log.d(CLASSTAG, "content-length: " + length);
 			is = entity.getContent();
 			byte[] buffer = new byte[1024];
 			int len = 0;
@@ -87,7 +87,7 @@ public class DownloadTask implements Runnable {
 		} catch (IOException e) {
 			get.abort();
 			String msg = "Error when save mp3.";
-			Log.e(CLASSTAG, msg, e);
+//			Log.e(CLASSTAG, msg, e);
 			for (IProgressListener listener : mListeners) {
 				listener.setError(WHICH_DOWNLOAD_MP3, msg);
 			}
@@ -110,7 +110,7 @@ public class DownloadTask implements Runnable {
 
 	private boolean downloadText() {
 		if (TextUtils.isEmpty(mArticle.text)) {
-			Log.e(CLASSTAG, "text is empty");
+//			Log.e(CLASSTAG, "text is empty");
 			for (IProgressListener listener : mListeners) {
 				listener.setError(WHICH_DOWNLOAD_TEXT, "text is empty.");
 			}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cn.yo2.aquarium.pocketvoa" android:versionCode="3"
+	package="cn.yo2.aquarium.pocketvoa" android:versionCode="1"
 	android:versionName="@string/app_version">
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:name=".App">
@@ -15,14 +15,15 @@
 		<activity android:name=".Show" android:label="@string/app_name"
 			android:configChanges="keyboardHidden|orientation">
 		</activity>
-		
+
 		<activity android:name=".Settings" android:label="@string/app_name"
 			android:configChanges="keyboardHidden|orientation">
 		</activity>
 
-	<service android:name="DownloadService"></service>
-</application>
+		<service android:name="DownloadService"></service>
+	</application>
 	<uses-sdk android:minSdkVersion="3" />
 
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest> 

@@ -72,8 +72,8 @@ public class DatabaseHelper {
 	}
 
 	/**
-	 * Query articles with the type and subtype, if the argument is null, 
-	 * do not filter on the column
+	 * Query articles with the type and subtype, if the argument is null, do not
+	 * filter on the column
 	 * 
 	 * @param type
 	 * @param subtype
@@ -138,7 +138,7 @@ public class DatabaseHelper {
 
 		return mDb.insert(T_ARTICLES, null, values);
 	}
-	
+
 	public long createArticle(Article article) {
 		ContentValues values = new ContentValues();
 
@@ -166,20 +166,19 @@ public class DatabaseHelper {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			try {
-				Log.d(CLASSTAG, EXEC_SQL_PREFIX + CREATE_TABLE_SQL);
+				 Log.d(CLASSTAG, EXEC_SQL_PREFIX + CREATE_TABLE_SQL);
 				db.execSQL(CREATE_TABLE_SQL);
 			} catch (SQLException e) {
-				Log.e(CLASSTAG, "Error when create tables", e);
+				 Log.e(CLASSTAG, "Error when create tables", e);
 			}
 
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log
-					.w(CLASSTAG, "Upgrading database from version "
-							+ oldVersion + " to " + newVersion
-							+ ", which will destroy all old data");
+			String msg = "Upgrading database from version " + oldVersion
+					+ " to " + newVersion + ", which will destroy all old data";
+			Log.w(CLASSTAG, msg);
 			try {
 				Log.d(CLASSTAG, EXEC_SQL_PREFIX + DROP_TABLE_SQL);
 				db.execSQL(DROP_TABLE_SQL);

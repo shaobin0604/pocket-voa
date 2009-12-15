@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 
 public class Utils {
@@ -45,20 +48,42 @@ public class Utils {
 		}
 		return text.toString();
 	}
-	
+
 	public static File localTextFile(Article article) {
-		return new File(localArticleDir(article), Utils.extractFilename(article.url));
+		return new File(localArticleDir(article), Utils
+				.extractFilename(article.url));
 	}
 
 	public static File localMp3File(Article article) {
-		return new File(localArticleDir(article), Utils.extractFilename(article.mp3));
+		return new File(localArticleDir(article), Utils
+				.extractFilename(article.mp3));
 	}
-	
+
 	public static File localArticleDir(Article article) {
-		File dir = new File("/sdcard/pocket-voa/" + article.type + '/' + article.subtype + '/');
+		File dir = new File("/sdcard/pocket-voa/" + article.type + '/'
+				+ article.subtype + '/');
 		if (!dir.exists())
 			dir.mkdirs();
 		return dir;
+	}
+
+	public static boolean hasInternet(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (cm == null)
+			return false;
+
+		NetworkInfo[] info = cm.getAllNetworkInfo();
+		if (info != null) {
+			int len = info.length;
+			for (int i = 0; i < len; i++) {
+				if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public static File getAppDir() {

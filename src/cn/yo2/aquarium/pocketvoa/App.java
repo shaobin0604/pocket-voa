@@ -67,14 +67,14 @@ public class App extends Application {
 	}
 
 	private IDataSource getDefaultDataSource() {
-		return new cn.yo2.aquarium.pocketvoa.parser.iciba.DataSource();
+		return new cn.yo2.aquarium.pocketvoa.parser.voa51.DataSource();
 	}
 
 	public IDataSource getDataSourceFromPrefs(
 			SharedPreferences sharedPreferences) {
 		String datasourceStr = sharedPreferences.getString(
 				getString(R.string.prefs_datasource_key), "");
-		Log.d(CLASSTAG, "datasource prefs -- " + datasourceStr);
+//		Log.d(CLASSTAG, "datasource prefs -- " + datasourceStr);
 		IDataSource dataSource = null;
 		if (TextUtils.isEmpty(datasourceStr)) {
 			dataSource = getDefaultDataSource();

@@ -7,11 +7,23 @@
 	</string-array>
 
 	<string-array name="standard_english">
-		<item>Standard English</item>
+		<item>English News</item>
 	</string-array>
 	<string-array name="special_english">
 		<item>Development Report</item>
 		<item>This is America</item>
+		<item>Agriculture Report</item>
+		<item>Science in the News</item>
+		<item>Health Report</item>
+		<item>Explorations</item>
+		<item>Education Report</item>
+		<item>The Making of a Nation</item>
+		<item>Economics Report</item>
+		<item>American Mosaic</item>
+		<item>In the News</item>
+		<item>American Stories</item>
+		<item>Words And Their Stories</item>
+		<item>People in America</item>
 	</string-array>
 	<string-array name="english_learning">
 		<item>Popular American</item>
@@ -25,13 +37,25 @@
 	
 	<string-array name="standard_english_local">
 		<item>All</item>
-		<item>Standard English</item>
+		<item>English News</item>
 	</string-array>
 	
 	<string-array name="special_english_local">
 		<item>All</item>
 		<item>Development Report</item>
 		<item>This is America</item>
+		<item>Agriculture Report</item>
+		<item>Science in the News</item>
+		<item>Health Report</item>
+		<item>Explorations</item>
+		<item>Education Report</item>
+		<item>The Making of a Nation</item>
+		<item>Economics Report</item>
+		<item>American Mosaic</item>
+		<item>In the News</item>
+		<item>American Stories</item>
+		<item>Words And Their Stories</item>
+		<item>People in America</item>
 	</string-array>
 	
 	<string-array name="english_learning_local">

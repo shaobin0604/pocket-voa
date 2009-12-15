@@ -47,8 +47,9 @@ public class Main extends Activity {
 	private static final String CLASSTAG = Main.class.getSimpleName();
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
-	private static final int MENU_ABOUT = Menu.FIRST + 1;
-	private static final int MENU_EXIT = Menu.FIRST + 2;
+	private static final int MENU_TEST = Menu.FIRST + 1;
+	private static final int MENU_ABOUT = Menu.FIRST + 2;
+	private static final int MENU_EXIT = Menu.FIRST + 3;
 
 	private static final int DLG_ERROR = 0;
 	private static final int DLG_PROGRESS = 1;
@@ -57,6 +58,8 @@ public class Main extends Activity {
 	private static final int DLG_CONFIRM_DELETE = 4;
 	private static final int DLG_CONFIRM_DOWNLOAD = 5;
 	private static final int DLG_ABOUT = 6;
+	private static final int DLG_INTERNET_STATUS_CONNECTED = 7;
+	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 8;
 
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
@@ -94,7 +97,7 @@ public class Main extends Activity {
 			if (getString(R.string.prefs_list_count_key).equals(key)) {
 
 				int maxCount = mApp.getMaxCountFromPrefs(sharedPreferences);
-				Log.d(CLASSTAG, "max count: " + maxCount);
+//				Log.d(CLASSTAG, "max count: " + maxCount);
 				for (Iterator<IListParser> i = mApp.mDataSource
 						.getListParsers().values().iterator(); i.hasNext();) {
 					i.next().setMaxCount(maxCount);
@@ -181,6 +184,26 @@ public class Main extends Activity {
 
 	};
 
+	private Handler mInternetStatusHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_SUCCESS:
+				dismissDialog(DLG_PROGRESS);
+				showDialog(DLG_INTERNET_STATUS_CONNECTED);
+				break;
+			case WHAT_FAIL_IO:
+				dismissDialog(DLG_PROGRESS);
+				showDialog(DLG_INTERNET_STATUS_DISCONNECTED);
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
+
 	private TabHost mTabHost;
 
 	private Button btnRefreshLocal;
@@ -195,6 +218,8 @@ public class Main extends Activity {
 	private Spinner spnTypeRemote;
 	private Spinner spnSubtypeRemote;
 
+	private LayoutInflater mInflater;
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -205,6 +230,8 @@ public class Main extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		mInflater = LayoutInflater.from(this);
 
 		mApp = (App) getApplication();
 
@@ -228,6 +255,13 @@ public class Main extends Activity {
 		setupRemoteTabWidgets();
 
 		refreshLocalList();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Toast.makeText(this, R.string.toast_open_context_menu,
+		// Toast.LENGTH_SHORT).show();
 	}
 
 	private void updateTitle() {
@@ -427,6 +461,10 @@ public class Main extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings)
 				.setIcon(android.R.drawable.ic_menu_preferences);
+		menu
+				.add(Menu.NONE, MENU_TEST, Menu.NONE,
+						R.string.menu_internet_status).setIcon(
+						R.drawable.signal);
 		menu.add(Menu.NONE, MENU_ABOUT, Menu.NONE, R.string.menu_about)
 				.setIcon(android.R.drawable.ic_menu_info_details);
 		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(
@@ -443,6 +481,9 @@ public class Main extends Activity {
 			Intent intent = new Intent(this, Settings.class);
 			startActivity(intent);
 			return true;
+		case MENU_TEST:
+			testInternet();
+			return true;
 		case MENU_ABOUT:
 			showDialog(DLG_ABOUT);
 			return true;
@@ -455,6 +496,21 @@ public class Main extends Activity {
 			break;
 		}
 		return result;
+	}
+
+	private void testInternet() {
+		showDialog(DLG_PROGRESS);
+		new Thread() {
+
+			@Override
+			public void run() {
+				if (Utils.hasInternet(Main.this))
+					mInternetStatusHandler.sendEmptyMessage(WHAT_SUCCESS);
+				else
+					mInternetStatusHandler.sendEmptyMessage(WHAT_FAIL_IO);
+			}
+
+		}.start();
 	}
 
 	// @Override
@@ -590,10 +646,8 @@ public class Main extends Activity {
 			return builder4.create();
 		case DLG_ABOUT:
 			AlertDialog.Builder builder5 = new AlertDialog.Builder(this);
-			LayoutInflater inflater = LayoutInflater.from(this);
-			View layout = inflater.inflate(R.layout.about,
-					(ViewGroup) findViewById(R.id.root_about));
-			builder5.setView(layout);
+			
+			builder5.setView(mInflater.inflate(R.layout.about, null));
 			builder5.setTitle(R.string.alert_title_about);
 			builder5.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
@@ -633,6 +687,37 @@ public class Main extends Activity {
 					});
 
 			return builder6.create();
+		case DLG_INTERNET_STATUS_CONNECTED:
+			AlertDialog.Builder builder7 = new AlertDialog.Builder(this);
+			builder7.setIcon(android.R.drawable.ic_dialog_info);
+			builder7.setTitle(R.string.alert_title_internet_status);
+			builder7.setView(mInflater.inflate(
+					R.layout.connect_established, null));
+			builder7.setNeutralButton(R.string.btn_ok,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// 
+						}
+					});
+			return builder7.create();
+		case DLG_INTERNET_STATUS_DISCONNECTED:
+			AlertDialog.Builder builder8 = new AlertDialog.Builder(this);
+			builder8.setIcon(android.R.drawable.ic_dialog_info);
+			builder8.setTitle(R.string.alert_title_internet_status);
+
+			builder8.setView(mInflater.inflate(
+					R.layout.connect_no, null));
+			
+			builder8.setNeutralButton(R.string.btn_ok,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// 
+
+						}
+					});
+			return builder8.create();
 		default:
 			break;
 		}
@@ -726,8 +811,8 @@ public class Main extends Activity {
 					subtypeIndex = 0;
 				}
 
-				Log.d(CLASSTAG, "typeIndex -- " + typeIndex);
-				Log.d(CLASSTAG, "subtypeIndex -- " + subtypeIndex);
+//				Log.d(CLASSTAG, "typeIndex -- " + typeIndex);
+//				Log.d(CLASSTAG, "subtypeIndex -- " + subtypeIndex);
 
 				mCursor = mDatabaseHelper.queryArticles(mTypesLocal[typeIndex],
 						subtypeIndex == 0 ? null
@@ -753,7 +838,7 @@ public class Main extends Activity {
 
 				String key = mTypesRemote[typeIndex] + "_"
 						+ mSubtypesRemote[typeIndex][subtypeIndex];
-				Log.d(CLASSTAG, "key -- " + key);
+//				Log.d(CLASSTAG, "key -- " + key);
 				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
 						.get(key);
 				try {
@@ -799,7 +884,7 @@ public class Main extends Activity {
 
 				String key = mTypesRemote[typeIndex] + "_"
 						+ mSubtypesRemote[typeIndex][subtypeIndex];
-				Log.d(CLASSTAG, "key -- " + key);
+//				Log.d(CLASSTAG, "key -- " + key);
 				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
 						.get(key);
 
