@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:admob="http://schemas.android.com/apk/res/cn.yo2.aquarium.pocketvoa"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
@@ -56,4 +57,13 @@
         		android:secondaryProgress="0" />
         </LinearLayout>
 	</LinearLayout>
+	<com.admob.android.ads.AdView
+    	android:id="@+id/ad" 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content"
+    	admob:backgroundColor="#000000"
+    	admob:textColor="#FFFFFF"
+    	admob:keywords="Android game"  
+    	admob:isGoneWithoutAd="true" 
+    	admob:refreshInterval="60" />
 </LinearLayout>

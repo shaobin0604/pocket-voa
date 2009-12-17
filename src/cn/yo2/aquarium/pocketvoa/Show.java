@@ -2,6 +2,8 @@ package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
 
+import com.admob.android.ads.AdView;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -73,6 +75,7 @@ public class Show extends Activity {
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
 
+	private AdView mAdView;
 	private WebView mWebView;
 	private ImageButton mBtnStart;
 	private ImageButton mBtnPause;
@@ -431,6 +434,8 @@ public class Show extends Activity {
 	}
 
 	private void setupWidgets() {
+		mAdView = (AdView) findViewById(R.id.ad);
+		
 		mWebView = (WebView) findViewById(R.id.webview);
 
 		mBtnStart = (ImageButton) findViewById(R.id.btn_start);

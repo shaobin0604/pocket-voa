@@ -24,6 +24,56 @@ public final class R {
         public static final int type_local=0x7f050004;
     }
     public static final class attr {
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int backgroundColor=0x7f010001;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int isGoneWithoutAd=0x7f010005;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int keywords=0x7f010003;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int refreshInterval=0x7f010004;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int testing=0x7f010000;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int textColor=0x7f010002;
     }
     public static final class drawable {
         public static final int blank=0x7f020000;
@@ -37,6 +87,8 @@ public final class R {
         public static final int web_small=0x7f020008;
     }
     public static final class id {
+        public static final int ad=0x7f07001c;
+        public static final int author=0x7f070005;
         public static final int btn_pause=0x7f070018;
         public static final int btn_refresh_local=0x7f07000f;
         public static final int btn_refresh_remote=0x7f070015;
@@ -44,6 +96,7 @@ public final class R {
         public static final int empty_local=0x7f07000e;
         public static final int empty_remote=0x7f070014;
         public static final int iv_icon=0x7f070001;
+        public static final int license=0x7f070006;
         public static final int list_local=0x7f07000d;
         public static final int list_remote=0x7f070013;
         public static final int pb_audio=0x7f07001b;
@@ -57,13 +110,11 @@ public final class R {
         public static final int tabhost=0x7f070009;
         public static final int tv_app_name=0x7f070002;
         public static final int tv_app_version=0x7f070004;
-        public static final int tv_app_version_text=0x7f070003;
-        public static final int tv_author=0x7f070005;
+        public static final int tv_app_version_label=0x7f070003;
         public static final int tv_ellapsed_time=0x7f070019;
-        public static final int tv_license=0x7f070006;
         public static final int tv_title=0x7f070008;
         public static final int tv_total_time=0x7f07001a;
-        public static final int tv_website=0x7f070007;
+        public static final int website=0x7f070007;
         public static final int webview=0x7f070016;
     }
     public static final class layout {
@@ -75,71 +126,187 @@ public final class R {
         public static final int show=0x7f030005;
     }
     public static final class string {
-        public static final int alert_msg_confirm_delete=0x7f06000e;
-        public static final int alert_msg_confirm_download=0x7f060010;
-        public static final int alert_msg_download_audio_error=0x7f060017;
-        public static final int alert_msg_download_error=0x7f060016;
-        public static final int alert_msg_download_text_error=0x7f060018;
-        public static final int alert_msg_internet_status_connected=0x7f060009;
-        public static final int alert_msg_internet_status_disconnected=0x7f06000a;
-        public static final int alert_msg_load_local_page_error=0x7f060013;
-        public static final int alert_msg_load_remote_page_error=0x7f060012;
-        public static final int alert_msg_loadlist_error=0x7f060019;
-        public static final int alert_msg_play_local_audio_error=0x7f060015;
-        public static final int alert_msg_play_remote_audio_error=0x7f060014;
-        public static final int alert_title_about=0x7f06000b;
-        public static final int alert_title_confirm_delete=0x7f06000d;
-        public static final int alert_title_confirm_download=0x7f06000f;
-        public static final int alert_title_error=0x7f060011;
-        public static final int alert_title_internet_status=0x7f060008;
-        public static final int alert_title_select_action=0x7f06000c;
-        public static final int app_author=0x7f060004;
-        public static final int app_license=0x7f060005;
+        public static final int alert_msg_confirm_delete=0x7f060012;
+        public static final int alert_msg_confirm_download=0x7f060014;
+        public static final int alert_msg_download_audio_error=0x7f06001b;
+        public static final int alert_msg_download_error=0x7f06001a;
+        public static final int alert_msg_download_text_error=0x7f06001c;
+        public static final int alert_msg_internet_status_connected=0x7f06000d;
+        public static final int alert_msg_internet_status_disconnected=0x7f06000e;
+        public static final int alert_msg_load_local_page_error=0x7f060017;
+        public static final int alert_msg_load_remote_page_error=0x7f060016;
+        public static final int alert_msg_loadlist_error=0x7f06001d;
+        public static final int alert_msg_play_local_audio_error=0x7f060019;
+        public static final int alert_msg_play_remote_audio_error=0x7f060018;
+        public static final int alert_title_about=0x7f06000f;
+        public static final int alert_title_confirm_delete=0x7f060011;
+        public static final int alert_title_confirm_download=0x7f060013;
+        public static final int alert_title_error=0x7f060015;
+        public static final int alert_title_internet_status=0x7f06000c;
+        public static final int alert_title_select_action=0x7f060010;
+        public static final int app_author=0x7f060005;
+        public static final int app_author_label=0x7f060004;
+        public static final int app_email=0x7f060006;
+        public static final int app_license=0x7f060008;
+        public static final int app_license_label=0x7f060007;
         public static final int app_name=0x7f060001;
         public static final int app_version=0x7f060003;
-        public static final int app_version_text=0x7f060002;
-        public static final int app_website=0x7f060006;
-        public static final int btn_no=0x7f06002c;
-        public static final int btn_ok=0x7f060029;
-        public static final int btn_refresh=0x7f06002a;
-        public static final int btn_yes=0x7f06002b;
+        public static final int app_version_label=0x7f060002;
+        public static final int app_website=0x7f06000a;
+        public static final int app_website_label=0x7f060009;
+        public static final int btn_no=0x7f060030;
+        public static final int btn_ok=0x7f06002d;
+        public static final int btn_refresh=0x7f06002e;
+        public static final int btn_yes=0x7f06002f;
         public static final int hello=0x7f060000;
-        public static final int menu_about=0x7f060024;
-        public static final int menu_delete=0x7f060028;
-        public static final int menu_download=0x7f060023;
-        public static final int menu_exit=0x7f060026;
-        public static final int menu_internet_status=0x7f060022;
-        public static final int menu_settings=0x7f060025;
-        public static final int menu_view=0x7f060027;
-        public static final int no_data=0x7f060007;
-        public static final int notification_download_audio_error_ticker=0x7f060038;
-        public static final int notification_download_audio_progress_content=0x7f06003e;
-        public static final int notification_download_audio_progress_ticker=0x7f06003c;
-        public static final int notification_download_audio_success_ticker=0x7f06003a;
-        public static final int notification_download_text_error_ticker=0x7f060037;
-        public static final int notification_download_text_progress_content=0x7f06003d;
-        public static final int notification_download_text_progress_ticker=0x7f06003b;
-        public static final int notification_download_text_success_ticker=0x7f060039;
-        public static final int prefs_datasource_dialog_title=0x7f060036;
-        public static final int prefs_datasource_key=0x7f060033;
-        public static final int prefs_datasource_summary=0x7f060035;
-        public static final int prefs_datasource_title=0x7f060034;
-        public static final int prefs_list_count_dialog_title=0x7f060032;
-        public static final int prefs_list_count_key=0x7f06002f;
-        public static final int prefs_list_count_summary=0x7f060031;
-        public static final int prefs_list_count_title=0x7f060030;
-        public static final int progressbar_download_title=0x7f06001a;
-        public static final int progressspin_loadlist_msg=0x7f06001c;
-        public static final int progressspin_loadpage_msg=0x7f06001b;
-        public static final int tab_local=0x7f06002d;
-        public static final int tab_remote=0x7f06002e;
-        public static final int toast_article_deleted=0x7f06001e;
-        public static final int toast_download_audio_complete=0x7f060020;
-        public static final int toast_download_start=0x7f06001f;
-        public static final int toast_download_text_complete=0x7f060021;
-        public static final int toast_open_context_menu=0x7f06001d;
+        public static final int menu_about=0x7f060028;
+        public static final int menu_delete=0x7f06002c;
+        public static final int menu_download=0x7f060027;
+        public static final int menu_exit=0x7f06002a;
+        public static final int menu_internet_status=0x7f060026;
+        public static final int menu_settings=0x7f060029;
+        public static final int menu_view=0x7f06002b;
+        public static final int no_data=0x7f06000b;
+        public static final int notification_download_audio_error_ticker=0x7f06003c;
+        public static final int notification_download_audio_progress_content=0x7f060042;
+        public static final int notification_download_audio_progress_ticker=0x7f060040;
+        public static final int notification_download_audio_success_ticker=0x7f06003e;
+        public static final int notification_download_text_error_ticker=0x7f06003b;
+        public static final int notification_download_text_progress_content=0x7f060041;
+        public static final int notification_download_text_progress_ticker=0x7f06003f;
+        public static final int notification_download_text_success_ticker=0x7f06003d;
+        public static final int prefs_datasource_dialog_title=0x7f06003a;
+        public static final int prefs_datasource_key=0x7f060037;
+        public static final int prefs_datasource_summary=0x7f060039;
+        public static final int prefs_datasource_title=0x7f060038;
+        public static final int prefs_list_count_dialog_title=0x7f060036;
+        public static final int prefs_list_count_key=0x7f060033;
+        public static final int prefs_list_count_summary=0x7f060035;
+        public static final int prefs_list_count_title=0x7f060034;
+        public static final int progressbar_download_title=0x7f06001e;
+        public static final int progressspin_loadlist_msg=0x7f060020;
+        public static final int progressspin_loadpage_msg=0x7f06001f;
+        public static final int tab_local=0x7f060031;
+        public static final int tab_remote=0x7f060032;
+        public static final int toast_article_deleted=0x7f060022;
+        public static final int toast_download_audio_complete=0x7f060024;
+        public static final int toast_download_start=0x7f060023;
+        public static final int toast_download_text_complete=0x7f060025;
+        public static final int toast_open_context_menu=0x7f060021;
     }
     public static final class xml {
         public static final int settings=0x7f040000;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a com_admob_android_ads_AdView.
+           <p>Includes the following attributes:</p>
+           <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute<th>Summary</tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_isGoneWithoutAd cn.yo2.aquarium.pocketvoa:isGoneWithoutAd}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_keywords cn.yo2.aquarium.pocketvoa:keywords}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_testing cn.yo2.aquarium.pocketvoa:testing}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code><td></tr>
+           </table>
+           @see #com_admob_android_ads_AdView_backgroundColor
+           @see #com_admob_android_ads_AdView_isGoneWithoutAd
+           @see #com_admob_android_ads_AdView_keywords
+           @see #com_admob_android_ads_AdView_refreshInterval
+           @see #com_admob_android_ads_AdView_testing
+           @see #com_admob_android_ads_AdView_textColor
+         */
+        public static final int[] com_admob_android_ads_AdView = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003,
+            0x7f010004, 0x7f010005
+        };
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#backgroundColor}
+          attribute's value can be found in the {@link #com_admob_android_ads_AdView} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:backgroundColor
+        */
+        public static final int com_admob_android_ads_AdView_backgroundColor = 1;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#isGoneWithoutAd}
+          attribute's value can be found in the {@link #com_admob_android_ads_AdView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:isGoneWithoutAd
+        */
+        public static final int com_admob_android_ads_AdView_isGoneWithoutAd = 5;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#keywords}
+          attribute's value can be found in the {@link #com_admob_android_ads_AdView} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:keywords
+        */
+        public static final int com_admob_android_ads_AdView_keywords = 3;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#refreshInterval}
+          attribute's value can be found in the {@link #com_admob_android_ads_AdView} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:refreshInterval
+        */
+        public static final int com_admob_android_ads_AdView_refreshInterval = 4;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#testing}
+          attribute's value can be found in the {@link #com_admob_android_ads_AdView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:testing
+        */
+        public static final int com_admob_android_ads_AdView_testing = 0;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#textColor}
+          attribute's value can be found in the {@link #com_admob_android_ads_AdView} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:textColor
+        */
+        public static final int com_admob_android_ads_AdView_textColor = 2;
+    };
 }

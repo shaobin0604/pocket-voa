@@ -2,11 +2,15 @@
 <resources>
 	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">Pocket VOA</string>
-	<string name="app_version_text">Version: </string>
+	<string name="app_version_label">Version: </string>
 	<string name="app_version">1.0.0</string>
-	<string name="app_author">Author: Bin Shao[shaobin0604@gmail.com]</string>
-	<string name="app_license">License: Apache License, Version 2.0</string>
-	<string name="app_website">http://aquarium.yo2.cn</string>
+	<string name="app_author_label">Author: </string>
+	<string name="app_author">Bin Shao</string>
+	<string name="app_email">shaobin0604@qq.com</string>
+	<string name="app_license_label">License: </string>
+	<string name="app_license">Apache License, Version 2.0</string>
+	<string name="app_website_label">Website: </string>
+	<string name="app_website">http://aquarium.yo2.cn/</string>
 	
 	<string name="no_data">No Data :-(</string>
 	
