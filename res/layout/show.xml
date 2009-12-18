@@ -66,4 +66,5 @@
     	admob:keywords="Android game"  
     	admob:isGoneWithoutAd="true" 
     	admob:refreshInterval="60" />
+    	
 </LinearLayout>

@@ -97,7 +97,7 @@ public class Main extends Activity {
 			if (getString(R.string.prefs_list_count_key).equals(key)) {
 
 				int maxCount = mApp.getMaxCountFromPrefs(sharedPreferences);
-//				Log.d(CLASSTAG, "max count: " + maxCount);
+				// Log.d(CLASSTAG, "max count: " + maxCount);
 				for (Iterator<IListParser> i = mApp.mDataSource
 						.getListParsers().values().iterator(); i.hasNext();) {
 					i.next().setMaxCount(maxCount);
@@ -230,7 +230,7 @@ public class Main extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		mInflater = LayoutInflater.from(this);
 
 		mApp = (App) getApplication();
@@ -646,7 +646,7 @@ public class Main extends Activity {
 			return builder4.create();
 		case DLG_ABOUT:
 			AlertDialog.Builder builder5 = new AlertDialog.Builder(this);
-			
+
 			builder5.setView(mInflater.inflate(R.layout.about, null));
 			builder5.setTitle(R.string.alert_title_about);
 			builder5.setNeutralButton(R.string.btn_ok,
@@ -691,8 +691,8 @@ public class Main extends Activity {
 			AlertDialog.Builder builder7 = new AlertDialog.Builder(this);
 			builder7.setIcon(android.R.drawable.ic_dialog_info);
 			builder7.setTitle(R.string.alert_title_internet_status);
-			builder7.setView(mInflater.inflate(
-					R.layout.connect_established, null));
+			builder7.setView(mInflater.inflate(R.layout.connect_established,
+					null));
 			builder7.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
 
@@ -706,9 +706,8 @@ public class Main extends Activity {
 			builder8.setIcon(android.R.drawable.ic_dialog_info);
 			builder8.setTitle(R.string.alert_title_internet_status);
 
-			builder8.setView(mInflater.inflate(
-					R.layout.connect_no, null));
-			
+			builder8.setView(mInflater.inflate(R.layout.connect_no, null));
+
 			builder8.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
 
@@ -781,14 +780,16 @@ public class Main extends Activity {
 						TextView tvTitle = (TextView) view;
 						String title = cursor.getString(cursor
 								.getColumnIndex(DatabaseHelper.C_TITLE));
-						String date = Utils
-								.convertDateString(cursor.getString(cursor
-										.getColumnIndex(DatabaseHelper.C_DATE)));
-						tvTitle.setText(String.format("%s (%s)", title, date));
+						String date = cursor.getString(cursor
+								.getColumnIndex(DatabaseHelper.C_DATE));
+						if (TextUtils.isEmpty(date))
+							tvTitle.setText(title);
+						else
+							tvTitle.setText(String.format("%s (%s)", title,
+									Utils.convertDateString(date)));
 						return true;
 					}
 					return false;
-
 				}
 			});
 			lvLocal.setAdapter(mSimpleCursorAdapter);
@@ -811,8 +812,8 @@ public class Main extends Activity {
 					subtypeIndex = 0;
 				}
 
-//				Log.d(CLASSTAG, "typeIndex -- " + typeIndex);
-//				Log.d(CLASSTAG, "subtypeIndex -- " + subtypeIndex);
+				// Log.d(CLASSTAG, "typeIndex -- " + typeIndex);
+				// Log.d(CLASSTAG, "subtypeIndex -- " + subtypeIndex);
 
 				mCursor = mDatabaseHelper.queryArticles(mTypesLocal[typeIndex],
 						subtypeIndex == 0 ? null
@@ -838,7 +839,7 @@ public class Main extends Activity {
 
 				String key = mTypesRemote[typeIndex] + "_"
 						+ mSubtypesRemote[typeIndex][subtypeIndex];
-//				Log.d(CLASSTAG, "key -- " + key);
+				// Log.d(CLASSTAG, "key -- " + key);
 				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
 						.get(key);
 				try {
@@ -884,7 +885,7 @@ public class Main extends Activity {
 
 				String key = mTypesRemote[typeIndex] + "_"
 						+ mSubtypesRemote[typeIndex][subtypeIndex];
-//				Log.d(CLASSTAG, "key -- " + key);
+				// Log.d(CLASSTAG, "key -- " + key);
 				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
 						.get(key);
 
