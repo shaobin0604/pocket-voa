@@ -58,7 +58,7 @@ public class DownloadTask implements Runnable {
 	private boolean downloadMp3() {
 		FileOutputStream fos = null;
 		InputStream is = null;
-		HttpGet get = new HttpGet(mArticle.mp3);
+		HttpGet get = new HttpGet(mArticle.urlmp3);
 		try {
 
 			File savedAudio = Utils.localMp3File(mArticle);

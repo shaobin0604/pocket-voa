@@ -188,4 +188,9 @@ public class DataSource implements IDataSource {
 		mPageParsers.put("English Learning_Popular American",
 				new PopularAmericanPageParser());
 	}
+
+	public HashMap<String, IPageParser> getPageZhParsers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

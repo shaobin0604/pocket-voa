@@ -18,12 +18,16 @@ public class Utils {
 		article.id = intent.getLongExtra(Article.K_ID, -1);
 		article.title = intent.getStringExtra(Article.K_TITLE);
 		article.text = intent.getStringExtra(Article.K_TEXT);
-		article.mp3 = intent.getStringExtra(Article.K_MP3);
+		article.urlmp3 = intent.getStringExtra(Article.K_URLMP3);
 		article.type = intent.getStringExtra(Article.K_TYPE);
 		article.subtype = intent.getStringExtra(Article.K_SUBTYPE);
-		article.url = intent.getStringExtra(Article.K_URL);
+		article.urltext = intent.getStringExtra(Article.K_URLTEXT);
 		article.date = intent.getStringExtra(Article.K_DATE);
-
+		article.haslrc = intent.getBooleanExtra(Article.K_HASLRC, false);
+		article.hastextzh = intent.getBooleanExtra(Article.K_HASTEXTZH, false);
+		article.urllrc = intent.getStringExtra(Article.K_URLLRC);
+		article.urltextzh = intent.getStringExtra(Article.K_URLTEXTZH);
+		
 		return article;
 	}
 
@@ -34,8 +38,12 @@ public class Utils {
 		intent.putExtra(Article.K_DATE, article.date);
 		intent.putExtra(Article.K_TYPE, article.type);
 		intent.putExtra(Article.K_SUBTYPE, article.subtype);
-		intent.putExtra(Article.K_URL, article.url);
-		intent.putExtra(Article.K_MP3, article.mp3);
+		intent.putExtra(Article.K_URLTEXT, article.urltext);
+		intent.putExtra(Article.K_URLMP3, article.urlmp3);
+		intent.putExtra(Article.K_HASLRC, article.haslrc);
+		intent.putExtra(Article.K_HASTEXTZH, article.hastextzh);
+		intent.putExtra(Article.K_URLLRC, article.urllrc);
+		intent.putExtra(Article.K_URLTEXTZH, article.urltextzh);
 	}
 
 	public static String loadText(Article article) throws IOException {
@@ -51,12 +59,12 @@ public class Utils {
 
 	public static File localTextFile(Article article) {
 		return new File(localArticleDir(article), Utils
-				.extractFilename(article.url));
+				.extractFilename(article.urltext));
 	}
 
 	public static File localMp3File(Article article) {
 		return new File(localArticleDir(article), Utils
-				.extractFilename(article.mp3));
+				.extractFilename(article.urlmp3));
 	}
 
 	public static File localArticleDir(Article article) {

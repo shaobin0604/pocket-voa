@@ -26,7 +26,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 		int textStart = 0;
 		if (audioMatcher.find()) {
 			textStart = audioMatcher.start();
-			article.mp3 = audioMatcher.group(1);
+			article.urlmp3 = audioMatcher.group(1);
 		} else {
 			throw new IllegalContentFormatException("Cannot find match");
 		}

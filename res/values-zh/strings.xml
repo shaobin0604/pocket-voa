@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, Main!</string>
+	<string name="app_name">口袋VOA</string>
+	<string name="app_version_label">版本: </string>
+	<string name="app_version">1.0.3</string>
+	<string name="app_author_label">作者: </string>
+	<string name="app_author">邵彬</string>
+	<string name="app_email">shaobin0604@qq.com</string>
+	<string name="app_license_label">协议: </string>
+	<string name="app_license">Apache License, Version 2.0</string>
+	<string name="app_website_label">网站: </string>
+	<string name="app_website">http://aquarium.yo2.cn/</string>
+	
+	<string name="no_data">没有数据 :-(</string>
+	
+	<string name="alert_title_internet_status">网络连接状态</string>
+	<string name="alert_msg_internet_status_connected">已连接</string>
+	<string name="alert_msg_internet_status_disconnected">已断开</string>
+	
+	<string name="alert_title_about">关于</string>
+	
+	<string name="alert_title_select_action">请选择操作方式</string>
+	
+	<string name="alert_title_confirm_delete">确认删除</string>
+	<string name="alert_msg_confirm_delete">你确定要删除文章 - \"%1$s\"?</string>
+	
+	<string name="alert_title_confirm_download">确认删除</string>
+	<string name="alert_msg_confirm_download">你之前已经下载过文章 - \"%1$s\", 你确认要重新下载吗?</string>
+	
+	<string name="alert_title_error">发生错误</string>
+	
+	<string name="alert_msg_load_remote_page_error">无法加载远程网页</string>
+	<string name="alert_msg_load_local_page_error">无法加载本地网页</string>
+	
+	<string name="alert_msg_play_remote_audio_error">无法播放远程音频</string>
+	<string name="alert_msg_play_local_audio_error">无法播放本地音频</string>
+	
+	<string name="alert_msg_download_error">无法下载文章</string>
+	<string name="alert_msg_download_audio_error">无法下载音频</string>
+	<string name="alert_msg_download_text_error">无法下载文本</string>
+	
+	<string name="alert_msg_loadlist_error">无法加载列表</string>
+	
+	<string name="progressbar_download_title">正在下载音频文件</string>
+	<string name="progressspin_loadpage_msg">加载中...</string>
+	<string name="progressspin_loadlist_msg">加载中...</string>
+	
+	<string name="toast_open_context_menu">长按列表项弹出环境菜单</string>
+	<string name="toast_article_deleted">文章已删除</string>
+	<string name="toast_download_start">开始下载...</string>
+	<string name="toast_download_audio_complete">音频下载完成</string>
+	<string name="toast_download_text_complete">文本下载完成</string>
+	
+	<string name="menu_internet_status">网络状态</string>
+	<string name="menu_download">下载</string>
+	<string name="menu_about">关于</string>
+	<string name="menu_settings">设置</string>
+	<string name="menu_exit">退出</string>
+	<string name="menu_view">查看</string>
+	<string name="menu_delete">删除</string>
+	
+	<string name="btn_ok">确定</string>
+	<string name="btn_refresh">刷新</string>
+	<string name="btn_yes">是</string>
+	<string name="btn_no">否</string>
+	
+	<string name="tab_local">本地</string>
+	<string name="tab_remote">远程</string>
+	
+	<string name="prefs_list_count_key">list_count</string>
+	<string name="prefs_list_count_title">最大条目</string>
+	<string name="prefs_list_count_summary">选择远程文章列表中显示的最大条目数</string>
+	<string name="prefs_list_count_dialog_title">请选择一个最大条目数量</string>
+	
+	<string name="prefs_datasource_key">data_source</string>
+	<string name="prefs_datasource_title">数据来源</string>
+	<string name="prefs_datasource_summary">选择文章的数据来源</string>
+	<string name="prefs_datasource_dialog_title">请选择一个数据来源</string>
+	
+	<string name="notification_download_text_error_ticker">下载文本出错</string>
+	<string name="notification_download_audio_error_ticker">下载 MP3 出错</string>
+	
+	<string name="notification_download_text_success_ticker">下载文本已完成</string>
+	<string name="notification_download_audio_success_ticker">下载 MP3 已完成</string>
+	
+	<string name="notification_download_text_progress_ticker">文本下载中</string>
+	<string name="notification_download_audio_progress_ticker">MP3下载中</string>
+	
+	<string name="notification_download_text_progress_content">文本 %1$d%% 下载中  [%2$d/%3$d]KB</string>
+	<string name="notification_download_audio_progress_content">MP3 %1$d%% 下载中  [%2$d/%3$d]KB</string>
+	
+</resources>

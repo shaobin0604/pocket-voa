@@ -1,8 +1,7 @@
 package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
-
-import com.admob.android.ads.AdView;
+import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,15 +24,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import com.admob.android.ads.AdView;
 
 public class Show extends Activity {
 	private static final String CLASSTAG = Show.class.getSimpleName();
+	
+	private static final String[] KEYWORDS = {
+		"android game farm",
+		"food sport",
+		"life auto outdoor",
+	};
 
 	// Activity managed Dialogs
 	private static final int DLG_PROGRESS_SPIN = 1;
@@ -43,19 +52,24 @@ public class Show extends Activity {
 
 	// Option Menus
 	private static final int MENU_DOWNLOAD = Menu.FIRST;
+	private static final int MENU_TRANSLATE = Menu.FIRST + 1;
+	private static final int MENU_LRC = Menu.FIRST + 2;
 
 	// Load remote page handler message type
 	private static final int WHAT_LOAD_REMOTE_PAGE_SUCCESS = 0;
 	private static final int WHAT_LOAD_REMOTE_PAGE_FAIL_IO = 1;
 	private static final int WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE = 2;
+	private static final int WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS = 3;
+	private static final int WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_IO = 4;
+	private static final int WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_PARSE = 5;
 
 	// Load local page handler message type
-	private static final int WHAT_LOAD_LOCAL_PAGE_SUCCESS = 3;
-	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_IO = 4;
-	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE = 5;
+	private static final int WHAT_LOAD_LOCAL_PAGE_SUCCESS = 0;
+	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_IO = 1;
+	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE = 2;
 
 	// MediaPlayer handler message type
-	private static final int WHAT_PLAYER_PROGRESS = 6;
+	private static final int WHAT_PLAYER_PROGRESS = 0;
 
 	private enum MediaPlayerState {
 		Idle, Initialized, Preparing, Prepared, Started, Paused, Stopped, PlaybackCompleted, End, Error,
@@ -69,14 +83,16 @@ public class Show extends Activity {
 
 	private App mApp;
 
-	// Article current shown 
+	// Article current shown
 	private Article mArticle;
 
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
 
 	private AdView mAdView;
-	private WebView mWebView;
+	private ViewFlipper mViewFlipper;
+	private WebView mWebViewEn;
+	private WebView mWebViewZh;
 	private ImageButton mBtnStart;
 	private ImageButton mBtnPause;
 	private TextView mTvEllapsedTime;
@@ -101,12 +117,19 @@ public class Show extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case WHAT_LOAD_REMOTE_PAGE_SUCCESS:
-				mWebView.loadDataWithBaseURL("", mArticle.text, "text/html",
+				mWebViewEn.loadDataWithBaseURL("", mArticle.text, "text/html",
+						"utf-8", "");
+				dismissDialog(DLG_PROGRESS_SPIN);
+				break;
+			case WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS:
+				mWebViewZh.loadDataWithBaseURL("", mArticle.textzh, "text/html",
 						"utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
 			case WHAT_LOAD_REMOTE_PAGE_FAIL_IO:
 			case WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE:
+			case WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_IO:
+			case WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS_SPIN);
 				mLastError = Error.LoadRemotePageError;
 				showDialog(DLG_ERROR);
@@ -124,7 +147,7 @@ public class Show extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case WHAT_LOAD_LOCAL_PAGE_SUCCESS:
-				mWebView.loadDataWithBaseURL("", mArticle.text, "text/html",
+				mWebViewEn.loadDataWithBaseURL("", mArticle.text, "text/html",
 						"utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
@@ -211,7 +234,7 @@ public class Show extends Activity {
 			if (mMediaPlayerState == MediaPlayerState.Idle) {
 				Uri uri = null;
 				if (mArticle.id == -1)
-					uri = Uri.parse(mArticle.mp3);
+					uri = Uri.parse(mArticle.urlmp3);
 				else
 					uri = Uri.fromFile(Utils.localMp3File(mArticle));
 				Log.d(CLASSTAG, "mp3 url -- " + uri);
@@ -361,12 +384,17 @@ public class Show extends Activity {
 		boolean result = super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, MENU_DOWNLOAD, Menu.NONE, R.string.menu_download)
 				.setIcon(R.drawable.file_download);
+		menu.add(Menu.NONE, MENU_TRANSLATE, Menu.NONE, R.string.menu_translate);
+		menu.add(Menu.NONE, MENU_LRC, Menu.NONE, R.string.menu_lrc);
+
 		return result;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.getItem(0).setEnabled(mArticle.id == -1);
+		menu.getItem(1).setEnabled(mArticle.hastextzh);
+		menu.getItem(2).setEnabled(mArticle.haslrc);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -374,7 +402,7 @@ public class Show extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_DOWNLOAD:
-			// TODO check if the article has been downloaded
+			// check if the article has been downloaded
 			if (mDatabaseHelper.isArticleExist(mArticle)) {
 				showDialog(DLG_CONFIRM_DOWNLOAD);
 			} else {
@@ -382,10 +410,52 @@ public class Show extends Activity {
 
 			}
 			return true;
+		case MENU_TRANSLATE:
+			loadPageZh();
+			return true;
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void loadPageZh() {
+		// show translate page
+		mViewFlipper.setDisplayedChild(1);
+		if (mArticle.id == -1)
+			loadRemotePageZh();
+		else
+			loadLocalPageZh();
+	}
+
+	private void loadRemotePageZh() {
+		// TODO use zh page parser
+		showDialog(DLG_PROGRESS_SPIN);
+		new Thread() {
+
+			@Override
+			public void run() {
+				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageZhParsers()
+						.get(mArticle.type + "_" + mArticle.subtype);
+				try {
+					mApp.mPageGenerator.getArticle(mArticle, true);
+					mLoadRemotePageHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS);
+				} catch (IOException e) {
+					mLoadRemotePageHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_IO);
+				} catch (IllegalContentFormatException e) {
+					mLoadRemotePageHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_PARSE);
+				}
+			}
+
+		}.start();
+
+	}
+
+	private void loadLocalPageZh() {
+		// TODO add code to complete this method
 	}
 
 	private void downloadArticleModal() {
@@ -408,6 +478,11 @@ public class Show extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// no title bar
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		
 		setContentView(R.layout.show);
 
 		mApp = (App) getApplication();
@@ -436,7 +511,15 @@ public class Show extends Activity {
 	private void setupWidgets() {
 		mAdView = (AdView) findViewById(R.id.ad);
 		
-		mWebView = (WebView) findViewById(R.id.webview);
+		String keywords = KEYWORDS[new Random(System.currentTimeMillis())
+				.nextInt(KEYWORDS.length)];
+		Log.d(CLASSTAG, "keywords -- " + keywords);
+		mAdView.setKeywords(keywords);
+
+		mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
+
+		mWebViewEn = (WebView) findViewById(R.id.webview_en);
+		mWebViewZh = (WebView) findViewById(R.id.webview_zh);
 
 		mBtnStart = (ImageButton) findViewById(R.id.btn_start);
 		mBtnStart.setOnClickListener(mStartButtonClickListener);
@@ -488,7 +571,7 @@ public class Show extends Activity {
 				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
 						.get(mArticle.type + "_" + mArticle.subtype);
 				try {
-					mApp.mPageGenerator.getArticle(mArticle);
+					mApp.mPageGenerator.getArticle(mArticle, false);
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_SUCCESS);
 				} catch (IOException e) {
@@ -505,7 +588,6 @@ public class Show extends Activity {
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-		// TODO Auto-generated method stub
 		super.onConfigurationChanged(newConfig);
 	}
 
@@ -534,7 +616,7 @@ public class Show extends Activity {
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
+							
 
 						}
 					});

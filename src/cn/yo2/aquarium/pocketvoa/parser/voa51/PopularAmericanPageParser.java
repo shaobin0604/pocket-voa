@@ -23,7 +23,7 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 		Matcher audioMatcher = audioPattern.matcher(content);
 		
 		if (audioMatcher.find()) {
-			article.mp3 = DataSource.HOST + audioMatcher.group(1);
+			article.urlmp3 = DataSource.HOST + audioMatcher.group(1);
 		} else {
 			throw new IllegalContentFormatException("Cannot find match mp3");
 		}

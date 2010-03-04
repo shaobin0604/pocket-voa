@@ -8,6 +8,7 @@ public interface IDataSource {
 	public HashMap<String, String> getListUrls();
 	public HashMap<String, IListParser> getListParsers();
 	public HashMap<String, IPageParser> getPageParsers();
+	public HashMap<String, IPageParser> getPageZhParsers();
 	
 	public String getName();
 }

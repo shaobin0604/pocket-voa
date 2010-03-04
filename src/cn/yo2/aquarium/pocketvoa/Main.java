@@ -64,6 +64,35 @@ public class Main extends Activity {
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
 	private static final int WHAT_FAIL_PARSE = 2;
+	
+	private static final String[] TYPES_REMOTE = { 
+			"Standard English",
+			"Special English", 
+			"English Learning", 
+	};
+	
+	private static final String[][] SUBTYPES_REMOTE = {
+			{ "English News", },
+			{ "Development Report", "This is America", "Agriculture Report",
+					"Science in the News", "Health Report", "Explorations",
+					"Education Report", "The Making of a Nation",
+					"Economics Report", "American Mosaic", "In the News",
+					"American Stories", "Words And Their Stories",
+					"People in America", }, 
+			{ "Popular American", }, 
+	};
+	
+	private static final String[] TYPES_LOCAL = { "Standard English",
+			"Special English", "English Learning", };
+
+	private static final String[][] SUBTYPES_LOCAL = {
+			{ "All", "English News", },
+			{ "All", "Development Report", "This is America", "Agriculture Report",
+					"Science in the News", "Health Report", "Explorations",
+					"Education Report", "The Making of a Nation",
+					"Economics Report", "American Mosaic", "In the News",
+					"American Stories", "Words And Their Stories",
+					"People in America", }, { "All", "Popular American", }, };
 
 	private enum Error {
 		LoadListError, DownloadError,
@@ -75,12 +104,7 @@ public class Main extends Activity {
 
 	private Article mLongClickArticle;
 
-	private String[] mTypesRemote;
-	private String[][] mSubtypesRemote;
 	private ArrayAdapter<CharSequence>[] mAdaptersRemote;
-
-	private String[] mTypesLocal;
-	private String[][] mSubtypesLocal;
 	private ArrayAdapter<CharSequence>[] mAdaptersLocal;
 
 	private ArrayList<Article> mList;
@@ -397,12 +421,12 @@ public class Main extends Activity {
 	}
 
 	private void extractTypesRemote() {
-		mTypesRemote = getResources().getStringArray(R.array.type);
-
-		mSubtypesRemote = new String[][] {
-				getResources().getStringArray(R.array.standard_english),
-				getResources().getStringArray(R.array.special_english),
-				getResources().getStringArray(R.array.english_learning), };
+//		mTypesRemote = getResources().getStringArray(R.array.type);
+//
+//		mSubtypesRemote = new String[][] {
+//				getResources().getStringArray(R.array.standard_english),
+//				getResources().getStringArray(R.array.special_english),
+//				getResources().getStringArray(R.array.english_learning), };
 
 		ArrayAdapter<CharSequence> stAdapter = ArrayAdapter.createFromResource(
 				this, R.array.standard_english,
@@ -428,12 +452,12 @@ public class Main extends Activity {
 
 	private void extractTypesLocal() {
 		// local types: add all option
-		mTypesLocal = getResources().getStringArray(R.array.type_local);
-
-		mSubtypesLocal = new String[][] {
-				getResources().getStringArray(R.array.standard_english_local),
-				getResources().getStringArray(R.array.special_english_local),
-				getResources().getStringArray(R.array.english_learning_local), };
+//		mTypesLocal = getResources().getStringArray(R.array.type_local);
+//
+//		mSubtypesLocal = new String[][] {
+//				getResources().getStringArray(R.array.standard_english_local),
+//				getResources().getStringArray(R.array.special_english_local),
+//				getResources().getStringArray(R.array.english_learning_local), };
 
 		ArrayAdapter<CharSequence> stAdapterLocal = ArrayAdapter
 				.createFromResource(this, R.array.standard_english_local,
@@ -770,14 +794,37 @@ public class Main extends Activity {
 		if (mSimpleCursorAdapter == null) {
 			mSimpleCursorAdapter = new SimpleCursorAdapter(this,
 					R.layout.list_item, mCursor,
-					new String[] { DatabaseHelper.C_TITLE },
-					new int[] { R.id.tv_title });
+					new String[] { DatabaseHelper.C_HASLRC, DatabaseHelper.C_HASTEXTZH, DatabaseHelper.C_TITLE, },
+					new int[] { R.id.iv_lrc, R.id.iv_textzh, R.id.tv_title, });
 			mSimpleCursorAdapter.setViewBinder(new ViewBinder() {
 
 				public boolean setViewValue(View view, Cursor cursor,
 						int columnIndex) {
-					if (view.getId() == R.id.tv_title) {
+					switch (view.getId()) {
+					case R.id.iv_lrc:
+						ImageView ivLrc = (ImageView) view;
+						boolean haslrc = cursor.getInt(cursor
+								.getColumnIndex(DatabaseHelper.C_HASLRC)) == 1;
+						if (haslrc) 
+							ivLrc.setImageResource(R.drawable.lrc);
+						else 
+							ivLrc.setImageResource(R.drawable.no);
+						
+						return true;
+					case R.id.iv_textzh:
+						ImageView ivTextzh = (ImageView) view;
+						boolean hastextzh = cursor.getInt(cursor
+								.getColumnIndex(DatabaseHelper.C_HASTEXTZH)) == 1;
+						
+						if (hastextzh)
+							ivTextzh.setImageResource(R.drawable.textzh);
+						else 
+							ivTextzh.setImageResource(R.drawable.no);
+						
+						return true;
+					case R.id.tv_title:
 						TextView tvTitle = (TextView) view;
+						
 						String title = cursor.getString(cursor
 								.getColumnIndex(DatabaseHelper.C_TITLE));
 						String date = cursor.getString(cursor
@@ -788,7 +835,9 @@ public class Main extends Activity {
 							tvTitle.setText(String.format("%s (%s)", title,
 									Utils.convertDateString(date)));
 						return true;
-					}
+					default:
+						break;
+					}		
 					return false;
 				}
 			});
@@ -815,9 +864,9 @@ public class Main extends Activity {
 				// Log.d(CLASSTAG, "typeIndex -- " + typeIndex);
 				// Log.d(CLASSTAG, "subtypeIndex -- " + subtypeIndex);
 
-				mCursor = mDatabaseHelper.queryArticles(mTypesLocal[typeIndex],
+				mCursor = mDatabaseHelper.queryArticles(TYPES_LOCAL[typeIndex],
 						subtypeIndex == 0 ? null
-								: mSubtypesLocal[typeIndex][subtypeIndex]);
+								: SUBTYPES_LOCAL[typeIndex][subtypeIndex]);
 				mLocalListHandler.sendEmptyMessage(WHAT_SUCCESS);
 			}
 
@@ -837,8 +886,9 @@ public class Main extends Activity {
 					subtypeIndex = 0;
 				}
 
-				String key = mTypesRemote[typeIndex] + "_"
-						+ mSubtypesRemote[typeIndex][subtypeIndex];
+				// TODO change here to support i18n
+				String key = TYPES_REMOTE[typeIndex] + "_"
+						+ SUBTYPES_REMOTE[typeIndex][subtypeIndex];
 				// Log.d(CLASSTAG, "key -- " + key);
 				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
 						.get(key);
@@ -883,14 +933,14 @@ public class Main extends Activity {
 					subtypeIndex = 0;
 				}
 
-				String key = mTypesRemote[typeIndex] + "_"
-						+ mSubtypesRemote[typeIndex][subtypeIndex];
+				String key = TYPES_REMOTE[typeIndex] + "_"
+						+ SUBTYPES_REMOTE[typeIndex][subtypeIndex];
 				// Log.d(CLASSTAG, "key -- " + key);
 				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
 						.get(key);
 
 				try {
-					mApp.mPageGenerator.getArticle(article);
+					mApp.mPageGenerator.getArticle(article, false);
 					mDownloadHandler.sendEmptyMessage(WHAT_SUCCESS);
 				} catch (IOException e) {
 					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_IO);
@@ -940,12 +990,23 @@ class RowAdapter extends BaseAdapter {
 		}
 
 		Article article = mList.get(position);
+		
 		if (TextUtils.isEmpty(article.date))
 			wraper.getTitle().setText(article.title);
 		else
 			wraper.getTitle().setText(
 					String.format("%s (%s)", article.title, Utils
 							.convertDateString(article.date)));
+		
+		if (article.haslrc) 
+			wraper.getLrc().setImageResource(R.drawable.lrc);
+		else 
+			wraper.getLrc().setImageResource(R.drawable.no);
+		
+		if (article.hastextzh)
+			wraper.getTextZh().setImageResource(R.drawable.textzh);
+		else 
+			wraper.getTextZh().setImageResource(R.drawable.no);
 
 		return row;
 	}
@@ -955,6 +1016,8 @@ class RowAdapter extends BaseAdapter {
 class ViewWraper {
 	View root;
 	TextView tvTitle;
+	ImageView ivLrc;
+	ImageView ivTextzh;
 
 	public ViewWraper(View root) {
 		this.root = root;
@@ -965,5 +1028,20 @@ class ViewWraper {
 			tvTitle = (TextView) root.findViewById(R.id.tv_title);
 		}
 		return tvTitle;
+	}
+	
+	ImageView getLrc() {
+		if (ivLrc == null) {
+			ivLrc = (ImageView) root.findViewById(R.id.iv_lrc);
+		}
+		return ivLrc;
+	}
+	
+	ImageView getTextZh() {
+		if (ivTextzh == null) {
+			ivTextzh = (ImageView) root.findViewById(R.id.iv_textzh);
+		}
+		return ivTextzh;
+			
 	}
 }

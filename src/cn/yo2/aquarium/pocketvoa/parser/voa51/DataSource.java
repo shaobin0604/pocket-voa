@@ -43,11 +43,14 @@ public class DataSource implements IDataSource {
 	private final HashMap<String, IListParser> mListParsers = new HashMap<String, IListParser>();
 	// Article type_subtype ->
 	private final HashMap<String, IPageParser> mPageParsers = new HashMap<String, IPageParser>();
+	// Article type_subtype ->
+	private final HashMap<String, IPageParser> mPageZhParsers = new HashMap<String, IPageParser>();
 
 	public void init(int maxCount) {
 		setupListUrls();
 		setupListParsers(maxCount);
 		setupPageParsers();
+		setupPageZhParsers();
 	}
 
 	public HashMap<String, IListParser> getListParsers() {
@@ -60,6 +63,10 @@ public class DataSource implements IDataSource {
 
 	public HashMap<String, IPageParser> getPageParsers() {
 		return mPageParsers;
+	}
+	
+	public HashMap<String, IPageParser> getPageZhParsers() {
+		return mPageZhParsers;
 	}
 
 	public String getName() {
@@ -187,5 +194,43 @@ public class DataSource implements IDataSource {
 		// English learning
 		mPageParsers.put("English Learning_Popular American",
 				new PopularAmericanPageParser());
+	}
+	
+	private void setupPageZhParsers() {
+		// standard English
+		
+
+		// special English
+		mPageZhParsers.put("Special English_Development Report",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_This is America",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Agriculture Report",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Science in the News",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Health Report",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Explorations",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Education Report",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_The Making of a Nation",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Economics Report",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_American Mosaic",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_In the News",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_American Stories",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_Words And Their Stories",
+				new StandardEnglishPageZhParser());
+		mPageZhParsers.put("Special English_People in America",
+				new StandardEnglishPageZhParser());
+		
+		// English learning
+		
 	}
 }

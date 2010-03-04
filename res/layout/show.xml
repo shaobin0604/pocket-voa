@@ -4,11 +4,30 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
-	<WebView 
-		android:id="@+id/webview" 
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-		android:layout_weight="1.0"/>
+	<com.admob.android.ads.AdView
+    	android:id="@+id/ad" 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content"
+    	admob:backgroundColor="#000000"
+    	admob:textColor="#FFFFFF" 
+    	admob:isGoneWithoutAd="true" 
+    	admob:refreshInterval="60" />
+	<ViewFlipper 
+		android:id="@+id/flipper"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0">  
+		<WebView 
+			android:id="@+id/webview_en" 
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" 
+			/>
+		<WebView 
+			android:id="@+id/webview_zh" 
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" 
+			/>
+	</ViewFlipper>
 	<LinearLayout 
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -57,14 +76,4 @@
         		android:secondaryProgress="0" />
         </LinearLayout>
 	</LinearLayout>
-	<com.admob.android.ads.AdView
-    	android:id="@+id/ad" 
-    	android:layout_width="fill_parent" 
-    	android:layout_height="wrap_content"
-    	admob:backgroundColor="#000000"
-    	admob:textColor="#FFFFFF"
-    	admob:keywords="Android game"  
-    	admob:isGoneWithoutAd="true" 
-    	admob:refreshInterval="60" />
-    	
 </LinearLayout>

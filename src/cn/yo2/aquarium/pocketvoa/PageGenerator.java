@@ -27,22 +27,25 @@ public class PageGenerator {
 		this.mHttpClient = httpClient;
 	}
 
-	public void getArticle(Article article) throws IOException,
+	public void getArticle(Article article, boolean translate) throws IOException,
 			IllegalContentFormatException {
-		if (TextUtils.isEmpty(article.url))
+		if (TextUtils.isEmpty(article.urltext))
 			throw new IllegalArgumentException("article's url should not be blank.");
-		
-		HttpGet get = new HttpGet(article.url);
+		HttpGet get = null;
+		if (translate)
+			get = new HttpGet(article.urltextzh);
+		else 
+			get = new HttpGet(article.urltext);
 		try {
 			String body = mHttpClient.execute(get, mResponseHandler);
 			mParser.parse(article, body);
 		} catch (IOException e) {
 			get.abort();
-			Log.e(CLASSTAG, "IO Error when get list from " + article.url, e);
+			Log.e(CLASSTAG, "IO Error when get list from " + article.urltext, e);
 			throw e;
 		} catch (IllegalContentFormatException e) {
 			get.abort();
-			Log.e(CLASSTAG, "Content format Error when get list from " + article.url,
+			Log.e(CLASSTAG, "Content format Error when get list from " + article.urltext,
 					e);
 			throw e;
 		} 

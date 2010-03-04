@@ -46,7 +46,7 @@ public class PopularAmericanListParser extends AbstractListParser {
 			
 			Article article = new Article();
 			article.id = -1;
-			article.url = DataSource.HOST + (url.startsWith("/") ? url : "/" + url);
+			article.urltext = DataSource.HOST + (url.startsWith("/") ? url : "/" + url);
 			article.title = title;
 			article.date = Utils.formatDateString(date);
 			article.type = mType;

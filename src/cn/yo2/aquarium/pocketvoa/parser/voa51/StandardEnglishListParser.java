@@ -24,30 +24,37 @@ public class StandardEnglishListParser extends AbstractListParser {
 
 	public ArrayList<Article> parse(String body) throws IllegalContentFormatException {
 		if (TextUtils.isEmpty(body))
-			throw new IllegalContentFormatException("The respone body is empty.");
+			throw new IllegalContentFormatException("The response body is empty.");
 		ArrayList<Article> list = new ArrayList<Article>();
 		// int ulStart = body.indexOf("id=\"list\"");
 		Pattern pattern = Pattern
-				.compile("<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>\\s*\\((\\d+-\\d+-\\d+)\\)");
+				.compile("<li>\\s*(<img src=/images/lrc\\.gif>)?\\s*(<img src=/images/yi\\.gif>)?\\s*<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>\\s*\\((\\d+-\\d+-\\d+)\\)\\s*</li>");
 		Matcher matcher = pattern.matcher(body);
 		int count = 0;
-		while (matcher.find() && count < this.mMaxCount) {
+		int maxCount = this.mMaxCount;
+		while (matcher.find() && count < maxCount) {
 			
 			count++;
 			
-			String url = matcher.group(1);
-			String title = matcher.group(2);
-			String date = matcher.group(3);
+			String haslrc = matcher.group(1);
+			String hastextzh = matcher.group(2);
+			String urltext = matcher.group(3);
+			String title = matcher.group(4);
+			String date = matcher.group(5);
 			
-			Log.d(CLASSTAG, "url -- " + url + " title -- " + title + " date -- " + date);
+			Log.d(CLASSTAG, "haslrc -- " + haslrc + " hastextzh -- " + hastextzh + " urltext -- " + urltext + " title -- " + title + " date -- " + date);
 			
 			Article article = new Article();
+			
 			article.id = -1;
-			article.url = DataSource.HOST + (url.startsWith("/") ? url : "/" + url);
+			article.urltext = DataSource.HOST + (urltext.startsWith("/") ? urltext : "/" + urltext);
 			article.title = title;
 			article.date = Utils.formatDateString(date);
 			article.type = mType;
 			article.subtype = mSubtype;
+			article.haslrc = (null != haslrc);
+			article.hastextzh = (null != hastextzh);
+				
 			list.add(article);
 		}
 		return list;
