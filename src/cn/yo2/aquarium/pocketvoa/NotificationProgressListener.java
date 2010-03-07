@@ -47,6 +47,12 @@ public class NotificationProgressListener implements IProgressListener {
 		case DownloadTask.WHICH_DOWNLOAD_TEXT:
 			tickerText = contentText = mContext.getString(R.string.notification_download_text_error_ticker);
 			break;
+		case DownloadTask.WHICH_DOWNLOAD_LYRIC:
+			tickerText = contentText = mContext.getString(R.string.notification_download_lyric_error_ticker);
+			break;
+		case DownloadTask.WHICH_DOWNLOAD_TEXTZH:
+			tickerText = contentText = mContext.getString(R.string.notification_download_textzh_error_ticker);
+			break;
 		}
 		
 		long when = System.currentTimeMillis();
@@ -80,6 +86,12 @@ public class NotificationProgressListener implements IProgressListener {
 			break;
 		case DownloadTask.WHICH_DOWNLOAD_TEXT:
 			tickerText = contentText = mContext.getString(R.string.notification_download_text_success_ticker);
+			break;
+		case DownloadTask.WHICH_DOWNLOAD_LYRIC:
+			tickerText = contentText = mContext.getString(R.string.notification_download_lyric_success_ticker);
+			break;
+		case DownloadTask.WHICH_DOWNLOAD_TEXTZH:
+			tickerText = contentText = mContext.getString(R.string.notification_download_textzh_success_ticker);
 			break;
 		}
 		
@@ -117,6 +129,14 @@ public class NotificationProgressListener implements IProgressListener {
 		case DownloadTask.WHICH_DOWNLOAD_TEXT:
 			tickerText = mContext.getString(R.string.notification_download_text_progress_ticker);
 			contentText = mContext.getString(R.string.notification_download_text_progress_content, 100 * pos / total, pos / 1000, total / 1000);
+			break;
+		case DownloadTask.WHICH_DOWNLOAD_LYRIC:
+			tickerText = mContext.getString(R.string.notification_download_lyric_progress_ticker);
+			contentText = mContext.getString(R.string.notification_download_lyric_progress_content, 100 * pos / total, pos / 1000, total / 1000);
+			break;
+		case DownloadTask.WHICH_DOWNLOAD_TEXTZH:
+			tickerText = mContext.getString(R.string.notification_download_textzh_progress_ticker);
+			contentText = mContext.getString(R.string.notification_download_textzh_progress_content, 100 * pos / total, pos / 1000, total / 1000);
 			break;
 		}
 		

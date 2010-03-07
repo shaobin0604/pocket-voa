@@ -79,15 +79,22 @@
 	<string name="prefs_datasource_dialog_title">请选择一个数据来源</string>
 	
 	<string name="notification_download_text_error_ticker">下载文本出错</string>
-	<string name="notification_download_audio_error_ticker">下载 MP3 出错</string>
+	<string name="notification_download_audio_error_ticker">下载音频出错</string>
+	<string name="notification_download_textzh_error_ticker">下载翻译文本出错</string>
+	<string name="notification_download_lyric_error_ticker">下载歌词出错</string>
 	
 	<string name="notification_download_text_success_ticker">下载文本已完成</string>
-	<string name="notification_download_audio_success_ticker">下载 MP3 已完成</string>
+	<string name="notification_download_audio_success_ticker">下载音频已完成</string>
+	<string name="notification_download_textzh_success_ticker">下载翻译文本已完成</string>
+	<string name="notification_download_lyric_success_ticker">下载歌词已完成</string>
 	
 	<string name="notification_download_text_progress_ticker">文本下载中</string>
-	<string name="notification_download_audio_progress_ticker">MP3下载中</string>
+	<string name="notification_download_audio_progress_ticker">音频下载中</string>
+	<string name="notification_download_textzh_progress_ticker">翻译文本下载中</string>
+	<string name="notification_download_lyric_progress_ticker">歌词下载中</string>
 	
 	<string name="notification_download_text_progress_content">文本 %1$d%% 下载中  [%2$d/%3$d]KB</string>
-	<string name="notification_download_audio_progress_content">MP3 %1$d%% 下载中  [%2$d/%3$d]KB</string>
-	
+	<string name="notification_download_audio_progress_content">音频 %1$d%% 下载中  [%2$d/%3$d]KB</string>
+	<string name="notification_download_textzh_progress_content">翻译文本 %1$d%% 下载中  [%2$d/%3$d]KB</string>
+	<string name="notification_download_lyric_progress_content">歌词 %1$d%% 下载中  [%2$d/%3$d]KB</string>
 </resources>

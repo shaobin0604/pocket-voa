@@ -64,13 +64,10 @@ public class Main extends Activity {
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
 	private static final int WHAT_FAIL_PARSE = 2;
-	
-	private static final String[] TYPES_REMOTE = { 
-			"Standard English",
-			"Special English", 
-			"English Learning", 
-	};
-	
+
+	private static final String[] TYPES_REMOTE = { "Standard English",
+			"Special English", "English Learning", };
+
 	private static final String[][] SUBTYPES_REMOTE = {
 			{ "English News", },
 			{ "Development Report", "This is America", "Agriculture Report",
@@ -78,21 +75,20 @@ public class Main extends Activity {
 					"Education Report", "The Making of a Nation",
 					"Economics Report", "American Mosaic", "In the News",
 					"American Stories", "Words And Their Stories",
-					"People in America", }, 
-			{ "Popular American", }, 
-	};
-	
+					"People in America", }, { "Popular American", }, };
+
 	private static final String[] TYPES_LOCAL = { "Standard English",
 			"Special English", "English Learning", };
 
 	private static final String[][] SUBTYPES_LOCAL = {
 			{ "All", "English News", },
-			{ "All", "Development Report", "This is America", "Agriculture Report",
-					"Science in the News", "Health Report", "Explorations",
-					"Education Report", "The Making of a Nation",
-					"Economics Report", "American Mosaic", "In the News",
-					"American Stories", "Words And Their Stories",
-					"People in America", }, { "All", "Popular American", }, };
+			{ "All", "Development Report", "This is America",
+					"Agriculture Report", "Science in the News",
+					"Health Report", "Explorations", "Education Report",
+					"The Making of a Nation", "Economics Report",
+					"American Mosaic", "In the News", "American Stories",
+					"Words And Their Stories", "People in America", },
+			{ "All", "Popular American", }, };
 
 	private enum Error {
 		LoadListError, DownloadError,
@@ -421,12 +417,12 @@ public class Main extends Activity {
 	}
 
 	private void extractTypesRemote() {
-//		mTypesRemote = getResources().getStringArray(R.array.type);
-//
-//		mSubtypesRemote = new String[][] {
-//				getResources().getStringArray(R.array.standard_english),
-//				getResources().getStringArray(R.array.special_english),
-//				getResources().getStringArray(R.array.english_learning), };
+		// mTypesRemote = getResources().getStringArray(R.array.type);
+		//
+		// mSubtypesRemote = new String[][] {
+		// getResources().getStringArray(R.array.standard_english),
+		// getResources().getStringArray(R.array.special_english),
+		// getResources().getStringArray(R.array.english_learning), };
 
 		ArrayAdapter<CharSequence> stAdapter = ArrayAdapter.createFromResource(
 				this, R.array.standard_english,
@@ -452,12 +448,12 @@ public class Main extends Activity {
 
 	private void extractTypesLocal() {
 		// local types: add all option
-//		mTypesLocal = getResources().getStringArray(R.array.type_local);
-//
-//		mSubtypesLocal = new String[][] {
-//				getResources().getStringArray(R.array.standard_english_local),
-//				getResources().getStringArray(R.array.special_english_local),
-//				getResources().getStringArray(R.array.english_learning_local), };
+		// mTypesLocal = getResources().getStringArray(R.array.type_local);
+		//
+		// mSubtypesLocal = new String[][] {
+		// getResources().getStringArray(R.array.standard_english_local),
+		// getResources().getStringArray(R.array.special_english_local),
+		// getResources().getStringArray(R.array.english_learning_local), };
 
 		ArrayAdapter<CharSequence> stAdapterLocal = ArrayAdapter
 				.createFromResource(this, R.array.standard_english_local,
@@ -575,7 +571,7 @@ public class Main extends Activity {
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
 			// without this statement, you would not be able to change
-			// AlertDialog's message in onPreparedDialog
+			// AlertDialog's message in onPrepareDialog
 			builder.setMessage("");
 			builder.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
@@ -641,7 +637,7 @@ public class Main extends Activity {
 			builder4.setIcon(android.R.drawable.ic_dialog_alert);
 			builder4.setTitle(R.string.alert_title_confirm_delete);
 			// without this statement, you would not be able to change
-			// AlertDialog's message in onPreparedDialog
+			// AlertDialog's message in onPrepareDialog
 			builder4.setMessage("");
 			builder4.setPositiveButton(R.string.btn_yes,
 					new DialogInterface.OnClickListener() {
@@ -687,7 +683,7 @@ public class Main extends Activity {
 			builder6.setIcon(android.R.drawable.ic_dialog_alert);
 			builder6.setTitle(R.string.alert_title_confirm_download);
 			// without this statement, you would not be able to change
-			// AlertDialog's message in onPreparedDialog
+			// AlertDialog's message in onPrepareDialog
 			builder6.setMessage("");
 			builder6.setPositiveButton(R.string.btn_yes,
 					new DialogInterface.OnClickListener() {
@@ -749,9 +745,9 @@ public class Main extends Activity {
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
+		AlertDialog alertDialog = (AlertDialog) dialog;
 		switch (id) {
 		case DLG_ERROR:
-			AlertDialog alertDialog = (AlertDialog) dialog;
 			switch (mLastError) {
 			case LoadListError:
 				alertDialog
@@ -760,15 +756,18 @@ public class Main extends Activity {
 			case DownloadError:
 				alertDialog
 						.setMessage(getString(R.string.alert_msg_download_error));
+				break;
 			default:
 				break;
 			}
 			break;
+		case DLG_CONFIRM_DOWNLOAD:
+			alertDialog.setMessage(getString(R.string.alert_msg_confirm_download,
+					mLongClickArticle.title));
+			break;
 		case DLG_CONFIRM_DELETE:
-			AlertDialog alertDialog2 = (AlertDialog) dialog;
-			alertDialog2
-					.setMessage(getString(R.string.alert_msg_confirm_delete,
-							mLongClickArticle.title));
+			alertDialog.setMessage(getString(R.string.alert_msg_confirm_delete,
+					mLongClickArticle.title));
 			break;
 		default:
 			break;
@@ -792,9 +791,12 @@ public class Main extends Activity {
 
 	private void bindLocalList() {
 		if (mSimpleCursorAdapter == null) {
-			mSimpleCursorAdapter = new SimpleCursorAdapter(this,
-					R.layout.list_item, mCursor,
-					new String[] { DatabaseHelper.C_HASLRC, DatabaseHelper.C_HASTEXTZH, DatabaseHelper.C_TITLE, },
+			mSimpleCursorAdapter = new SimpleCursorAdapter(
+					this,
+					R.layout.list_item,
+					mCursor,
+					new String[] { DatabaseHelper.C_HASLRC,
+							DatabaseHelper.C_HASTEXTZH, DatabaseHelper.C_TITLE, },
 					new int[] { R.id.iv_lrc, R.id.iv_textzh, R.id.tv_title, });
 			mSimpleCursorAdapter.setViewBinder(new ViewBinder() {
 
@@ -805,26 +807,26 @@ public class Main extends Activity {
 						ImageView ivLrc = (ImageView) view;
 						boolean haslrc = cursor.getInt(cursor
 								.getColumnIndex(DatabaseHelper.C_HASLRC)) == 1;
-						if (haslrc) 
+						if (haslrc)
 							ivLrc.setImageResource(R.drawable.lrc);
-						else 
+						else
 							ivLrc.setImageResource(R.drawable.no);
-						
+
 						return true;
 					case R.id.iv_textzh:
 						ImageView ivTextzh = (ImageView) view;
 						boolean hastextzh = cursor.getInt(cursor
 								.getColumnIndex(DatabaseHelper.C_HASTEXTZH)) == 1;
-						
+
 						if (hastextzh)
 							ivTextzh.setImageResource(R.drawable.textzh);
-						else 
+						else
 							ivTextzh.setImageResource(R.drawable.no);
-						
+
 						return true;
 					case R.id.tv_title:
 						TextView tvTitle = (TextView) view;
-						
+
 						String title = cursor.getString(cursor
 								.getColumnIndex(DatabaseHelper.C_TITLE));
 						String date = cursor.getString(cursor
@@ -837,7 +839,7 @@ public class Main extends Activity {
 						return true;
 					default:
 						break;
-					}		
+					}
 					return false;
 				}
 			});
@@ -919,6 +921,11 @@ public class Main extends Activity {
 		startService(intent);
 	}
 
+	/**
+	 * Load remote article, parse page
+	 * 
+	 * @param article
+	 */
 	private void loadRemoteArticle(final Article article) {
 		showDialog(DLG_PROGRESS);
 		new Thread() {
@@ -941,6 +948,11 @@ public class Main extends Activity {
 
 				try {
 					mApp.mPageGenerator.getArticle(article, false);
+					if (article.hastextzh) {
+						mApp.mPageGenerator.mParser = mApp.mDataSource
+								.getPageZhParsers().get(key);
+						mApp.mPageGenerator.getArticle(article, true);
+					}
 					mDownloadHandler.sendEmptyMessage(WHAT_SUCCESS);
 				} catch (IOException e) {
 					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_IO);
@@ -990,22 +1002,22 @@ class RowAdapter extends BaseAdapter {
 		}
 
 		Article article = mList.get(position);
-		
+
 		if (TextUtils.isEmpty(article.date))
 			wraper.getTitle().setText(article.title);
 		else
 			wraper.getTitle().setText(
 					String.format("%s (%s)", article.title, Utils
 							.convertDateString(article.date)));
-		
-		if (article.haslrc) 
+
+		if (article.haslrc)
 			wraper.getLrc().setImageResource(R.drawable.lrc);
-		else 
+		else
 			wraper.getLrc().setImageResource(R.drawable.no);
-		
+
 		if (article.hastextzh)
 			wraper.getTextZh().setImageResource(R.drawable.textzh);
-		else 
+		else
 			wraper.getTextZh().setImageResource(R.drawable.no);
 
 		return row;
@@ -1029,19 +1041,19 @@ class ViewWraper {
 		}
 		return tvTitle;
 	}
-	
+
 	ImageView getLrc() {
 		if (ivLrc == null) {
 			ivLrc = (ImageView) root.findViewById(R.id.iv_lrc);
 		}
 		return ivLrc;
 	}
-	
+
 	ImageView getTextZh() {
 		if (ivTextzh == null) {
 			ivTextzh = (ImageView) root.findViewById(R.id.iv_textzh);
 		}
 		return ivTextzh;
-			
+
 	}
 }

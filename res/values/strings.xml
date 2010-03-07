@@ -82,14 +82,22 @@
 	
 	<string name="notification_download_text_error_ticker">Download Text Error</string>
 	<string name="notification_download_audio_error_ticker">Download MP3 Error</string>
+	<string name="notification_download_textzh_error_ticker">Download Text Translated Error</string>
+	<string name="notification_download_lyric_error_ticker">Download Lyric Error</string>
 	
 	<string name="notification_download_text_success_ticker">Download Text Complete</string>
 	<string name="notification_download_audio_success_ticker">Download MP3 Complete</string>
+	<string name="notification_download_textzh_success_ticker">Download Text Translated Complete</string>
+	<string name="notification_download_lyric_success_ticker">Download Lyric Complete</string>
 	
 	<string name="notification_download_text_progress_ticker">Downloading Text</string>
 	<string name="notification_download_audio_progress_ticker">Downloading MP3</string>
+	<string name="notification_download_textzh_progress_ticker">Downloading Text Translated</string>
+	<string name="notification_download_lyric_progress_ticker">Downloading Lyric</string>
 	
 	<string name="notification_download_text_progress_content">Downloading Text %1$d%% [%2$d/%3$d]KB</string>
 	<string name="notification_download_audio_progress_content">Downloading MP3 %1$d%% [%2$d/%3$d]KB</string>
+	<string name="notification_download_textzh_progress_content">Downloading Text Translated %1$d%% [%2$d/%3$d]KB</string>
+	<string name="notification_download_lyric_progress_content">Downloading Lyric %1$d%% [%2$d/%3$d]KB</string>
 	
 </resources>

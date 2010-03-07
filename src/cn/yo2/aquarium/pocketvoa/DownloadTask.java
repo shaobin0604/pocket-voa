@@ -21,6 +21,8 @@ public class DownloadTask implements Runnable {
 
 	public static final int WHICH_DOWNLOAD_TEXT = 0;
 	public static final int WHICH_DOWNLOAD_MP3 = 1;
+	public static final int WHICH_DOWNLOAD_TEXTZH = 2;
+	public static final int WHICH_DOWNLOAD_LYRIC = 3;
 
 	private DefaultHttpClient mClient;
 
@@ -51,24 +53,109 @@ public class DownloadTask implements Runnable {
 	}
 
 	public void run() {
-		if (downloadText() && downloadMp3())
-			mDatabaseHelper.createArticle(mArticle);
+		boolean result = downloadText();
+		if (!result)
+			return;
+		
+		result = downloadMp3();
+		if (!result)
+			return;
+		
+		if (mArticle.hastextzh)
+			result = downloadTextZh();
+		if (!result)
+			return;
+		
+		if (mArticle.haslrc)
+			result = downloadLyric();
+		if (!result)
+			return;
+		
+		mDatabaseHelper.createArticle(mArticle);
+	}
+
+	private boolean downloadText() {
+		return downloadTextFile(mArticle.text, Utils.localTextFile(mArticle),
+				WHICH_DOWNLOAD_TEXT, "Error when download text.");
+	}
+
+	private boolean downloadTextZh() {
+		return downloadTextFile(mArticle.textzh, Utils
+				.localTextZhFile(mArticle), WHICH_DOWNLOAD_TEXTZH,
+				"Error when downloading text translated.");
+	}
+
+	private boolean downloadTextFile(String text, File local, int which,
+			String error) {
+		if (TextUtils.isEmpty(text)) {
+			Log.e(CLASSTAG, "text is empty");
+			for (IProgressListener listener : mListeners) {
+				listener.setError(which, error);
+			}
+			return false;
+		} else {
+			FileWriter fw = null;
+			try {
+				if (!local.exists())
+					local.createNewFile();
+
+				fw = new FileWriter(local);
+				fw.write(text);
+				for (IProgressListener listener : mListeners) {
+					listener.setSuccess(which);
+				}
+				return true;
+			} catch (IOException e) {
+				Log.e(CLASSTAG, error, e);
+				for (IProgressListener listener : mListeners) {
+					listener.setError(which, error);
+				}
+				return false;
+			} finally {
+				if (fw != null)
+					try {
+						fw.close();
+					} catch (IOException e) {
+						// ignore
+					}
+			}
+		}
+	}
+
+	private boolean downloadLyric() {
+		return downloadFile(mArticle.urllrc, Utils.localLyricFile(mArticle),
+				WHICH_DOWNLOAD_LYRIC, "Error when downloading lyric.");
 	}
 
 	private boolean downloadMp3() {
+		return downloadFile(mArticle.urlmp3, Utils.localMp3File(mArticle),
+				WHICH_DOWNLOAD_MP3, "Error when downloading audio.");
+	}
+
+	/**
+	 * Download file from url to local path
+	 * 
+	 * @param url
+	 * @param local
+	 *            the local path you want to save the downloaded file
+	 * @param which
+	 *            the type id to send to download listener
+	 * @param error
+	 *            the error message to send when error occured
+	 * @return true if success, false otherwise
+	 */
+	private boolean downloadFile(String url, File local, int which, String error) {
 		FileOutputStream fos = null;
 		InputStream is = null;
-		HttpGet get = new HttpGet(mArticle.urlmp3);
+		HttpGet get = new HttpGet(url);
 		try {
-
-			File savedAudio = Utils.localMp3File(mArticle);
-			if (!savedAudio.exists())
-				savedAudio.createNewFile();
-			fos = new FileOutputStream(savedAudio);
+			if (!local.exists())
+				local.createNewFile();
+			fos = new FileOutputStream(local);
 			HttpResponse response = mClient.execute(get);
 			HttpEntity entity = response.getEntity();
 			long length = entity.getContentLength();
-//			Log.d(CLASSTAG, "content-length: " + length);
+			// Log.d(CLASSTAG, "content-length: " + length);
 			is = entity.getContent();
 			byte[] buffer = new byte[1024];
 			int len = 0;
@@ -77,19 +164,18 @@ public class DownloadTask implements Runnable {
 				read += len;
 				fos.write(buffer, 0, len);
 				for (IProgressListener listener : mListeners) {
-					listener.updateProgress(WHICH_DOWNLOAD_MP3, read, length);
+					listener.updateProgress(which, read, length);
 				}
 			}
 			for (IProgressListener listener : mListeners) {
-				listener.setSuccess(WHICH_DOWNLOAD_MP3);
+				listener.setSuccess(which);
 			}
 			return true;
 		} catch (IOException e) {
 			get.abort();
-			String msg = "Error when save mp3.";
-//			Log.e(CLASSTAG, msg, e);
+			Log.e(CLASSTAG, error, e);
 			for (IProgressListener listener : mListeners) {
-				listener.setError(WHICH_DOWNLOAD_MP3, msg);
+				listener.setError(which, error);
 			}
 			return false;
 		} finally {
@@ -108,42 +194,4 @@ public class DownloadTask implements Runnable {
 		}
 	}
 
-	private boolean downloadText() {
-		if (TextUtils.isEmpty(mArticle.text)) {
-//			Log.e(CLASSTAG, "text is empty");
-			for (IProgressListener listener : mListeners) {
-				listener.setError(WHICH_DOWNLOAD_TEXT, "text is empty.");
-			}
-			return false;
-		} else {
-			FileWriter fw = null;
-			try {
-				File downloadFile = Utils.localTextFile(mArticle);
-
-				if (!downloadFile.exists())
-					downloadFile.createNewFile();
-			
-				fw = new FileWriter(downloadFile);
-				fw.write(mArticle.text);
-				for (IProgressListener listener : mListeners) {
-					listener.setSuccess(WHICH_DOWNLOAD_TEXT);
-				}
-				return true;
-			} catch (IOException e) {
-				String msg = "Error when save text.";
-				Log.e(CLASSTAG, msg, e);
-				for (IProgressListener listener : mListeners) {
-					listener.setError(WHICH_DOWNLOAD_TEXT, msg);
-				}
-				return false;
-			} finally {
-				if (fw != null)
-					try {
-						fw.close();
-					} catch (IOException e) {
-						// ignore
-					}
-			}
-		}
-	}
 }

@@ -23,6 +23,8 @@ public class Utils {
 		article.subtype = intent.getStringExtra(Article.K_SUBTYPE);
 		article.urltext = intent.getStringExtra(Article.K_URLTEXT);
 		article.date = intent.getStringExtra(Article.K_DATE);
+		
+		article.textzh = intent.getStringExtra(Article.K_TEXTZH);
 		article.haslrc = intent.getBooleanExtra(Article.K_HASLRC, false);
 		article.hastextzh = intent.getBooleanExtra(Article.K_HASTEXTZH, false);
 		article.urllrc = intent.getStringExtra(Article.K_URLLRC);
@@ -40,6 +42,8 @@ public class Utils {
 		intent.putExtra(Article.K_SUBTYPE, article.subtype);
 		intent.putExtra(Article.K_URLTEXT, article.urltext);
 		intent.putExtra(Article.K_URLMP3, article.urlmp3);
+		
+		intent.putExtra(Article.K_TEXTZH, article.textzh);
 		intent.putExtra(Article.K_HASLRC, article.haslrc);
 		intent.putExtra(Article.K_HASTEXTZH, article.hastextzh);
 		intent.putExtra(Article.K_URLLRC, article.urllrc);
@@ -65,6 +69,16 @@ public class Utils {
 	public static File localMp3File(Article article) {
 		return new File(localArticleDir(article), Utils
 				.extractFilename(article.urlmp3));
+	}
+	
+	public static File localTextZhFile(Article article) {
+		return new File(localArticleDir(article), Utils
+				.extractFilename(article.urltextzh));
+	}
+	
+	public static File localLyricFile(Article article) {
+		return new File(localArticleDir(article), Utils
+				.extractFilename(article.urllrc));
 	}
 
 	public static File localArticleDir(Article article) {

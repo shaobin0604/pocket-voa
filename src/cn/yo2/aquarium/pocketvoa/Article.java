@@ -14,7 +14,7 @@ public class Article {
 	public static final String K_URLTEXTZH = "urltextzh";
 	public static final String K_TEXTZH    = "textzh"; 
 	public static final String K_URLLRC    = "urllrc";
-	public static final String K_HASTEXTZH     = "hastextzh";
+	public static final String K_HASTEXTZH = "hastextzh";
 	public static final String K_HASLRC    = "haslrc";
 	
 	
