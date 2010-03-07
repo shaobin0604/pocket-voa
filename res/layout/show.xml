@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:admob="http://schemas.android.com/apk/res/cn.yo2.aquarium.pocketvoa"
+	xmlns:pocketvoa="http://schemas.android.com/apk/res/cn.yo2.aquarium.pocketvoa"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
@@ -8,10 +8,10 @@
     	android:id="@+id/ad" 
     	android:layout_width="fill_parent" 
     	android:layout_height="wrap_content"
-    	admob:backgroundColor="#000000"
-    	admob:textColor="#FFFFFF" 
-    	admob:isGoneWithoutAd="true" 
-    	admob:refreshInterval="60" />
+    	pocketvoa:backgroundColor="#000000"
+    	pocketvoa:textColor="#FFFFFF" 
+    	pocketvoa:isGoneWithoutAd="true" 
+    	pocketvoa:refreshInterval="60" />
 	<ViewFlipper 
 		android:id="@+id/flipper"
         android:layout_width="fill_parent"
@@ -26,6 +26,12 @@
 			android:id="@+id/webview_zh" 
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" 
+			/>
+		<cn.yo2.aquarium.pocketvoa.lyric.LyricView
+			android:id="@+id/lyricview" 
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			pocketvoa:textSize="16dip"
 			/>
 	</ViewFlipper>
 	<LinearLayout 

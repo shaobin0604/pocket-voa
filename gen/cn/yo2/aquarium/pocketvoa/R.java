@@ -33,6 +33,15 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int backgroundColor=0x7f010001;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int focusLineColor=0x7f010006;
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -49,6 +58,15 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int keywords=0x7f010003;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int otherLineColor=0x7f010007;
         /** <p>Must be an integer value, such as "<code>100</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -74,6 +92,16 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int textColor=0x7f010002;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int textSize=0x7f010008;
     }
     public static final class drawable {
         public static final int blank=0x7f020000;
@@ -92,10 +120,10 @@ containing a value of this type.
     public static final class id {
         public static final int ad=0x7f070018;
         public static final int author=0x7f070005;
-        public static final int btn_pause=0x7f07001d;
+        public static final int btn_pause=0x7f07001e;
         public static final int btn_refresh_local=0x7f070011;
         public static final int btn_refresh_remote=0x7f070017;
-        public static final int btn_start=0x7f07001c;
+        public static final int btn_start=0x7f07001d;
         public static final int empty_local=0x7f070010;
         public static final int empty_remote=0x7f070016;
         public static final int flipper=0x7f070019;
@@ -105,7 +133,8 @@ containing a value of this type.
         public static final int license=0x7f070006;
         public static final int list_local=0x7f07000f;
         public static final int list_remote=0x7f070015;
-        public static final int pb_audio=0x7f070020;
+        public static final int lyricview=0x7f07001c;
+        public static final int pb_audio=0x7f070021;
         public static final int root_about=0x7f070000;
         public static final int spinner_subtype_local=0x7f07000e;
         public static final int spinner_subtype_remote=0x7f070014;
@@ -117,9 +146,9 @@ containing a value of this type.
         public static final int tv_app_name=0x7f070002;
         public static final int tv_app_version=0x7f070004;
         public static final int tv_app_version_label=0x7f070003;
-        public static final int tv_ellapsed_time=0x7f07001e;
+        public static final int tv_ellapsed_time=0x7f07001f;
         public static final int tv_title=0x7f07000a;
-        public static final int tv_total_time=0x7f07001f;
+        public static final int tv_total_time=0x7f070020;
         public static final int website=0x7f070007;
         public static final int webview_en=0x7f07001a;
         public static final int webview_zh=0x7f07001b;
@@ -207,6 +236,69 @@ containing a value of this type.
         public static final int settings=0x7f040000;
     }
     public static final class styleable {
+        /** Attributes that can be used with a cn_yo2_aquarium_pocketvoa_lyric_LyricView.
+           <p>Includes the following attributes:</p>
+           <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute<th>Summary</tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor cn.yo2.aquarium.pocketvoa:focusLineColor}</code><td></tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor cn.yo2.aquarium.pocketvoa:otherLineColor}</code><td></tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize cn.yo2.aquarium.pocketvoa:textSize}</code><td></tr>
+           </table>
+           @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor
+           @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor
+           @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize
+         */
+        public static final int[] cn_yo2_aquarium_pocketvoa_lyric_LyricView = {
+            0x7f010006, 0x7f010007, 0x7f010008
+        };
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#focusLineColor}
+          attribute's value can be found in the {@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:focusLineColor
+        */
+        public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor = 0;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#otherLineColor}
+          attribute's value can be found in the {@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:otherLineColor
+        */
+        public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor = 1;
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#textSize}
+          attribute's value can be found in the {@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:textSize
+        */
+        public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize = 2;
         /** Attributes that can be used with a com_admob_android_ads_AdView.
            <p>Includes the following attributes:</p>
            <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">

@@ -8,4 +8,10 @@
 		<attr name="refreshInterval" format="integer" />
 		<attr name="isGoneWithoutAd" format="boolean" />
 	</declare-styleable>
+	
+	<declare-styleable name="cn.yo2.aquarium.pocketvoa.lyric.LyricView">
+		<attr name="focusLineColor" format="color" />
+		<attr name="otherLineColor" format="color" />
+		<attr name="textSize" format="dimension" />
+	</declare-styleable>
 </resources>
