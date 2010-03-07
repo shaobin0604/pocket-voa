@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.ImageButton;
@@ -32,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 
 import com.admob.android.ads.AdView;
 
@@ -343,6 +343,8 @@ public class Show extends Activity {
 		}
 	};
 
+	private LyricView mLyricView;
+
 	private void updatePalyerButton() {
 		switch (mMediaPlayerState) {
 		case Preparing:
@@ -419,6 +421,25 @@ public class Show extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private void loadLyricView() {
+		// show lyric view
+		mViewFlipper.setDisplayedChild(2);
+		if (mArticle.id == -1)
+			loadRemoteLyricView();
+		else
+			loadLocalLyricView();
+	}
+	
+	private void loadLocalLyricView() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void loadRemoteLyricView() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void loadPageZh() {
 		// show translate page
 		mViewFlipper.setDisplayedChild(1);
@@ -520,6 +541,8 @@ public class Show extends Activity {
 
 		mWebViewEn = (WebView) findViewById(R.id.webview_en);
 		mWebViewZh = (WebView) findViewById(R.id.webview_zh);
+	
+		mLyricView = (LyricView) findViewById(R.id.lyricview);
 
 		mBtnStart = (ImageButton) findViewById(R.id.btn_start);
 		mBtnStart.setOnClickListener(mStartButtonClickListener);
