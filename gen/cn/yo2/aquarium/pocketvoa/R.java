@@ -33,6 +33,14 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int backgroundColor=0x7f010001;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int errorMessage=0x7f010009;
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
 <p>This may also be a reference to a resource (in the form
@@ -251,17 +259,33 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute<th>Summary</tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage cn.yo2.aquarium.pocketvoa:errorMessage}</code><td></tr>
            <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor cn.yo2.aquarium.pocketvoa:focusLineColor}</code><td></tr>
            <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor cn.yo2.aquarium.pocketvoa:otherLineColor}</code><td></tr>
            <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize cn.yo2.aquarium.pocketvoa:textSize}</code><td></tr>
            </table>
+           @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize
          */
         public static final int[] cn_yo2_aquarium_pocketvoa_lyric_LyricView = {
-            0x7f010006, 0x7f010007, 0x7f010008
+            0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009
         };
+        /**
+          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#errorMessage}
+          attribute's value can be found in the {@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:errorMessage
+        */
+        public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage = 3;
         /**
           <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#focusLineColor}
           attribute's value can be found in the {@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView} array.

@@ -1,5 +1,7 @@
 package cn.yo2.aquarium.pocketvoa;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 
@@ -40,6 +42,11 @@ public class Show extends Activity {
 
 	private static final String[] KEYWORDS = { "android game farm",
 			"food sport", "life auto outdoor", "iphone", };
+
+	// Current View in ViewFlipper
+	private static final int VIEW_ORIGINAL = 0;
+	private static final int VIEW_TRANSLATION = 1;
+	private static final int VIEW_LYRIC = 2;
 
 	// Activity managed Dialogs
 	private static final int DLG_PROGRESS_SPIN = 1;
@@ -107,8 +114,16 @@ public class Show extends Activity {
 	private TextView mTvEllapsedTime;
 	private TextView mTvTotalTime;
 	private ProgressBar mProgressBar;
-	
+
 	private int mCurrentView;
+
+	private boolean mRemoteOriginalLoaded;
+	private boolean mRemoteTranslationLoaded;
+	private boolean mRemoteLyricLoaded;
+
+	private boolean mLocalOriginalLoaded;
+	private boolean mLocalTranslationLoaded;
+	private boolean mLocalLyricLoaded;
 
 	private int mPlayProgress; // 1..100
 	private int mTotalTime; // in millis
@@ -182,7 +197,7 @@ public class Show extends Activity {
 
 	};
 
-	private Handler mDownloadMp3Handler = new Handler() {
+	private Handler mDownloadHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -218,6 +233,28 @@ public class Show extends Activity {
 		}
 	};
 
+	private Handler mLyricHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_PLAYER_PROGRESS:
+				if (mMediaPlayerState == MediaPlayerState.Started) {
+					// TODO update LyricView
+					Log.d(CLASSTAG, "in mLyricHandler");
+					if (mCurrentView == VIEW_LYRIC) {
+						mLyricView.update(mMediaPlayer.getCurrentPosition());
+						mLyricHandler.sendEmptyMessageDelayed(WHAT_PLAYER_PROGRESS, 100);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
+
 	private Handler mPlayerHandler = new Handler() {
 
 		@Override
@@ -226,12 +263,12 @@ public class Show extends Activity {
 			case WHAT_PLAYER_PROGRESS:
 				if (mMediaPlayerState == MediaPlayerState.Started) {
 					mEllapsedTime = mMediaPlayer.getCurrentPosition();
-					Log.d(CLASSTAG, "playing millis -- " + mEllapsedTime
-							+ " duration -- " + mTotalTime);
+//					Log.d(CLASSTAG, "playing millis -- " + mEllapsedTime
+//							+ " duration -- " + mTotalTime);
 					updateProgressBar();
 
 					mPlayProgress = mEllapsedTime * 100 / mTotalTime;
-					Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
+//					Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
 					updateEllapsedTime();
 
 					mPlayerHandler.sendEmptyMessageDelayed(
@@ -289,6 +326,9 @@ public class Show extends Activity {
 				mMediaPlayerState = MediaPlayerState.Started;
 				updatePalyerButton();
 				mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+				
+				if (mCurrentView == VIEW_LYRIC) 
+					mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 			}
 
 		}
@@ -335,6 +375,9 @@ public class Show extends Activity {
 			updatePalyerButton();
 
 			mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+			
+			if (mCurrentView == VIEW_LYRIC)
+				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 		}
 	};
 
@@ -398,7 +441,7 @@ public class Show extends Activity {
 		mTvTotalTime.setText(DateUtils.formatElapsedTime(mRecycle,
 				mTotalTime / 1000));
 	}
-	
+
 	private boolean isRemote() {
 		return mArticle.id == -1;
 	}
@@ -415,7 +458,7 @@ public class Show extends Activity {
 				R.string.menu_lrc);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
 				R.string.menu_download).setIcon(R.drawable.file_download);
-		
+
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_ORIGINAL, Menu.NONE,
 				R.string.menu_original);
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_TRANSLATION, Menu.NONE,
@@ -431,11 +474,12 @@ public class Show extends Activity {
 		if (isRemote()) {
 			menu.setGroupVisible(MENU_REMOTE_GROUP, true);
 			menu.setGroupVisible(MENU_LOCAL_GROUP, false);
-			
+
 			switch (mCurrentView) {
 			case 0:
 				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(false);
-				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(
+						mArticle.hastextzh);
 				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(mArticle.haslrc);
 				break;
 			case 1:
@@ -445,20 +489,23 @@ public class Show extends Activity {
 				break;
 			case 2:
 				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(true);
-				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(
+						mArticle.hastextzh);
 				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(false);
 				break;
 			default:
-				throw new RuntimeException("mCurrentView invalid -- " + mCurrentView);
+				throw new RuntimeException("mCurrentView invalid -- "
+						+ mCurrentView);
 			}
 		} else {
 			menu.setGroupVisible(MENU_REMOTE_GROUP, false);
 			menu.setGroupVisible(MENU_LOCAL_GROUP, true);
-			
+
 			switch (mCurrentView) {
 			case 0:
 				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(false);
-				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(
+						mArticle.hastextzh);
 				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(mArticle.haslrc);
 				break;
 			case 1:
@@ -468,14 +515,16 @@ public class Show extends Activity {
 				break;
 			case 2:
 				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(true);
-				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(
+						mArticle.hastextzh);
 				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(false);
 				break;
 			default:
-				throw new RuntimeException("mCurrentView invalid -- " + mCurrentView);
+				throw new RuntimeException("mCurrentView invalid -- "
+						+ mCurrentView);
 			}
 		}
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -483,23 +532,29 @@ public class Show extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_REMOTE_ORIGINAL:
-			mCurrentView = 0;
+			if (!mRemoteOriginalLoaded)
+				loadRemoteOriginal();
+			mCurrentView = VIEW_ORIGINAL;
 			mViewFlipper.setDisplayedChild(mCurrentView);
-			loadRemotePage();
-			return true;
 			
+			return true;
+
 		case MENU_REMOTE_TRANSLATION:
-			mCurrentView = 1;
+			if (!mRemoteTranslationLoaded)
+				loadRemoteTranslation();
+			mCurrentView = VIEW_TRANSLATION;
 			mViewFlipper.setDisplayedChild(mCurrentView);
-			loadRemotePageZh();
-			return true;
-		
-		case MENU_REMOTE_LYRIC:
-			mCurrentView = 2;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			loadRemoteLyricView();
-			return true;
 			
+			return true;
+
+		case MENU_REMOTE_LYRIC:
+			if (!mRemoteLyricLoaded)
+				loadRemoteLyricView();
+			mCurrentView = VIEW_LYRIC;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			
+			return true;
+
 		case MENU_REMOTE_DOWNLOAD:
 			// check if the article has been downloaded
 			if (mDatabaseHelper.isArticleExist(mArticle)) {
@@ -509,43 +564,46 @@ public class Show extends Activity {
 
 			}
 			return true;
-			
+
 		case MENU_LOCAL_ORIGINAL:
-			mCurrentView = 0;
+			if (!mLocalOriginalLoaded)
+				loadLocalOriginal();
+			mCurrentView = VIEW_ORIGINAL;
 			mViewFlipper.setDisplayedChild(mCurrentView);
-			loadLocalPage();
-			return true;
 			
+			return true;
+
 		case MENU_LOCAL_TRANSLATION:
-			mCurrentView = 1;
+			if (!mLocalTranslationLoaded)
+				loadLocalTranslation();
+			mCurrentView = VIEW_TRANSLATION;
 			mViewFlipper.setDisplayedChild(mCurrentView);
-			loadLocalPageZh();
-			return true;
-		
-		case MENU_LOCAL_LYRIC:
-			mCurrentView = 2;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			loadLocalLyricView();
-			return true;
 			
+			return true;
+
+		case MENU_LOCAL_LYRIC:
+			if (!mLocalLyricLoaded)
+				loadLocalLyricView();
+			mCurrentView = VIEW_LYRIC;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			
+			return true;
+
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void loadLyricView() {
-		// show lyric view
-		mViewFlipper.setDisplayedChild(2);
-		if (mArticle.id == -1)
-			loadRemoteLyricView();
-		else
-			loadLocalLyricView();
-	}
-
 	private void loadLocalLyricView() {
 		// TODO Auto-generated method stub
-
+		try {
+			mLocalLyricLoaded = mLyricView.loadLyric(new FileInputStream(Utils
+					.localLyricFile(mArticle)));
+		} catch (FileNotFoundException e) {
+			mLocalLyricLoaded = false;
+			mLyricView.setError();
+		}
 	}
 
 	private void loadRemoteLyricView() {
@@ -553,7 +611,7 @@ public class Show extends Activity {
 
 	}
 
-	private void loadRemotePageZh() {
+	private void loadRemoteTranslation() {
 		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
@@ -564,12 +622,15 @@ public class Show extends Activity {
 								mArticle.type + "_" + mArticle.subtype);
 				try {
 					mApp.mPageGenerator.getArticle(mArticle, true);
+					mRemoteTranslationLoaded = true;
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS);
 				} catch (IOException e) {
+					mRemoteTranslationLoaded = false;
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_IO);
 				} catch (IllegalContentFormatException e) {
+					mRemoteTranslationLoaded = false;
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_PARSE);
 				}
@@ -579,7 +640,7 @@ public class Show extends Activity {
 
 	}
 
-	private void loadLocalPageZh() {
+	private void loadLocalTranslation() {
 		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
@@ -587,9 +648,11 @@ public class Show extends Activity {
 			public void run() {
 				try {
 					mArticle.textzh = Utils.loadTextZh(mArticle);
+					mLocalTranslationLoaded = true;
 					mLoadLocalPageHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS);
 				} catch (IOException e) {
+					mLocalTranslationLoaded = false;
 					mLoadLocalPageHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_IO);
 				}
@@ -602,8 +665,7 @@ public class Show extends Activity {
 		showDialog(DLG_PROGRESS_BAR);
 		DownloadTask task = new DownloadTask(mApp.mHttpClient, mDatabaseHelper,
 				mArticle);
-		task.addProgressListener(new HandlerProgressListener(
-				mDownloadMp3Handler));
+		task.addProgressListener(new HandlerProgressListener(mDownloadHandler));
 		new Thread(task).start();
 	}
 
@@ -642,9 +704,9 @@ public class Show extends Activity {
 
 		// load page
 		if (mArticle.id == -1)
-			loadRemotePage();
+			loadRemoteOriginal();
 		else
-			loadLocalPage();
+			loadLocalOriginal();
 	}
 
 	private void setupWidgets() {
@@ -684,7 +746,7 @@ public class Show extends Activity {
 		mMediaPlayer.setOnCompletionListener(mCompletionListener);
 	}
 
-	private void loadLocalPage() {
+	private void loadLocalOriginal() {
 		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
@@ -692,9 +754,11 @@ public class Show extends Activity {
 			public void run() {
 				try {
 					mArticle.text = Utils.loadText(mArticle);
+					mLocalOriginalLoaded = true;
 					mLoadLocalPageHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_SUCCESS);
 				} catch (IOException e) {
+					mLocalOriginalLoaded = false;
 					mLoadLocalPageHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_FAIL_IO);
 				}
@@ -703,7 +767,7 @@ public class Show extends Activity {
 		}.start();
 	}
 
-	private void loadRemotePage() {
+	private void loadRemoteOriginal() {
 		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
@@ -713,12 +777,15 @@ public class Show extends Activity {
 						.get(mArticle.type + "_" + mArticle.subtype);
 				try {
 					mApp.mPageGenerator.getArticle(mArticle, false);
+					mRemoteOriginalLoaded = true;
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_SUCCESS);
 				} catch (IOException e) {
+					mRemoteOriginalLoaded = false;
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_FAIL_IO);
 				} catch (IllegalContentFormatException e) {
+					mRemoteOriginalLoaded = false;
 					mLoadRemotePageHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE);
 				}

@@ -13,5 +13,6 @@
 		<attr name="focusLineColor" format="color" />
 		<attr name="otherLineColor" format="color" />
 		<attr name="textSize" format="dimension" />
+		<attr name="errorMessage" format="string" />
 	</declare-styleable>
 </resources>
