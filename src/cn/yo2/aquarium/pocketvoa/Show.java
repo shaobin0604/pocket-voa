@@ -37,12 +37,9 @@ import com.admob.android.ads.AdView;
 
 public class Show extends Activity {
 	private static final String CLASSTAG = Show.class.getSimpleName();
-	
-	private static final String[] KEYWORDS = {
-		"android game farm",
-		"food sport",
-		"life auto outdoor",
-	};
+
+	private static final String[] KEYWORDS = { "android game farm",
+			"food sport", "life auto outdoor", "iphone", };
 
 	// Activity managed Dialogs
 	private static final int DLG_PROGRESS_SPIN = 1;
@@ -50,10 +47,19 @@ public class Show extends Activity {
 	private static final int DLG_ERROR = 3;
 	private static final int DLG_CONFIRM_DOWNLOAD = 4;
 
+	// Option Menu Groups
+	private static final int MENU_REMOTE_GROUP = 1;
+	private static final int MENU_LOCAL_GROUP = 2;
+
 	// Option Menus
-	private static final int MENU_DOWNLOAD = Menu.FIRST;
-	private static final int MENU_TRANSLATE = Menu.FIRST + 1;
-	private static final int MENU_LRC = Menu.FIRST + 2;
+	private static final int MENU_REMOTE_ORIGINAL = Menu.FIRST;
+	private static final int MENU_REMOTE_TRANSLATION = Menu.FIRST + 1;
+	private static final int MENU_REMOTE_LYRIC = Menu.FIRST + 2;
+	private static final int MENU_REMOTE_DOWNLOAD = Menu.FIRST + 3;
+
+	private static final int MENU_LOCAL_ORIGINAL = Menu.FIRST + 4;
+	private static final int MENU_LOCAL_TRANSLATION = Menu.FIRST + 5;
+	private static final int MENU_LOCAL_LYRIC = Menu.FIRST + 6;
 
 	// Load remote page handler message type
 	private static final int WHAT_LOAD_REMOTE_PAGE_SUCCESS = 0;
@@ -67,6 +73,9 @@ public class Show extends Activity {
 	private static final int WHAT_LOAD_LOCAL_PAGE_SUCCESS = 0;
 	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_IO = 1;
 	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE = 2;
+	private static final int WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS = 3;
+	private static final int WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_IO = 4;
+	private static final int WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_PARSE = 5;
 
 	// MediaPlayer handler message type
 	private static final int WHAT_PLAYER_PROGRESS = 0;
@@ -98,6 +107,8 @@ public class Show extends Activity {
 	private TextView mTvEllapsedTime;
 	private TextView mTvTotalTime;
 	private ProgressBar mProgressBar;
+	
+	private int mCurrentView;
 
 	private int mPlayProgress; // 1..100
 	private int mTotalTime; // in millis
@@ -122,8 +133,8 @@ public class Show extends Activity {
 				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
 			case WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS:
-				mWebViewZh.loadDataWithBaseURL("", mArticle.textzh, "text/html",
-						"utf-8", "");
+				mWebViewZh.loadDataWithBaseURL("", mArticle.textzh,
+						"text/html", "utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
 			case WHAT_LOAD_REMOTE_PAGE_FAIL_IO:
@@ -151,8 +162,15 @@ public class Show extends Activity {
 						"utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
 				break;
+			case WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS:
+				mWebViewZh.loadDataWithBaseURL("", mArticle.textzh,
+						"text/html", "utf-8", "");
+				dismissDialog(DLG_PROGRESS_SPIN);
+				break;
 			case WHAT_LOAD_LOCAL_PAGE_FAIL_IO:
 			case WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE:
+			case WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_IO:
+			case WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS_SPIN);
 				mLastError = Error.LoadLocalPageError;
 				showDialog(DLG_ERROR);
@@ -380,30 +398,109 @@ public class Show extends Activity {
 		mTvTotalTime.setText(DateUtils.formatElapsedTime(mRecycle,
 				mTotalTime / 1000));
 	}
+	
+	private boolean isRemote() {
+		return mArticle.id == -1;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, MENU_DOWNLOAD, Menu.NONE, R.string.menu_download)
-				.setIcon(R.drawable.file_download);
-		menu.add(Menu.NONE, MENU_TRANSLATE, Menu.NONE, R.string.menu_translate);
-		menu.add(Menu.NONE, MENU_LRC, Menu.NONE, R.string.menu_lrc);
+
+		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_ORIGINAL, Menu.NONE,
+				R.string.menu_original);
+		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_TRANSLATION, Menu.NONE,
+				R.string.menu_translation);
+		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_LYRIC, Menu.NONE,
+				R.string.menu_lrc);
+		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
+				R.string.menu_download).setIcon(R.drawable.file_download);
+		
+		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_ORIGINAL, Menu.NONE,
+				R.string.menu_original);
+		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_TRANSLATION, Menu.NONE,
+				R.string.menu_translation);
+		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_LYRIC, Menu.NONE,
+				R.string.menu_lrc);
 
 		return result;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.getItem(0).setEnabled(mArticle.id == -1);
-		menu.getItem(1).setEnabled(mArticle.hastextzh);
-		menu.getItem(2).setEnabled(mArticle.haslrc);
+		if (isRemote()) {
+			menu.setGroupVisible(MENU_REMOTE_GROUP, true);
+			menu.setGroupVisible(MENU_LOCAL_GROUP, false);
+			
+			switch (mCurrentView) {
+			case 0:
+				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(false);
+				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(mArticle.haslrc);
+				break;
+			case 1:
+				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(true);
+				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(false);
+				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(mArticle.haslrc);
+				break;
+			case 2:
+				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(true);
+				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(false);
+				break;
+			default:
+				throw new RuntimeException("mCurrentView invalid -- " + mCurrentView);
+			}
+		} else {
+			menu.setGroupVisible(MENU_REMOTE_GROUP, false);
+			menu.setGroupVisible(MENU_LOCAL_GROUP, true);
+			
+			switch (mCurrentView) {
+			case 0:
+				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(false);
+				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(mArticle.haslrc);
+				break;
+			case 1:
+				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(true);
+				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(false);
+				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(mArticle.haslrc);
+				break;
+			case 2:
+				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(true);
+				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(mArticle.hastextzh);
+				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(false);
+				break;
+			default:
+				throw new RuntimeException("mCurrentView invalid -- " + mCurrentView);
+			}
+		}
+		
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_DOWNLOAD:
+		case MENU_REMOTE_ORIGINAL:
+			mCurrentView = 0;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			loadRemotePage();
+			return true;
+			
+		case MENU_REMOTE_TRANSLATION:
+			mCurrentView = 1;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			loadRemotePageZh();
+			return true;
+		
+		case MENU_REMOTE_LYRIC:
+			mCurrentView = 2;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			loadRemoteLyricView();
+			return true;
+			
+		case MENU_REMOTE_DOWNLOAD:
 			// check if the article has been downloaded
 			if (mDatabaseHelper.isArticleExist(mArticle)) {
 				showDialog(DLG_CONFIRM_DOWNLOAD);
@@ -412,15 +509,31 @@ public class Show extends Activity {
 
 			}
 			return true;
-		case MENU_TRANSLATE:
-			loadPageZh();
+			
+		case MENU_LOCAL_ORIGINAL:
+			mCurrentView = 0;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			loadLocalPage();
 			return true;
+			
+		case MENU_LOCAL_TRANSLATION:
+			mCurrentView = 1;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			loadLocalPageZh();
+			return true;
+		
+		case MENU_LOCAL_LYRIC:
+			mCurrentView = 2;
+			mViewFlipper.setDisplayedChild(mCurrentView);
+			loadLocalLyricView();
+			return true;
+			
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private void loadLyricView() {
 		// show lyric view
 		mViewFlipper.setDisplayedChild(2);
@@ -429,35 +542,26 @@ public class Show extends Activity {
 		else
 			loadLocalLyricView();
 	}
-	
+
 	private void loadLocalLyricView() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void loadRemoteLyricView() {
 		// TODO Auto-generated method stub
-		
-	}
 
-	private void loadPageZh() {
-		// show translate page
-		mViewFlipper.setDisplayedChild(1);
-		if (mArticle.id == -1)
-			loadRemotePageZh();
-		else
-			loadLocalPageZh();
 	}
 
 	private void loadRemotePageZh() {
-		// TODO use zh page parser
 		showDialog(DLG_PROGRESS_SPIN);
 		new Thread() {
 
 			@Override
 			public void run() {
-				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageZhParsers()
-						.get(mArticle.type + "_" + mArticle.subtype);
+				mApp.mPageGenerator.mParser = mApp.mDataSource
+						.getPageZhParsers().get(
+								mArticle.type + "_" + mArticle.subtype);
 				try {
 					mApp.mPageGenerator.getArticle(mArticle, true);
 					mLoadRemotePageHandler
@@ -476,7 +580,22 @@ public class Show extends Activity {
 	}
 
 	private void loadLocalPageZh() {
-		// TODO add code to complete this method
+		showDialog(DLG_PROGRESS_SPIN);
+		new Thread() {
+
+			@Override
+			public void run() {
+				try {
+					mArticle.textzh = Utils.loadTextZh(mArticle);
+					mLoadLocalPageHandler
+							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS);
+				} catch (IOException e) {
+					mLoadLocalPageHandler
+							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_IO);
+				}
+			}
+
+		}.start();
 	}
 
 	private void downloadArticleModal() {
@@ -503,7 +622,6 @@ public class Show extends Activity {
 		// no title bar
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		
 		setContentView(R.layout.show);
 
 		mApp = (App) getApplication();
@@ -531,7 +649,7 @@ public class Show extends Activity {
 
 	private void setupWidgets() {
 		mAdView = (AdView) findViewById(R.id.ad);
-		
+
 		String keywords = KEYWORDS[new Random(System.currentTimeMillis())
 				.nextInt(KEYWORDS.length)];
 		Log.d(CLASSTAG, "keywords -- " + keywords);
@@ -541,7 +659,7 @@ public class Show extends Activity {
 
 		mWebViewEn = (WebView) findViewById(R.id.webview_en);
 		mWebViewZh = (WebView) findViewById(R.id.webview_zh);
-	
+
 		mLyricView = (LyricView) findViewById(R.id.lyricview);
 
 		mBtnStart = (ImageButton) findViewById(R.id.btn_start);
@@ -633,14 +751,15 @@ public class Show extends Activity {
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
 			// without this statement, you would not be able to change
-			// AlertDialog's message in onPreparedDialog
+			// AlertDialog's message in onPrepareDialog
 			builder.setMessage("");
 			builder.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							
-
+							// Go back to Main Activity
+							// TODO Can add some retry support
+							Show.this.finish();
 						}
 					});
 			return builder.create();
@@ -649,7 +768,7 @@ public class Show extends Activity {
 			builder2.setIcon(android.R.drawable.ic_dialog_alert);
 			builder2.setTitle(R.string.alert_title_confirm_download);
 			// without this statement, you would not be able to change
-			// AlertDialog's message in onPreparedDialog
+			// AlertDialog's message in onPrepareDialog
 			builder2.setMessage("");
 			builder2.setPositiveButton(R.string.btn_yes,
 					new DialogInterface.OnClickListener() {

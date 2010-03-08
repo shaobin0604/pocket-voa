@@ -51,8 +51,15 @@ public class Utils {
 	}
 
 	public static String loadText(Article article) throws IOException {
-		File downloadFile = localTextFile(article);
-		FileReader fr = new FileReader(downloadFile);
+		return loadTextFile(localTextFile(article));
+	}
+	
+	public static String loadTextZh(Article article) throws IOException {
+		return loadTextFile(localTextZhFile(article));
+	}
+	
+	public static String loadTextFile(File file) throws IOException {
+		FileReader fr = new FileReader(file);
 		StringBuilder text = new StringBuilder();
 		char[] buf = new char[1024];
 		while (fr.read(buf) != -1) {

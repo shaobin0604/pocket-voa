@@ -4,14 +4,6 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
-	<com.admob.android.ads.AdView
-    	android:id="@+id/ad" 
-    	android:layout_width="fill_parent" 
-    	android:layout_height="wrap_content"
-    	pocketvoa:backgroundColor="#000000"
-    	pocketvoa:textColor="#FFFFFF" 
-    	pocketvoa:isGoneWithoutAd="true" 
-    	pocketvoa:refreshInterval="60" />
 	<ViewFlipper 
 		android:id="@+id/flipper"
         android:layout_width="fill_parent"
@@ -82,4 +74,12 @@
         		android:secondaryProgress="0" />
         </LinearLayout>
 	</LinearLayout>
+	<com.admob.android.ads.AdView
+    	android:id="@+id/ad" 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content"
+    	pocketvoa:backgroundColor="#000000"
+    	pocketvoa:textColor="#FFFFFF" 
+    	pocketvoa:isGoneWithoutAd="true" 
+    	pocketvoa:refreshInterval="60" />
 </LinearLayout>

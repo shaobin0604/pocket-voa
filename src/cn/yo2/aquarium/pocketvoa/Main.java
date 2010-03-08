@@ -646,8 +646,18 @@ public class Main extends Activity {
 							dialog.dismiss();
 							Utils.delete(Utils.localTextFile(mLongClickArticle)
 									.getAbsolutePath());
+
 							Utils.delete(Utils.localMp3File(mLongClickArticle)
 									.getAbsolutePath());
+
+							if (mLongClickArticle.hastextzh)
+								Utils.delete(Utils.localTextZhFile(
+										mLongClickArticle).getAbsolutePath());
+
+							if (mLongClickArticle.haslrc)
+								Utils.delete(Utils.localLyricFile(
+										mLongClickArticle).getAbsolutePath());
+
 							mDatabaseHelper.deleteArticle(mLongClickArticle.id);
 							Toast.makeText(Main.this,
 									R.string.toast_article_deleted,
@@ -762,7 +772,8 @@ public class Main extends Activity {
 			}
 			break;
 		case DLG_CONFIRM_DOWNLOAD:
-			alertDialog.setMessage(getString(R.string.alert_msg_confirm_download,
+			alertDialog.setMessage(getString(
+					R.string.alert_msg_confirm_download,
 					mLongClickArticle.title));
 			break;
 		case DLG_CONFIRM_DELETE:

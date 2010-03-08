@@ -53,7 +53,12 @@
 	<string name="toast_download_text_complete">文本下载完成</string>
 	
 	<string name="menu_internet_status">网络状态</string>
+	
 	<string name="menu_download">下载</string>
+	<string name="menu_original">原文</string>
+	<string name="menu_translation">译文</string>
+	<string name="menu_lrc">歌词</string>
+	
 	<string name="menu_about">关于</string>
 	<string name="menu_settings">设置</string>
 	<string name="menu_exit">退出</string>

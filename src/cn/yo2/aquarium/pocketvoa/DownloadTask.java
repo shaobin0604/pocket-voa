@@ -56,22 +56,25 @@ public class DownloadTask implements Runnable {
 		boolean result = downloadText();
 		if (!result)
 			return;
-		
+
 		result = downloadMp3();
 		if (!result)
 			return;
-		
+
 		if (mArticle.hastextzh)
 			result = downloadTextZh();
 		if (!result)
 			return;
-		
+
 		if (mArticle.haslrc)
 			result = downloadLyric();
 		if (!result)
 			return;
 		
-		mDatabaseHelper.createArticle(mArticle);
+		if (mDatabaseHelper.isArticleExist(mArticle))
+			mDatabaseHelper.updateArticle(mArticle);
+		else
+			mDatabaseHelper.createArticle(mArticle);
 	}
 
 	private boolean downloadText() {
