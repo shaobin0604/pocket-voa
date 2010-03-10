@@ -193,35 +193,13 @@ public class Lyric {
 		}
 		return null;
 	}
-	
-	public Sentence getSentenceInTimeFast(long time) {
-		int start = 0, end = list.size() - 1;
-		int mid;
-		int range;
-		Sentence sentence = null;
-		while (true) {
-			range = end - start;
-			
-			if (range == 0 && !sentence.isInTime(time))
-				return null;
-			
-			mid = start + range/2;
-			sentence = list.get(mid);
-			if (sentence.isInTime(time)) 
-				return sentence;
-			else if (time < sentence.mFromTime)
-				end = mid - 1;
-			else 
-				start = mid + 1;
-		}
-		
-	}
+
 
 	public Sentence getSentence(int index) {
 		return list.get(index);
 	}
 
-	public int getIndexInTime(long time) {
+	public int getSentenceIndexInTime(long time) {
 		for (int i = 0; i < list.size(); i++) {
 			Sentence sentence = list.get(i);
 			if (sentence.isInTime(time)) {
@@ -231,26 +209,44 @@ public class Lyric {
 		return -1;
 	}
 	
-	public int getIndexInTimeFast(long time) {
+//	public int getSentenceIndexInTimeFast(long time) {
+//		int start = 0, end = list.size() - 1;
+//		int mid;
+//		int range;
+//		Sentence sentence = null;
+//		while (true) {
+//			range = end - start;
+//			
+//			if (range == 0 && !sentence.isInTime(time))
+//				return -1;
+//			
+//			mid = start + range/2;
+//			sentence = list.get(mid);
+//			if (sentence.isInTime(time)) 
+//				return mid;
+//			else if (time < sentence.mFromTime)
+//				end = mid - 1;
+//			else 
+//				start = mid + 1;
+//		}
+//	}
+	
+	public int getSentenceIndexInTimeFast(long time) {
 		int start = 0, end = list.size() - 1;
 		int mid;
-		int range;
 		Sentence sentence = null;
-		while (true) {
-			range = end - start;
+		while (start <= end) {
 			
-			if (range == 0 && !sentence.isInTime(time))
-				return -1;
-			
-			mid = start + range/2;
+			mid = start + (end - start)/2;
 			sentence = list.get(mid);
-			if (sentence.isInTime(time)) 
-				return mid;
+			if (time > sentence.mToTime) 
+				start = mid + 1;
 			else if (time < sentence.mFromTime)
 				end = mid - 1;
 			else 
-				start = mid + 1;
+				return mid;
 		}
+		return -1;
 	}
 
 	public int getSize() {

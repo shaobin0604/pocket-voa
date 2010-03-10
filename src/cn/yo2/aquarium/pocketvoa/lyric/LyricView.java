@@ -1,6 +1,7 @@
 package cn.yo2.aquarium.pocketvoa.lyric;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -32,16 +33,16 @@ public class LyricView extends View {
 	private int mLineHeight;
 
 	// Current playing Sentence line number
-	private int mCurrentIndex;
+	private int mCurrentLineIndex;
 	// Current playing line vertical offset from half of view height
-	private int mCurrentOffset;
+	private int mCurrentVerticalOffset;
 	// Current playing Sentence
 	private Sentence mCurrentSentence;
 
 	// The Lyric object
 	private Lyric mLyric;
 
-	private List mLineWidth;
+	private List<Float> mLineLeftX;
 
 	// View width
 	private int mWidth;
@@ -55,10 +56,13 @@ public class LyricView extends View {
 
 	private String mErrorMessage;
 
-	private boolean mError;
+	private boolean mLyricLoaded;
 
 	public LyricView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+
+		Log.d(TAG, "in LyricView Constructor");
+
 		mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
 		TypedArray params = context.obtainStyledAttributes(attrs,
@@ -89,29 +93,47 @@ public class LyricView extends View {
 		mLineHeight = fmi.bottom - fmi.top;
 
 		mLyric = new Lyric();
+
+		mLineLeftX = new ArrayList<Float>();
 	}
 
 	public boolean loadLyric(InputStream is) {
-		mError = !mLyric.parseLyric(is);
-		update(0);
-		return mError;
+		Log.d(TAG, "in loadLyric");
+		mLyricLoaded = mLyric.parseLyric(is);
+		if (mLyricLoaded)
+			resetLyric();
+		return mLyricLoaded;
+	}
+	
+	public void resetLyric() {
+		mCurrentLineIndex = 0;
+		mCurrentSentence = mLyric.getSentence(mCurrentLineIndex);
+	}
+
+	private void calculateLineLeftX() {
+		mLineLeftX.clear();
+		for (int i = 0; i < mLyric.getSize(); i++) {
+			mLineLeftX.add((mWidth - mTextPaint.measureText(mLyric
+					.getSentence(i).mContent)) / 2);
+		}
 	}
 
 	public boolean update(long time) {
-		Log.d(TAG, "in update");
-		if (mCurrentIndex == mLyric.getSize() - 1)
+		Log.d(TAG, "in update time -- " + time);
+		if (mCurrentLineIndex == mLyric.getSize() - 1)
 			return false;
+
+		// if (mCurrentSentence == null) {
+		// mCurrentIndex = 0;
+		// } else if (time > mCurrentSentence.mToTime) {
+		// mCurrentIndex++;
+		// }
 		
-//		if (mCurrentSentence == null) {
-//			mCurrentIndex = 0;
-//		} else if (time > mCurrentSentence.mToTime) {
-//			mCurrentIndex++;
-//		}
-//		mCurrentIndex = mLyric.getIndexInTimeFast(time);
-		
-		mCurrentIndex = mLyric.getIndexInTime(time);
-		mCurrentSentence = mLyric.getSentence(mCurrentIndex);
-		mCurrentOffset = getVerticalOffset(mCurrentSentence.mFromTime,
+		mCurrentLineIndex = mLyric.getSentenceIndexInTimeFast(time);
+
+//		mCurrentLineIndex = mLyric.getSentenceIndexInTime(time);
+		mCurrentSentence = mLyric.getSentence(mCurrentLineIndex);
+		mCurrentVerticalOffset = getVerticalOffset(mCurrentSentence.mFromTime,
 				mCurrentSentence.mToTime, time);
 
 		invalidate();
@@ -196,37 +218,33 @@ public class LyricView extends View {
 	}
 
 	private void drawFocusedLine(Canvas canvas) {
-		Log.d(TAG, "CurrentIndex -- " + mCurrentIndex);
-		
+		Log.d(TAG, "CurrentIndex -- " + mCurrentLineIndex);
+
 		mTextPaint.setColor(mFocusLineColor);
 
 		String content = mCurrentSentence.mContent;
-		canvas.drawText(content,
-				(mWidth - mTextPaint.measureText(content)) / 2, mHeight / 2
-						- mCurrentOffset, mTextPaint);
+		canvas.drawText(content, mLineLeftX.get(mCurrentLineIndex), mHalfHeight
+				- mCurrentVerticalOffset, mTextPaint);
 	}
 
 	private void drawOtherLines(Canvas canvas) {
 		mTextPaint.setColor(mOtherLineColor);
 		// draw lines above focused line
-		for (int index = mCurrentIndex - 1, y = mHalfHeight - mCurrentOffset
-				- mLineHeight, count = 0; count < mOtherLineCount && index >= 0; index--, y -= mLineHeight, count++) {
+		for (int index = mCurrentLineIndex - 1, y = mHalfHeight - mCurrentVerticalOffset
+				- mLineHeight, count = 0; count < mOtherLineCount 
+				&& index >= 0; index--, y -= mLineHeight, count++) {
 			String content = mLyric.getSentence(index).mContent;
-//			Log.d(TAG, "line i " + index + " has content -- " + content);
-			canvas.drawText(content,
-					(mWidth - mTextPaint.measureText(content)) / 2, y,
-					mTextPaint);
+			// Log.d(TAG, "line i " + index + " has content -- " + content);
+			canvas.drawText(content, mLineLeftX.get(index), y, mTextPaint);
 		}
 
 		// draw lines below focused line
-		for (int index = mCurrentIndex + 1, y = mHalfHeight - mCurrentOffset
+		for (int index = mCurrentLineIndex + 1, y = mHalfHeight - mCurrentVerticalOffset
 				+ mLineHeight, count = 0; count < mOtherLineCount
 				&& index < mLyric.getSize(); index++, y += mLineHeight, count++) {
 			String content = mLyric.getSentence(index).mContent;
-//			 Log.d(TAG, "line i " + index + " has content -- " + content);
-			canvas.drawText(content,
-					(mWidth - mTextPaint.measureText(content)) / 2, y,
-					mTextPaint);
+			// Log.d(TAG, "line i " + index + " has content -- " + content);
+			canvas.drawText(content, mLineLeftX.get(index), y, mTextPaint);
 		}
 	}
 
@@ -240,12 +258,12 @@ public class LyricView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-
-		if (mError)
-			drawErrorMessage(canvas);
-		else {
+		Log.d(TAG, "in onDraw");
+		if (mLyricLoaded) {
 			drawFocusedLine(canvas);
 			drawOtherLines(canvas);
+		} else {
+			drawErrorMessage(canvas);
 		}
 	}
 
@@ -258,17 +276,16 @@ public class LyricView extends View {
 
 		mHalfHeight = mHeight / 2;
 		mOtherLineCount = mHalfHeight / 2;
+
+		if (mLyricLoaded)
+			calculateLineLeftX();
 	}
-	
-	public void setError() {
-		mError = true;
+
+	public void setLyricLoaded() {
+		mLyricLoaded = true;
 	}
-	
-	public void clearError() {
-		mError = false;
-	}
-	
-	public boolean isError() {
-		return mError;
+
+	public void clearLyricLoaded() {
+		mLyricLoaded = false;
 	}
 }

@@ -72,17 +72,25 @@ public class Show extends Activity {
 	private static final int WHAT_LOAD_REMOTE_PAGE_SUCCESS = 0;
 	private static final int WHAT_LOAD_REMOTE_PAGE_FAIL_IO = 1;
 	private static final int WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE = 2;
+
 	private static final int WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS = 3;
 	private static final int WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_IO = 4;
 	private static final int WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_PARSE = 5;
+
+	private static final int WHAT_LOAD_REMOTE_LYRIC_SUCCESS = 6;
+	private static final int WHAT_LOAD_REMOTE_LYRIC_FAIL_IO = 7;
 
 	// Load local page handler message type
 	private static final int WHAT_LOAD_LOCAL_PAGE_SUCCESS = 0;
 	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_IO = 1;
 	private static final int WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE = 2;
+
 	private static final int WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS = 3;
 	private static final int WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_IO = 4;
 	private static final int WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_PARSE = 5;
+
+	private static final int WHAT_LOAD_LOCAL_LYRIC_SUCCESS = 6;
+	private static final int WHAT_LOAD_LOCAL_LYRIC_FAIL_IO = 7;
 
 	// MediaPlayer handler message type
 	private static final int WHAT_PLAYER_PROGRESS = 0;
@@ -137,7 +145,7 @@ public class Show extends Activity {
 
 	private DatabaseHelper mDatabaseHelper;
 
-	private Handler mLoadRemotePageHandler = new Handler() {
+	private Handler mLoadRemoteHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
@@ -146,11 +154,18 @@ public class Show extends Activity {
 				mWebViewEn.loadDataWithBaseURL("", mArticle.text, "text/html",
 						"utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
+				mViewFlipper.setDisplayedChild(mCurrentView);
 				break;
 			case WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS:
 				mWebViewZh.loadDataWithBaseURL("", mArticle.textzh,
 						"text/html", "utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				break;
+			case WHAT_LOAD_REMOTE_LYRIC_SUCCESS:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 				break;
 			case WHAT_LOAD_REMOTE_PAGE_FAIL_IO:
 			case WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE:
@@ -160,6 +175,12 @@ public class Show extends Activity {
 				mLastError = Error.LoadRemotePageError;
 				showDialog(DLG_ERROR);
 				break;
+			case WHAT_LOAD_REMOTE_LYRIC_FAIL_IO:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				mLastError = Error.LoadRemotePageError;
+				showDialog(DLG_ERROR);
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				break;
 			default:
 				break;
 			}
@@ -167,7 +188,7 @@ public class Show extends Activity {
 
 	};
 
-	private Handler mLoadLocalPageHandler = new Handler() {
+	private Handler mLoadLocalHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
@@ -176,11 +197,18 @@ public class Show extends Activity {
 				mWebViewEn.loadDataWithBaseURL("", mArticle.text, "text/html",
 						"utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
+				mViewFlipper.setDisplayedChild(mCurrentView);
 				break;
 			case WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS:
 				mWebViewZh.loadDataWithBaseURL("", mArticle.textzh,
 						"text/html", "utf-8", "");
 				dismissDialog(DLG_PROGRESS_SPIN);
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				break;
+			case WHAT_LOAD_LOCAL_LYRIC_SUCCESS:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 				break;
 			case WHAT_LOAD_LOCAL_PAGE_FAIL_IO:
 			case WHAT_LOAD_LOCAL_PAGE_FAIL_PARSE:
@@ -189,6 +217,12 @@ public class Show extends Activity {
 				dismissDialog(DLG_PROGRESS_SPIN);
 				mLastError = Error.LoadLocalPageError;
 				showDialog(DLG_ERROR);
+				break;
+			case WHAT_LOAD_LOCAL_LYRIC_FAIL_IO:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				mLastError = Error.LoadLocalPageError;
+				showDialog(DLG_ERROR);
+				mViewFlipper.setDisplayedChild(mCurrentView);
 				break;
 			default:
 				break;
@@ -244,7 +278,8 @@ public class Show extends Activity {
 					Log.d(CLASSTAG, "in mLyricHandler");
 					if (mCurrentView == VIEW_LYRIC) {
 						mLyricView.update(mMediaPlayer.getCurrentPosition());
-						mLyricHandler.sendEmptyMessageDelayed(WHAT_PLAYER_PROGRESS, 100);
+						mLyricHandler.sendEmptyMessageDelayed(
+								WHAT_PLAYER_PROGRESS, 100);
 					}
 				}
 				break;
@@ -263,12 +298,12 @@ public class Show extends Activity {
 			case WHAT_PLAYER_PROGRESS:
 				if (mMediaPlayerState == MediaPlayerState.Started) {
 					mEllapsedTime = mMediaPlayer.getCurrentPosition();
-//					Log.d(CLASSTAG, "playing millis -- " + mEllapsedTime
-//							+ " duration -- " + mTotalTime);
+					// Log.d(CLASSTAG, "playing millis -- " + mEllapsedTime
+					// + " duration -- " + mTotalTime);
 					updateProgressBar();
 
 					mPlayProgress = mEllapsedTime * 100 / mTotalTime;
-//					Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
+					// Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
 					updateEllapsedTime();
 
 					mPlayerHandler.sendEmptyMessageDelayed(
@@ -326,8 +361,8 @@ public class Show extends Activity {
 				mMediaPlayerState = MediaPlayerState.Started;
 				updatePalyerButton();
 				mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
-				
-				if (mCurrentView == VIEW_LYRIC) 
+
+				if (mCurrentView == VIEW_LYRIC)
 					mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 			}
 
@@ -375,7 +410,7 @@ public class Show extends Activity {
 			updatePalyerButton();
 
 			mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
-			
+
 			if (mCurrentView == VIEW_LYRIC)
 				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
 		}
@@ -401,6 +436,8 @@ public class Show extends Activity {
 
 			updateEllapsedTime();
 			updateProgressBar();
+
+			resetLyricView();
 		}
 	};
 
@@ -426,6 +463,10 @@ public class Show extends Activity {
 		default:
 			break;
 		}
+	}
+
+	protected void resetLyricView() {
+		mLyricView.resetLyric();
 	}
 
 	private void updateProgressBar() {
@@ -532,27 +573,32 @@ public class Show extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_REMOTE_ORIGINAL:
+			mCurrentView = VIEW_ORIGINAL;
 			if (!mRemoteOriginalLoaded)
 				loadRemoteOriginal();
-			mCurrentView = VIEW_ORIGINAL;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			
+			else
+				mViewFlipper.setDisplayedChild(mCurrentView);
+
 			return true;
 
 		case MENU_REMOTE_TRANSLATION:
+			mCurrentView = VIEW_TRANSLATION;
 			if (!mRemoteTranslationLoaded)
 				loadRemoteTranslation();
-			mCurrentView = VIEW_TRANSLATION;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			
+			else
+				mViewFlipper.setDisplayedChild(mCurrentView);
+
 			return true;
 
 		case MENU_REMOTE_LYRIC:
+			mCurrentView = VIEW_LYRIC;
 			if (!mRemoteLyricLoaded)
 				loadRemoteLyricView();
-			mCurrentView = VIEW_LYRIC;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			
+			else {
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+			}
+
 			return true;
 
 		case MENU_REMOTE_DOWNLOAD:
@@ -566,27 +612,31 @@ public class Show extends Activity {
 			return true;
 
 		case MENU_LOCAL_ORIGINAL:
+			mCurrentView = VIEW_ORIGINAL;
 			if (!mLocalOriginalLoaded)
 				loadLocalOriginal();
-			mCurrentView = VIEW_ORIGINAL;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			
+			else
+				mViewFlipper.setDisplayedChild(mCurrentView);
+
 			return true;
 
 		case MENU_LOCAL_TRANSLATION:
+			mCurrentView = VIEW_TRANSLATION;
 			if (!mLocalTranslationLoaded)
 				loadLocalTranslation();
-			mCurrentView = VIEW_TRANSLATION;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			
+			else
+				mViewFlipper.setDisplayedChild(mCurrentView);
+
 			return true;
 
 		case MENU_LOCAL_LYRIC:
+			mCurrentView = VIEW_LYRIC;
 			if (!mLocalLyricLoaded)
 				loadLocalLyricView();
-			mCurrentView = VIEW_LYRIC;
-			mViewFlipper.setDisplayedChild(mCurrentView);
-			
+			else {
+				mViewFlipper.setDisplayedChild(mCurrentView);
+				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+			}
 			return true;
 
 		default:
@@ -596,19 +646,61 @@ public class Show extends Activity {
 	}
 
 	private void loadLocalLyricView() {
-		// TODO Auto-generated method stub
-		try {
-			mLocalLyricLoaded = mLyricView.loadLyric(new FileInputStream(Utils
-					.localLyricFile(mArticle)));
-		} catch (FileNotFoundException e) {
-			mLocalLyricLoaded = false;
-			mLyricView.setError();
-		}
+		showDialog(DLG_PROGRESS_SPIN);
+		new Thread() {
+
+			@Override
+			public void run() {
+				try {
+					mLocalLyricLoaded = mLyricView
+							.loadLyric(new FileInputStream(Utils
+									.localLyricFile(mArticle)));
+					if (mLocalLyricLoaded)
+						mLoadLocalHandler
+								.sendEmptyMessage(WHAT_LOAD_LOCAL_LYRIC_SUCCESS);
+				} catch (FileNotFoundException e) {
+					Log.d(CLASSTAG, "loadLocalLyricView fail.", e);
+					mLocalLyricLoaded = false;
+					mLyricView.clearLyricLoaded();
+					mLoadLocalHandler
+							.sendEmptyMessage(WHAT_LOAD_LOCAL_LYRIC_FAIL_IO);
+				}
+			}
+
+		}.start();
+
 	}
 
 	private void loadRemoteLyricView() {
-		// TODO Auto-generated method stub
+		showDialog(DLG_PROGRESS_SPIN);
+		new Thread() {
 
+			@Override
+			public void run() {
+				try {
+					mRemoteLyricLoaded = mLyricView.loadLyric(Utils
+							.getInputStreamFromUrl(mApp.mHttpClient,
+									mArticle.urllrc));
+					Log.d(CLASSTAG, "loadRemoteLyricView: "
+							+ mRemoteLyricLoaded);
+					if (mRemoteLyricLoaded) {
+						mLoadRemoteHandler
+								.sendEmptyMessage(WHAT_LOAD_REMOTE_LYRIC_SUCCESS);
+					} else {
+						mLyricView.clearLyricLoaded();
+						mLoadRemoteHandler
+								.sendEmptyMessage(WHAT_LOAD_REMOTE_LYRIC_FAIL_IO);
+					}
+				} catch (IOException e) {
+					Log.d(CLASSTAG, "loadRemoteLyricView fail.", e);
+					mRemoteLyricLoaded = false;
+					mLyricView.clearLyricLoaded();
+					mLoadRemoteHandler
+							.sendEmptyMessage(WHAT_LOAD_REMOTE_LYRIC_FAIL_IO);
+				}
+			}
+
+		}.start();
 	}
 
 	private void loadRemoteTranslation() {
@@ -623,15 +715,15 @@ public class Show extends Activity {
 				try {
 					mApp.mPageGenerator.getArticle(mArticle, true);
 					mRemoteTranslationLoaded = true;
-					mLoadRemotePageHandler
+					mLoadRemoteHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_SUCCESS);
 				} catch (IOException e) {
 					mRemoteTranslationLoaded = false;
-					mLoadRemotePageHandler
+					mLoadRemoteHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_IO);
 				} catch (IllegalContentFormatException e) {
 					mRemoteTranslationLoaded = false;
-					mLoadRemotePageHandler
+					mLoadRemoteHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_ZH_FAIL_PARSE);
 				}
 			}
@@ -649,11 +741,11 @@ public class Show extends Activity {
 				try {
 					mArticle.textzh = Utils.loadTextZh(mArticle);
 					mLocalTranslationLoaded = true;
-					mLoadLocalPageHandler
+					mLoadLocalHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_ZH_SUCCESS);
 				} catch (IOException e) {
 					mLocalTranslationLoaded = false;
-					mLoadLocalPageHandler
+					mLoadLocalHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_ZH_FAIL_IO);
 				}
 			}
@@ -755,11 +847,11 @@ public class Show extends Activity {
 				try {
 					mArticle.text = Utils.loadText(mArticle);
 					mLocalOriginalLoaded = true;
-					mLoadLocalPageHandler
+					mLoadLocalHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_SUCCESS);
 				} catch (IOException e) {
 					mLocalOriginalLoaded = false;
-					mLoadLocalPageHandler
+					mLoadLocalHandler
 							.sendEmptyMessage(WHAT_LOAD_LOCAL_PAGE_FAIL_IO);
 				}
 			}
@@ -778,15 +870,15 @@ public class Show extends Activity {
 				try {
 					mApp.mPageGenerator.getArticle(mArticle, false);
 					mRemoteOriginalLoaded = true;
-					mLoadRemotePageHandler
+					mLoadRemoteHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_SUCCESS);
 				} catch (IOException e) {
 					mRemoteOriginalLoaded = false;
-					mLoadRemotePageHandler
+					mLoadRemoteHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_FAIL_IO);
 				} catch (IllegalContentFormatException e) {
 					mRemoteOriginalLoaded = false;
-					mLoadRemotePageHandler
+					mLoadRemoteHandler
 							.sendEmptyMessage(WHAT_LOAD_REMOTE_PAGE_FAIL_PARSE);
 				}
 			}

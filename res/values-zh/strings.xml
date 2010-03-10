@@ -13,6 +13,7 @@
 	<string name="app_website">http://aquarium.yo2.cn/</string>
 	
 	<string name="no_data">没有数据 :-(</string>
+	<string name="no_lyric">无法加载歌词:-(</string>
 	
 	<string name="alert_title_internet_status">网络连接状态</string>
 	<string name="alert_msg_internet_status_connected">已连接</string>

@@ -13,6 +13,7 @@
 	<string name="app_website">http://aquarium.yo2.cn/</string>
 	
 	<string name="no_data">No Data :-(</string>
+	<string name="no_lyric">Cannot Load Lyric :-(</string>
 	
 	<string name="alert_title_internet_status">Internet Connection Status</string>
 	<string name="alert_msg_internet_status_connected">Connected</string>

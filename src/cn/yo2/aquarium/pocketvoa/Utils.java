@@ -3,6 +3,11 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,13 +28,13 @@ public class Utils {
 		article.subtype = intent.getStringExtra(Article.K_SUBTYPE);
 		article.urltext = intent.getStringExtra(Article.K_URLTEXT);
 		article.date = intent.getStringExtra(Article.K_DATE);
-		
+
 		article.textzh = intent.getStringExtra(Article.K_TEXTZH);
 		article.haslrc = intent.getBooleanExtra(Article.K_HASLRC, false);
 		article.hastextzh = intent.getBooleanExtra(Article.K_HASTEXTZH, false);
 		article.urllrc = intent.getStringExtra(Article.K_URLLRC);
 		article.urltextzh = intent.getStringExtra(Article.K_URLTEXTZH);
-		
+
 		return article;
 	}
 
@@ -42,7 +47,7 @@ public class Utils {
 		intent.putExtra(Article.K_SUBTYPE, article.subtype);
 		intent.putExtra(Article.K_URLTEXT, article.urltext);
 		intent.putExtra(Article.K_URLMP3, article.urlmp3);
-		
+
 		intent.putExtra(Article.K_TEXTZH, article.textzh);
 		intent.putExtra(Article.K_HASLRC, article.haslrc);
 		intent.putExtra(Article.K_HASTEXTZH, article.hastextzh);
@@ -53,11 +58,11 @@ public class Utils {
 	public static String loadText(Article article) throws IOException {
 		return loadTextFile(localTextFile(article));
 	}
-	
+
 	public static String loadTextZh(Article article) throws IOException {
 		return loadTextFile(localTextZhFile(article));
 	}
-	
+
 	public static String loadTextFile(File file) throws IOException {
 		FileReader fr = new FileReader(file);
 		StringBuilder text = new StringBuilder();
@@ -77,12 +82,12 @@ public class Utils {
 		return new File(localArticleDir(article), Utils
 				.extractFilename(article.urlmp3));
 	}
-	
+
 	public static File localTextZhFile(Article article) {
 		return new File(localArticleDir(article), Utils
 				.extractFilename(article.urltextzh));
 	}
-	
+
 	public static File localLyricFile(Article article) {
 		return new File(localArticleDir(article), Utils
 				.extractFilename(article.urllrc));
@@ -256,5 +261,22 @@ public class Utils {
 		}
 		sb.append(parts[2]);
 		return sb.toString();
+	}
+
+	public static InputStream getInputStreamFromUrl(HttpClient client,
+			String url) throws IOException {
+		HttpGet get = new HttpGet(url);
+		try {
+			return client.execute(get).getEntity().getContent();
+		} catch (IllegalStateException e) {
+			get.abort();
+			throw e;
+		} catch (ClientProtocolException e) {
+			get.abort();
+			throw e;
+		} catch (IOException e) {
+			get.abort();
+			throw e;
+		}
 	}
 }
