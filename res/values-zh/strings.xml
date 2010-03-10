@@ -66,6 +66,8 @@
 	<string name="menu_view">查看</string>
 	<string name="menu_delete">删除</string>
 	
+	<string name="btn_retry">重试</string>
+	<string name="btn_cancel">取消</string>
 	<string name="btn_ok">确定</string>
 	<string name="btn_refresh">刷新</string>
 	<string name="btn_yes">是</string>

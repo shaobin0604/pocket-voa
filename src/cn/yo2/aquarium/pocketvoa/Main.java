@@ -579,7 +579,7 @@ public class Main extends Activity {
 			// without this statement, you would not be able to change
 			// AlertDialog's message in onPrepareDialog
 			builder.setMessage("");
-			builder.setPositiveButton("Retry",
+			builder.setPositiveButton(R.string.btn_retry,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -599,11 +599,11 @@ public class Main extends Activity {
 
 						}
 					});
-			builder.setNegativeButton("Cancel",
+			builder.setNegativeButton(R.string.btn_cancel,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
-							// 
+							// Do nothing, just close the dialog
 
 						}
 					});
