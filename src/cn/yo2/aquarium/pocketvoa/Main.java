@@ -64,6 +64,10 @@ public class Main extends Activity {
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
 	private static final int WHAT_FAIL_PARSE = 2;
+	
+	private static final int CMD_REFRESH_REMOTE_LIST = 0;
+	private static final int CMD_REFRESH_LOCAL_LIST = 1;
+	private static final int CMD_DOWNLOAD_ARTICLE = 2;
 
 	private static final String[] TYPES_REMOTE = { "Standard English",
 			"Special English", "English Learning", };
@@ -95,6 +99,8 @@ public class Main extends Activity {
 	}
 
 	private Error mLastError;
+	
+	private int mLastCommand;
 
 	private App mApp;
 
@@ -274,7 +280,7 @@ public class Main extends Activity {
 		// set up widgets for remote tab
 		setupRemoteTabWidgets();
 
-		refreshLocalList();
+		commandRefreshLocalList();
 	}
 
 	@Override
@@ -312,7 +318,7 @@ public class Main extends Activity {
 
 			public void onClick(View v) {
 
-				refreshRemoteList();
+				commandRefreshRemoteList();
 			}
 		});
 
@@ -364,7 +370,7 @@ public class Main extends Activity {
 		btnRefreshLocal.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				refreshLocalList();
+				commandRefreshLocalList();
 			}
 		});
 
@@ -573,7 +579,27 @@ public class Main extends Activity {
 			// without this statement, you would not be able to change
 			// AlertDialog's message in onPrepareDialog
 			builder.setMessage("");
-			builder.setNeutralButton(R.string.btn_ok,
+			builder.setPositiveButton("Retry",
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							switch (mLastCommand) {
+							case CMD_REFRESH_LOCAL_LIST:
+								commandRefreshLocalList();
+								break;
+							case CMD_REFRESH_REMOTE_LIST:
+								commandRefreshRemoteList();
+								break;
+							case CMD_DOWNLOAD_ARTICLE:
+								commandDownloadArticle(mLongClickArticle);
+								break;
+							default:
+								break;
+							}
+
+						}
+					});
+			builder.setNegativeButton("Cancel",
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -623,7 +649,7 @@ public class Main extends Activity {
 								startShowActivity(mLongClickArticle);
 								break;
 							case 1:
-								loadRemoteArticle(mLongClickArticle);
+								commandDownloadArticle(mLongClickArticle);
 								break;
 							default:
 								break;
@@ -662,7 +688,7 @@ public class Main extends Activity {
 							Toast.makeText(Main.this,
 									R.string.toast_article_deleted,
 									Toast.LENGTH_SHORT).show();
-							refreshLocalList();
+							commandRefreshLocalList();
 						}
 					});
 
@@ -861,7 +887,8 @@ public class Main extends Activity {
 
 	}
 
-	private void refreshLocalList() {
+	private void commandRefreshLocalList() {
+		mLastCommand = CMD_REFRESH_LOCAL_LIST;
 		showDialog(DLG_PROGRESS);
 
 		new Thread() {
@@ -886,7 +913,8 @@ public class Main extends Activity {
 		}.start();
 	}
 
-	private void refreshRemoteList() {
+	private void commandRefreshRemoteList() {
+		mLastCommand = CMD_REFRESH_REMOTE_LIST;
 		showDialog(DLG_PROGRESS);
 		new Thread() {
 
@@ -937,7 +965,8 @@ public class Main extends Activity {
 	 * 
 	 * @param article
 	 */
-	private void loadRemoteArticle(final Article article) {
+	private void commandDownloadArticle(final Article article) {
+		mLastCommand = CMD_DOWNLOAD_ARTICLE;
 		showDialog(DLG_PROGRESS);
 		new Thread() {
 
@@ -973,6 +1002,21 @@ public class Main extends Activity {
 			}
 
 		}.start();
+	}
+
+	private class RefreshRemoteListCommand implements Command {
+
+		public void execute() {
+			commandRefreshRemoteList();
+		}
+	}
+
+	private class RefreshLocalListCommand implements Command {
+
+		public void execute() {
+			commandRefreshLocalList();
+		}
+
 	}
 }
 
