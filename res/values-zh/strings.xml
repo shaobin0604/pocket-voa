@@ -15,6 +15,8 @@
 	<string name="no_data">没有数据 :-(</string>
 	<string name="no_lyric">无法加载歌词:-(</string>
 	
+	<string name="alert_title_what_is_new">更新日志</string>
+	
 	<string name="alert_title_internet_status">网络连接状态</string>
 	<string name="alert_msg_internet_status_connected">已连接</string>
 	<string name="alert_msg_internet_status_disconnected">已断开</string>
@@ -29,7 +31,7 @@
 	<string name="alert_title_confirm_download">确认删除</string>
 	<string name="alert_msg_confirm_download">你之前已经下载过文章 - \"%1$s\", 你确认要重新下载吗?</string>
 	
-	<string name="alert_title_error">发生错误</string>
+	<string name="alert_title_error">注意</string>
 	
 	<string name="alert_msg_load_remote_page_error">无法加载远程网页</string>
 	<string name="alert_msg_load_local_page_error">无法加载本地网页</string>

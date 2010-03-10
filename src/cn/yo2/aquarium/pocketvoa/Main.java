@@ -12,7 +12,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -45,6 +49,8 @@ import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class Main extends Activity {
 	private static final String CLASSTAG = Main.class.getSimpleName();
+	
+	private static final String KEY_VERSION_CODE = "versionCode";
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
 	private static final int MENU_TEST = Menu.FIRST + 1;
@@ -60,6 +66,7 @@ public class Main extends Activity {
 	private static final int DLG_ABOUT = 6;
 	private static final int DLG_INTERNET_STATUS_CONNECTED = 7;
 	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 8;
+	private static final int DLG_WHAT_IS_NEW = 9;
 
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
@@ -93,6 +100,7 @@ public class Main extends Activity {
 					"American Mosaic", "In the News", "American Stories",
 					"Words And Their Stories", "People in America", },
 			{ "All", "Popular American", }, };
+
 
 	private enum Error {
 		LoadListError, DownloadError,
@@ -572,6 +580,7 @@ public class Main extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
+		
 		case DLG_ERROR:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
@@ -773,6 +782,19 @@ public class Main extends Activity {
 						}
 					});
 			return builder8.create();
+		case DLG_WHAT_IS_NEW:
+			AlertDialog.Builder builder9 = new AlertDialog.Builder(this);
+			builder9.setIcon(android.R.drawable.ic_dialog_info);
+			builder9.setTitle(R.string.alert_title_what_is_new);
+			builder9.setNeutralButton(R.string.btn_ok,
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// 
+
+						}
+					});
+			return builder9.create();
 		default:
 			break;
 		}
@@ -1003,20 +1025,49 @@ public class Main extends Activity {
 
 		}.start();
 	}
-
-	private class RefreshRemoteListCommand implements Command {
-
-		public void execute() {
-			commandRefreshRemoteList();
+	
+	private int getCurrentVersionCode() {
+		PackageManager manager = getPackageManager();
+		String packageName = getPackageName();
+//		Log.d(CLASSTAG, "package name -- " + packageName);
+		try {
+			PackageInfo info = manager.getPackageInfo(packageName, 0);
+			return info.versionCode;
+		} catch (NameNotFoundException e) {
+			return 1;
 		}
 	}
 
-	private class RefreshLocalListCommand implements Command {
+	/**
+	 * Check if application is just upgraded
+	 * 
+	 * @return 
+	 */
+	private boolean isJustUpgraded() {
+		int currentVersionCode = getCurrentVersionCode();
+		int savedVersionCode = getSavedVersionCode();
+//		Log.d(CLASSTAG, "current version code -- " + currentVersionCode);
+//		Log.d(CLASSTAG, "saved version code -- " + savedVersionCode);
+		return currentVersionCode != savedVersionCode;
+	}
 
-		public void execute() {
-			commandRefreshLocalList();
-		}
-
+	/**
+	 * Get saved package version code from preferences 
+	 * 
+	 * @return the saved package version code
+	 */
+	private int getSavedVersionCode() {
+		return getPreferences(MODE_PRIVATE).getInt(KEY_VERSION_CODE, 0);
+	}
+	
+	/**
+	 * Save current package version code to preferences
+	 */
+	private void setSavedVersionCode() {
+		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		editor.putInt(KEY_VERSION_CODE, getCurrentVersionCode());
+		editor.commit();
 	}
 }
 
