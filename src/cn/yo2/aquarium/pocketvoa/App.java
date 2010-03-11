@@ -44,7 +44,11 @@ public class App extends Application {
 
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		mDataSource = getDataSourceFromPrefs(mSharedPreferences);
+		// since version 1.1.0 remove multiple datasource support.
+//		mDataSource = getDataSourceFromPrefs(mSharedPreferences);
+		
+		mDataSource = getDefaultDataSource();
+		mDataSource.init(getMaxCountFromPrefs(mSharedPreferences));
 	}
 
 	public final DefaultHttpClient mHttpClient = setupHttpClient();

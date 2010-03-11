@@ -1,0 +1,20 @@
+Pocket VOA - An online/offline reader for Voice of American program.
+
+Version 1.1.0 [11/03/2010]
+	- New: Add What is New? dialog when first run.
+	- New: Add Help menu item.
+	- New: Add indicator icon to article list. Letter T for which has Chinese translation, and letter L for which has Lyric.
+	- New: Show Chinese translation in Show Activity.
+	- New: Show Lyric in Show Activity.
+	- New: Add Retry button to error alert dialog.
+	- New: Add WakeLock to Show Activity.
+	- New: Remove www.iciba.com DataSource for it does not provide Chinese translation and Lyric.
+
+Version 1.0.2 [14/01/2010]
+	- New: Support Simplified Chinese  
+
+Version 1.0.1 [18/12/2009]
+	- Fix Bug: Application crash when download article which does not have publish date.
+	
+Version 1.0.0 [17/12/2009]
+	- Initial release

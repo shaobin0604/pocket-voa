@@ -15,7 +15,7 @@ public class DatabaseHelper {
 
 	private static final String DB_NAME = "pocketvoa.db";
 
-	private static final int DB_VER = 5;
+	private static final int DB_VER = 4;
 
 	static final String T_ARTICLES = "articles";
 
@@ -29,7 +29,7 @@ public class DatabaseHelper {
 	static final String C_URLTEXT = Article.K_URLTEXT;
 	static final String C_URLMP3 = Article.K_URLMP3;
 
-	// the following two columns added from db version 4
+	// the following four columns added from db version 4
 	static final String C_URLTEXTZH = Article.K_URLTEXTZH;
 	static final String C_URLLRC = Article.K_URLLRC;
 
@@ -42,13 +42,9 @@ public class DatabaseHelper {
 	private static final String CREATE_TABLE_SQL = "CREATE TABLE " + T_ARTICLES
 			+ "(" + C_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + C_TYPE
 			+ " TEXT," + C_SUBTYPE + " TEXT," + C_TITLE + " TEXT," + C_DATE
-			+ " INTEGER,"
-
-			+ C_URLTEXT + " TEXT," + C_URLMP3 + " TEXT,"
-
-			+ C_URLTEXTZH + " TEXT," + C_URLLRC + " TEXT,"
-
-			+ C_HASTEXTZH + " INTEGER," + C_HASLRC + " INTEGER" + ");";
+			+ " INTEGER," + C_URLTEXT + " TEXT," + C_URLMP3 + " TEXT,"
+			+ C_URLTEXTZH + " TEXT," + C_URLLRC + " TEXT," + C_HASTEXTZH
+			+ " INTEGER," + C_HASLRC + " INTEGER" + ");";
 
 	private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS "
 			+ T_ARTICLES + ";";
@@ -208,7 +204,7 @@ public class DatabaseHelper {
 
 		values.put(C_HASTEXTZH, article.hastextzh ? 1 : 0);
 		values.put(C_HASLRC, article.haslrc ? 1 : 0);
-		return mDb.update(T_ARTICLES, values, "id = " + article.id, null);
+		return mDb.update(T_ARTICLES, values, C_ID + "=" + article.id, null);
 	}
 
 	public int deleteArticle(long id) {
@@ -240,7 +236,7 @@ public class DatabaseHelper {
 			Log.w(CLASSTAG, msg);
 
 			if (oldVersion == 3 && newVersion == 4) {
-				// from version 3 to 4, add two columns
+				// from db version 3 to 4, add four columns, change two columns
 				db.beginTransaction();
 				try {
 					db

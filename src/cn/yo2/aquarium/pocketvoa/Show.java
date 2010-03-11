@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,6 +22,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -109,6 +112,8 @@ public class Show extends Activity {
 	private Error mLastError;
 
 	private App mApp;
+
+	private WakeLock mWakeLock;
 
 	// Article current shown
 	private Article mArticle;
@@ -812,6 +817,9 @@ public class Show extends Activity {
 
 		setTitle(mArticle.title);
 
+		// Set up wakelock
+		setupWakeLock();
+
 		// set up controls
 		setupWidgets();
 
@@ -830,6 +838,11 @@ public class Show extends Activity {
 			mLastCommand = MENU_LOCAL_ORIGINAL;
 			commandLoadLocalOriginal();
 		}
+	}
+
+	private void setupWakeLock() {
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, CLASSTAG);
 	}
 
 	private void setupWidgets() {
@@ -1056,9 +1069,19 @@ public class Show extends Activity {
 			break;
 		}
 	}
+	
+	@Override
+	protected void onResume() {
+		if (!mWakeLock.isHeld())
+			mWakeLock.acquire();
+		super.onResume();
+	}
 
 	@Override
 	protected void onPause() {
+		if (mWakeLock.isHeld())
+			mWakeLock.release();
+		
 		switch (mMediaPlayerState) {
 		case Started:
 		case Paused:

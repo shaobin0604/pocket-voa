@@ -3,6 +3,7 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,13 +51,15 @@ import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class Main extends Activity {
 	private static final String CLASSTAG = Main.class.getSimpleName();
-	
+
 	private static final String KEY_VERSION_CODE = "versionCode";
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
 	private static final int MENU_TEST = Menu.FIRST + 1;
 	private static final int MENU_ABOUT = Menu.FIRST + 2;
 	private static final int MENU_EXIT = Menu.FIRST + 3;
+	private static final int MENU_CHANGE_LOG = Menu.FIRST + 4;
+	private static final int MENU_HELP = Menu.FIRST + 5;
 
 	private static final int DLG_ERROR = 0;
 	private static final int DLG_PROGRESS = 1;
@@ -66,12 +70,12 @@ public class Main extends Activity {
 	private static final int DLG_ABOUT = 6;
 	private static final int DLG_INTERNET_STATUS_CONNECTED = 7;
 	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 8;
-	private static final int DLG_WHAT_IS_NEW = 9;
+	private static final int DLG_CHANGE_LOG = 9;
 
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
 	private static final int WHAT_FAIL_PARSE = 2;
-	
+
 	private static final int CMD_REFRESH_REMOTE_LIST = 0;
 	private static final int CMD_REFRESH_LOCAL_LIST = 1;
 	private static final int CMD_DOWNLOAD_ARTICLE = 2;
@@ -101,13 +105,12 @@ public class Main extends Activity {
 					"Words And Their Stories", "People in America", },
 			{ "All", "Popular American", }, };
 
-
 	private enum Error {
 		LoadListError, DownloadError,
 	}
 
 	private Error mLastError;
-	
+
 	private int mLastCommand;
 
 	private App mApp;
@@ -289,6 +292,11 @@ public class Main extends Activity {
 		setupRemoteTabWidgets();
 
 		commandRefreshLocalList();
+
+		if (isJustUpgraded()) {
+			setSavedVersionCode();
+			showDialog(DLG_CHANGE_LOG);
+		}
 	}
 
 	@Override
@@ -501,6 +509,11 @@ public class Main extends Activity {
 						R.drawable.signal);
 		menu.add(Menu.NONE, MENU_ABOUT, Menu.NONE, R.string.menu_about)
 				.setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(Menu.NONE, MENU_CHANGE_LOG, Menu.NONE,
+				R.string.menu_change_log).setIcon(
+				android.R.drawable.ic_menu_info_details);
+		menu.add(Menu.NONE, MENU_HELP, Menu.NONE, R.string.menu_help).setIcon(
+				android.R.drawable.ic_menu_help);
 		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(
 				android.R.drawable.ic_menu_close_clear_cancel);
 
@@ -525,11 +538,20 @@ public class Main extends Activity {
 			stopService(new Intent(this, DownloadService.class));
 			finish();
 			return true;
-
+		case MENU_CHANGE_LOG:
+			showDialog(DLG_CHANGE_LOG);
+			return true;
+		case MENU_HELP:
+			showHelp();
+			return true;
 		default:
 			break;
 		}
 		return result;
+	}
+
+	private void showHelp() {
+		startActivity(new Intent(this, Help.class));
 	}
 
 	private void testInternet() {
@@ -580,7 +602,7 @@ public class Main extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		
+
 		case DLG_ERROR:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
@@ -782,10 +804,11 @@ public class Main extends Activity {
 						}
 					});
 			return builder8.create();
-		case DLG_WHAT_IS_NEW:
+		case DLG_CHANGE_LOG:
 			AlertDialog.Builder builder9 = new AlertDialog.Builder(this);
 			builder9.setIcon(android.R.drawable.ic_dialog_info);
 			builder9.setTitle(R.string.alert_title_what_is_new);
+			builder9.setMessage(R.string.alert_msg_what_is_new);
 			builder9.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
 
@@ -1025,11 +1048,11 @@ public class Main extends Activity {
 
 		}.start();
 	}
-	
+
 	private int getCurrentVersionCode() {
 		PackageManager manager = getPackageManager();
 		String packageName = getPackageName();
-//		Log.d(CLASSTAG, "package name -- " + packageName);
+		// Log.d(CLASSTAG, "package name -- " + packageName);
 		try {
 			PackageInfo info = manager.getPackageInfo(packageName, 0);
 			return info.versionCode;
@@ -1041,25 +1064,25 @@ public class Main extends Activity {
 	/**
 	 * Check if application is just upgraded
 	 * 
-	 * @return 
+	 * @return
 	 */
 	private boolean isJustUpgraded() {
 		int currentVersionCode = getCurrentVersionCode();
 		int savedVersionCode = getSavedVersionCode();
-//		Log.d(CLASSTAG, "current version code -- " + currentVersionCode);
-//		Log.d(CLASSTAG, "saved version code -- " + savedVersionCode);
+		// Log.d(CLASSTAG, "current version code -- " + currentVersionCode);
+		// Log.d(CLASSTAG, "saved version code -- " + savedVersionCode);
 		return currentVersionCode != savedVersionCode;
 	}
 
 	/**
-	 * Get saved package version code from preferences 
+	 * Get saved package version code from preferences
 	 * 
 	 * @return the saved package version code
 	 */
 	private int getSavedVersionCode() {
 		return getPreferences(MODE_PRIVATE).getInt(KEY_VERSION_CODE, 0);
 	}
-	
+
 	/**
 	 * Save current package version code to preferences
 	 */

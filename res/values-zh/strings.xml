@@ -3,7 +3,7 @@
 	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">口袋VOA</string>
 	<string name="app_version_label">版本: </string>
-	<string name="app_version">1.0.3</string>
+	<string name="app_version">1.1.0</string>
 	<string name="app_author_label">作者: </string>
 	<string name="app_author">邵彬</string>
 	<string name="app_email">shaobin0604@qq.com</string>
@@ -12,10 +12,34 @@
 	<string name="app_website_label">网站: </string>
 	<string name="app_website">http://aquarium.yo2.cn/</string>
 	
+	<!-- for activity title -->
+	<string name="ac_title_help">帮助</string>
+	<string name="ac_title_settings">设置</string>
+	
 	<string name="no_data">没有数据 :-(</string>
 	<string name="no_lyric">无法加载歌词:-(</string>
 	
 	<string name="alert_title_what_is_new">更新日志</string>
+	<string name="alert_msg_what_is_new">口袋VOA - 在线/离线美国之音阅读器\n
+\n
+版本 1.1.0 [11/03/2010]\n
+	\t- 改进: 增加更新记录对话框。\n
+	\t- 改进: 增加帮助菜单。\n
+	\t- 改进: 文章列表增加翻译和歌词的图标。T 表示有中文翻译，L 表示有歌词同步。\n
+	\t- 改进: 增加中文翻译。\n
+	\t- 改进: 增加歌词同步。\n
+	\t- 改进: 出错对话框增加重试按钮。\n
+	\t- 改进: 防止播放音频时休眠。\n
+	\t- 改进: 由于 www.iciba.com 数据源没有提供中文翻译和歌词同步，故删除该数据源。\n
+\n
+版本 1.0.2 [14/01/2010]\n
+	\t- 改进: 增加简体中文支持。\n
+\n
+版本 1.0.1 [18/12/2009]\n
+	\t- 修正: 当下载没有发布日期的文章时，程序崩溃。\n
+\n	
+版本 1.0.0 [17/12/2009]\n
+	\t- 初始版本</string>
 	
 	<string name="alert_title_internet_status">网络连接状态</string>
 	<string name="alert_msg_internet_status_connected">已连接</string>
@@ -55,6 +79,8 @@
 	<string name="toast_download_audio_complete">音频下载完成</string>
 	<string name="toast_download_text_complete">文本下载完成</string>
 	
+	<string name="menu_help">帮助</string>
+	<string name="menu_change_log">更新记录</string>
 	<string name="menu_internet_status">网络状态</string>
 	
 	<string name="menu_download">下载</string>
