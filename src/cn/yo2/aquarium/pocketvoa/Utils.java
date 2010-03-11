@@ -9,13 +9,19 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.view.WindowManager;
 
 public class Utils {
+	
+	public static void setKeepScreenOn(Activity activity) {
+		activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+	}
 
 	public static Article getArticleFromIntent(Intent intent) {
 		Article article = new Article();

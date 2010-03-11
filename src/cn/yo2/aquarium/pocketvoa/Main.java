@@ -266,6 +266,9 @@ public class Main extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Utils.setKeepScreenOn(this);
+		
 		setContentView(R.layout.main);
 
 		mInflater = LayoutInflater.from(this);
