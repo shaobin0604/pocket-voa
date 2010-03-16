@@ -1,4 +1,4 @@
-Pocket VOA - An online/offline reader for Voice of American program.
+Pocket VOA - An online/offline reader for Voice of America program.
 
 Version 1.1.0 [11/03/2010]
 	- New: Add What is New? dialog when first run.
@@ -7,7 +7,7 @@ Version 1.1.0 [11/03/2010]
 	- New: Show Chinese translation in Show Activity.
 	- New: Show Lyric in Show Activity.
 	- New: Add Retry button to error alert dialog.
-	- New: Add WakeLock to Show Activity.
+	- New: Keep screen on when application is in the foreground.
 	- New: Remove www.iciba.com DataSource for it does not provide Chinese translation and Lyric.
 
 Version 1.0.2 [14/01/2010]

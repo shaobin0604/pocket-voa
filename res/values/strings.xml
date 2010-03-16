@@ -20,7 +20,7 @@
 	<string name="no_lyric">Cannot Load Lyric :-(</string>
 	
 	<string name="alert_title_what_is_new">What\'s New?</string>
-	<string name="alert_msg_what_is_new">Pocket VOA - An online/offline reader for Voice of American program.\n
+	<string name="alert_msg_what_is_new">Pocket VOA - An online/offline reader for Voice of America program.\n
 \n
 Version 1.1.0 [11/03/2010]\n
 	\t- New: Add What is New? dialog when first run.\n
@@ -29,7 +29,7 @@ Version 1.1.0 [11/03/2010]\n
 	\t- New: Show Chinese translation in Show Activity.\n
 	\t- New: Show Lyric in Show Activity.\n
 	\t- New: Add Retry button to error alert dialog.\n
-	\t- New: Add WakeLock to Show Activity.\n
+	\t- New: Keep screen on when application is in the foreground.\n
 	\t- New: Remove www.iciba.com DataSource for it does not provide Chinese translation and Lyric.\n
 \n
 Version 1.0.2 [14/01/2010]\n

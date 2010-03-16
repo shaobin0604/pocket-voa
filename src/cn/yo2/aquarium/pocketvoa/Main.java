@@ -424,6 +424,10 @@ public class Main extends Activity {
 
 	private void setupTabs() {
 		mTabHost = (TabHost) findViewById(R.id.tabhost);
+		
+//		LayoutInflater.from(this).inflate(R.layout.main,
+//				mTabHost.getTabContentView(), true);
+		
 		mTabHost.setup();
 
 		TabHost.TabSpec tabSpec = mTabHost.newTabSpec("Local");
