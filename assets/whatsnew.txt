@@ -1,5 +1,8 @@
 Pocket VOA - An online/offline reader for Voice of America program.
 
+Version 1.1.1 [18/04/2010]
+	- Fix Bug: When in Show Activity, download translation will fail if user have not navigated to translation page before.
+
 Version 1.1.0 [11/03/2010]
 	- New: Add What is New? dialog when first run.
 	- New: Add Help menu item.

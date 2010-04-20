@@ -83,7 +83,7 @@
     	android:layout_width="fill_parent" 
     	android:layout_height="wrap_content"
     	pocketvoa:backgroundColor="#000000"
-    	pocketvoa:textColor="#FFFFFF" 
-    	pocketvoa:isGoneWithoutAd="true" 
+    	pocketvoa:primaryTextColor="#FFFFFF"
+    	pocketvoa:secondaryTextColor="#CCCCCC"
     	pocketvoa:refreshInterval="60" />
 </LinearLayout>

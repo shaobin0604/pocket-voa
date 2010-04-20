@@ -31,6 +31,7 @@ import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 
@@ -95,12 +96,17 @@ public class Show extends Activity {
 	// MediaPlayer handler message type
 	private static final int WHAT_PLAYER_PROGRESS = 0;
 
+	// Download handler message type
+	private static final int WHAT_SUCCESS = 0;
+	private static final int WHAT_FAIL_IO = 1;
+	private static final int WHAT_FAIL_PARSE = 2;
+
 	private enum MediaPlayerState {
 		Idle, Initialized, Preparing, Prepared, Started, Paused, Stopped, PlaybackCompleted, End, Error,
 	}
 
 	private enum Error {
-		LoadRemotePageError, LoadLocalPageError, PlayRemoteAudioError, PlayLocalAudioError, DownloadAudioError, DownloadTextError,
+		LoadRemotePageError, LoadLocalPageError, PlayRemoteAudioError, PlayLocalAudioError, DownloadError,
 	}
 
 	private int mCurrentView = VIEW_INVALID;
@@ -266,6 +272,36 @@ public class Show extends Activity {
 	// }
 	// }
 	// };
+
+	private Handler mDownloadHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_SUCCESS:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				// TODO check if the article has been downloaded
+				if (mDatabaseHelper.isArticleExist(mArticle)) {
+					showDialog(DLG_CONFIRM_DOWNLOAD);
+				} else {
+					downloadArticleInService(mArticle);
+					Toast.makeText(Show.this, R.string.toast_download_start,
+							Toast.LENGTH_SHORT).show();
+				}
+
+				break;
+			case WHAT_FAIL_IO:
+			case WHAT_FAIL_PARSE:
+				dismissDialog(DLG_PROGRESS_SPIN);
+				mLastError = Error.DownloadError;
+				showDialog(DLG_ERROR);
+				break;
+			default:
+				break;
+			}
+		}
+
+	};
 
 	private Handler mLyricHandler = new Handler() {
 
@@ -597,13 +633,35 @@ public class Show extends Activity {
 			loadRemoteLyricView();
 	}
 
-	private void commandRemoteDownload() {
-		// check if the article has been downloaded
-		if (mDatabaseHelper.isArticleExist(mArticle)) {
-			showDialog(DLG_CONFIRM_DOWNLOAD);
-		} else {
-			downloadArticleInService(mArticle);
-		}
+	private void commandDownloadArticle() {
+		mLastCommand = MENU_REMOTE_DOWNLOAD;
+		showDialog(DLG_PROGRESS_SPIN);
+		new Thread() {
+
+			@Override
+			public void run() {
+
+				try {
+					// Load translation if needed
+					if (mArticle.hastextzh && !mRemoteTranslationLoaded) {
+						mApp.mPageGenerator.mParser = mApp.mDataSource
+								.getPageZhParsers().get(
+										mArticle.type + "_" + mArticle.subtype);
+						mApp.mPageGenerator.getArticle(mArticle, true);
+						
+						mRemoteTranslationLoaded = true;
+					}
+					mDownloadHandler.sendEmptyMessage(WHAT_SUCCESS);
+				} catch (IOException e) {
+					mRemoteTranslationLoaded = false;
+					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_IO);
+				} catch (IllegalContentFormatException e) {
+					mRemoteTranslationLoaded = true;
+					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_PARSE);
+				}
+			}
+
+		}.start();
 	}
 
 	private void commandLoadLocalOriginal() {
@@ -649,7 +707,7 @@ public class Show extends Activity {
 			return true;
 
 		case MENU_REMOTE_DOWNLOAD:
-			commandRemoteDownload();
+			commandDownloadArticle();
 
 			return true;
 
@@ -1038,13 +1096,9 @@ public class Show extends Activity {
 				alertDialog
 						.setMessage(getString(R.string.alert_msg_play_local_audio_error));
 				break;
-			case DownloadAudioError:
+			case DownloadError:
 				alertDialog
-						.setMessage(getString(R.string.alert_msg_download_audio_error));
-				break;
-			case DownloadTextError:
-				alertDialog
-						.setMessage(getString(R.string.alert_msg_download_text_error));
+						.setMessage(getString(R.string.alert_msg_download_error));
 				break;
 			default:
 				break;

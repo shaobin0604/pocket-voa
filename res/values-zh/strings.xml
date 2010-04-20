@@ -3,7 +3,7 @@
 	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">口袋VOA</string>
 	<string name="app_version_label">版本: </string>
-	<string name="app_version">1.1.0</string>
+	<string name="app_version">1.1.1</string>
 	<string name="app_author_label">作者: </string>
 	<string name="app_author">邵彬</string>
 	<string name="app_email">shaobin0604@qq.com</string>
@@ -21,6 +21,9 @@
 	
 	<string name="alert_title_what_is_new">更新日志</string>
 	<string name="alert_msg_what_is_new">口袋VOA - 在线/离线美国之音阅读器\n
+\n
+版本1.1.1 [18/04/2010]\n
+	\t- 修正：在阅读界面下载翻译文本出错。\n
 \n
 版本 1.1.0 [11/03/2010]\n
 	\t- 改进: 增加更新记录对话框。\n

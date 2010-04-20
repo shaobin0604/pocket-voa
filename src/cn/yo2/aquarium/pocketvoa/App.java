@@ -126,6 +126,7 @@ public class App extends Application {
 
 			public void process(HttpRequest request, HttpContext context)
 					throws HttpException, IOException {
+				request.addHeader("Connection", "close");
 				request
 						.addHeader(
 								"User-Agent",
