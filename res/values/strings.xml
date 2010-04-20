@@ -69,6 +69,13 @@ Version 1.0.0 [17/12/2009]\n
 	
 	<string name="alert_msg_loadlist_error">Cannot load list</string>
 	
+	<!-- Dialog box title -->
+    <string name="service_start_error_title">Playback problem</string>
+    <!-- Dialog box message -->
+    <string name="service_start_error_msg">Sorry, the audio could not be played.</string>
+    <!-- Dialog box button -->
+    <string name="service_start_error_button">OK</string>
+	
 	<string name="progressbar_download_title">Downloading audio file</string>
 	<string name="progressspin_loadpage_msg">Loading...</string>
 	<string name="progressspin_loadlist_msg">Loading...</string>

@@ -34,19 +34,13 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal">
-		
-		<ImageButton
-			android:id="@+id/btn_start"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@android:drawable/ic_media_play"
-			android:enabled="true"/>
 		<ImageButton
 			android:id="@+id/btn_pause"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:src="@android:drawable/ic_media_pause"
-			android:enabled="false"/>
+			style="@android:style/MediaButton.Play"
+			/>
 		
 		<LinearLayout android:orientation="vertical"
 			android:layout_width="fill_parent"

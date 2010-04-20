@@ -122,16 +122,16 @@ containing a value of this type.
         public static final int lrc=0x7f020007;
         public static final int no=0x7f020008;
         public static final int signal=0x7f020009;
-        public static final int textzh=0x7f02000a;
-        public static final int web_small=0x7f02000b;
+        public static final int stat_notify_musicplayer=0x7f02000a;
+        public static final int textzh=0x7f02000b;
+        public static final int web_small=0x7f02000c;
     }
     public static final class id {
-        public static final int ad=0x7f070022;
+        public static final int ad=0x7f070021;
         public static final int author=0x7f070005;
-        public static final int btn_pause=0x7f07001e;
+        public static final int btn_pause=0x7f07001d;
         public static final int btn_refresh_local=0x7f070012;
         public static final int btn_refresh_remote=0x7f070018;
-        public static final int btn_start=0x7f07001d;
         public static final int empty_local=0x7f070011;
         public static final int empty_remote=0x7f070017;
         public static final int flipper=0x7f070019;
@@ -142,7 +142,7 @@ containing a value of this type.
         public static final int list_local=0x7f070010;
         public static final int list_remote=0x7f070016;
         public static final int lyricview=0x7f07001c;
-        public static final int pb_audio=0x7f070021;
+        public static final int pb_audio=0x7f070020;
         public static final int root_about=0x7f070000;
         public static final int spinner_subtype_local=0x7f07000f;
         public static final int spinner_subtype_remote=0x7f070015;
@@ -154,9 +154,9 @@ containing a value of this type.
         public static final int tv_app_name=0x7f070002;
         public static final int tv_app_version=0x7f070004;
         public static final int tv_app_version_label=0x7f070003;
-        public static final int tv_ellapsed_time=0x7f07001f;
+        public static final int tv_ellapsed_time=0x7f07001e;
         public static final int tv_title=0x7f07000b;
-        public static final int tv_total_time=0x7f070020;
+        public static final int tv_total_time=0x7f07001f;
         public static final int website=0x7f070007;
         public static final int webview=0x7f070008;
         public static final int webview_en=0x7f07001a;
@@ -207,61 +207,73 @@ containing a value of this type.
         public static final int app_version_label=0x7f060002;
         public static final int app_website=0x7f06000a;
         public static final int app_website_label=0x7f060009;
-        public static final int btn_cancel=0x7f060038;
-        public static final int btn_no=0x7f06003c;
-        public static final int btn_ok=0x7f060039;
-        public static final int btn_refresh=0x7f06003a;
-        public static final int btn_retry=0x7f060037;
-        public static final int btn_yes=0x7f06003b;
+        public static final int btn_cancel=0x7f06003b;
+        public static final int btn_no=0x7f06003f;
+        public static final int btn_ok=0x7f06003c;
+        public static final int btn_refresh=0x7f06003d;
+        public static final int btn_retry=0x7f06003a;
+        public static final int btn_yes=0x7f06003e;
         public static final int hello=0x7f060000;
-        public static final int menu_about=0x7f060032;
-        public static final int menu_change_log=0x7f06002c;
-        public static final int menu_delete=0x7f060036;
-        public static final int menu_download=0x7f06002e;
-        public static final int menu_exit=0x7f060034;
-        public static final int menu_help=0x7f06002b;
-        public static final int menu_internet_status=0x7f06002d;
-        public static final int menu_lrc=0x7f060031;
-        public static final int menu_original=0x7f06002f;
-        public static final int menu_settings=0x7f060033;
-        public static final int menu_translation=0x7f060030;
-        public static final int menu_view=0x7f060035;
+        public static final int menu_about=0x7f060035;
+        public static final int menu_change_log=0x7f06002f;
+        public static final int menu_delete=0x7f060039;
+        public static final int menu_download=0x7f060031;
+        public static final int menu_exit=0x7f060037;
+        public static final int menu_help=0x7f06002e;
+        public static final int menu_internet_status=0x7f060030;
+        public static final int menu_lrc=0x7f060034;
+        public static final int menu_original=0x7f060032;
+        public static final int menu_settings=0x7f060036;
+        public static final int menu_translation=0x7f060033;
+        public static final int menu_view=0x7f060038;
         public static final int no_data=0x7f06000d;
         public static final int no_lyric=0x7f06000e;
-        public static final int notification_download_audio_error_ticker=0x7f060048;
-        public static final int notification_download_audio_progress_content=0x7f060054;
-        public static final int notification_download_audio_progress_ticker=0x7f060050;
-        public static final int notification_download_audio_success_ticker=0x7f06004c;
-        public static final int notification_download_lyric_error_ticker=0x7f06004a;
-        public static final int notification_download_lyric_progress_content=0x7f060056;
-        public static final int notification_download_lyric_progress_ticker=0x7f060052;
-        public static final int notification_download_lyric_success_ticker=0x7f06004e;
-        public static final int notification_download_text_error_ticker=0x7f060047;
-        public static final int notification_download_text_progress_content=0x7f060053;
-        public static final int notification_download_text_progress_ticker=0x7f06004f;
-        public static final int notification_download_text_success_ticker=0x7f06004b;
-        public static final int notification_download_textzh_error_ticker=0x7f060049;
-        public static final int notification_download_textzh_progress_content=0x7f060055;
-        public static final int notification_download_textzh_progress_ticker=0x7f060051;
-        public static final int notification_download_textzh_success_ticker=0x7f06004d;
-        public static final int prefs_datasource_dialog_title=0x7f060046;
-        public static final int prefs_datasource_key=0x7f060043;
-        public static final int prefs_datasource_summary=0x7f060045;
-        public static final int prefs_datasource_title=0x7f060044;
-        public static final int prefs_list_count_dialog_title=0x7f060042;
-        public static final int prefs_list_count_key=0x7f06003f;
-        public static final int prefs_list_count_summary=0x7f060041;
-        public static final int prefs_list_count_title=0x7f060040;
-        public static final int progressbar_download_title=0x7f060023;
-        public static final int progressspin_loadlist_msg=0x7f060025;
-        public static final int progressspin_loadpage_msg=0x7f060024;
-        public static final int tab_local=0x7f06003d;
-        public static final int tab_remote=0x7f06003e;
-        public static final int toast_article_deleted=0x7f060027;
-        public static final int toast_download_audio_complete=0x7f060029;
-        public static final int toast_download_start=0x7f060028;
-        public static final int toast_download_text_complete=0x7f06002a;
-        public static final int toast_open_context_menu=0x7f060026;
+        public static final int notification_download_audio_error_ticker=0x7f06004b;
+        public static final int notification_download_audio_progress_content=0x7f060057;
+        public static final int notification_download_audio_progress_ticker=0x7f060053;
+        public static final int notification_download_audio_success_ticker=0x7f06004f;
+        public static final int notification_download_lyric_error_ticker=0x7f06004d;
+        public static final int notification_download_lyric_progress_content=0x7f060059;
+        public static final int notification_download_lyric_progress_ticker=0x7f060055;
+        public static final int notification_download_lyric_success_ticker=0x7f060051;
+        public static final int notification_download_text_error_ticker=0x7f06004a;
+        public static final int notification_download_text_progress_content=0x7f060056;
+        public static final int notification_download_text_progress_ticker=0x7f060052;
+        public static final int notification_download_text_success_ticker=0x7f06004e;
+        public static final int notification_download_textzh_error_ticker=0x7f06004c;
+        public static final int notification_download_textzh_progress_content=0x7f060058;
+        public static final int notification_download_textzh_progress_ticker=0x7f060054;
+        public static final int notification_download_textzh_success_ticker=0x7f060050;
+        public static final int prefs_datasource_dialog_title=0x7f060049;
+        public static final int prefs_datasource_key=0x7f060046;
+        public static final int prefs_datasource_summary=0x7f060048;
+        public static final int prefs_datasource_title=0x7f060047;
+        public static final int prefs_list_count_dialog_title=0x7f060045;
+        public static final int prefs_list_count_key=0x7f060042;
+        public static final int prefs_list_count_summary=0x7f060044;
+        public static final int prefs_list_count_title=0x7f060043;
+        public static final int progressbar_download_title=0x7f060026;
+        public static final int progressspin_loadlist_msg=0x7f060028;
+        public static final int progressspin_loadpage_msg=0x7f060027;
+        /**  Dialog box button 
+ Dialog box button 
+         */
+        public static final int service_start_error_button=0x7f060025;
+        /**  Dialog box message 
+ Dialog box message 
+         */
+        public static final int service_start_error_msg=0x7f060024;
+        /**  Dialog box title 
+ Dialog box title 
+         */
+        public static final int service_start_error_title=0x7f060023;
+        public static final int tab_local=0x7f060040;
+        public static final int tab_remote=0x7f060041;
+        public static final int toast_article_deleted=0x7f06002a;
+        public static final int toast_download_audio_complete=0x7f06002c;
+        public static final int toast_download_start=0x7f06002b;
+        public static final int toast_download_text_complete=0x7f06002d;
+        public static final int toast_open_context_menu=0x7f060029;
     }
     public static final class xml {
         public static final int settings=0x7f040000;

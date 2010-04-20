@@ -9,9 +9,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -20,7 +26,9 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -120,7 +128,6 @@ public class Show extends Activity {
 	private ViewFlipper mViewFlipper;
 	private WebView mWebViewEn;
 	private WebView mWebViewZh;
-	private ImageButton mBtnStart;
 	private ImageButton mBtnPause;
 	private TextView mTvEllapsedTime;
 	private TextView mTvTotalTime;
@@ -134,9 +141,9 @@ public class Show extends Activity {
 	private boolean mLocalTranslationLoaded;
 	private boolean mLocalLyricLoaded;
 
-	private int mPlayProgress; // 1..100
-	private int mTotalTime; // in millis
-	private int mEllapsedTime; // in millis
+	private int mPlayProgress; // 1..1000
+	private long mTotalTime; // in millis
+	private long mEllapsedTime; // in millis
 
 	private StringBuilder mRecycle = new StringBuilder(10);
 
@@ -302,7 +309,7 @@ public class Show extends Activity {
 					// + " duration -- " + mTotalTime);
 					updateProgressBar();
 
-					mPlayProgress = mEllapsedTime * 100 / mTotalTime;
+					mPlayProgress = (int)(mEllapsedTime * 1000 / mTotalTime);
 					// Log.d(CLASSTAG, "playing progress -- " + mPlayProgress);
 					updateEllapsedTime();
 
@@ -318,66 +325,27 @@ public class Show extends Activity {
 
 	};
 
-	private OnClickListener mStartButtonClickListener = new OnClickListener() {
-
-		public void onClick(View v) {
-			if (mMediaPlayerState == MediaPlayerState.Idle) {
-				Uri uri = null;
-				if (mArticle.id == -1)
-					uri = Uri.parse(mArticle.urlmp3);
-				else
-					uri = Uri.fromFile(Utils.localMp3File(mArticle));
-				Log.d(CLASSTAG, "mp3 url -- " + uri);
-				try {
-
-					mMediaPlayer.setDataSource(Show.this, uri);
-					mMediaPlayerState = MediaPlayerState.Initialized;
-
-					mMediaPlayer.prepareAsync();
-					mMediaPlayerState = MediaPlayerState.Preparing;
-
-					updatePalyerButton();
-
-				} catch (IllegalArgumentException e) {
-					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayRemoteAudioError;
-					showDialog(DLG_ERROR);
-				} catch (SecurityException e) {
-					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayRemoteAudioError;
-					showDialog(DLG_ERROR);
-				} catch (IllegalStateException e) {
-					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayRemoteAudioError;
-					showDialog(DLG_ERROR);
-				} catch (IOException e) {
-					Log.e(CLASSTAG, "mp3 url -- " + uri, e);
-					mLastError = Error.PlayRemoteAudioError;
-					showDialog(DLG_ERROR);
-				}
-
-			} else {
-				mMediaPlayer.start();
-				mMediaPlayerState = MediaPlayerState.Started;
-				updatePalyerButton();
-				mPlayerHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
-
-				if (mCurrentView == VIEW_LYRIC)
-					mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
-			}
-
-		}
-	};
-
 	private OnClickListener mPauseButtonClickListener = new OnClickListener() {
 
 		public void onClick(View v) {
-			mMediaPlayer.pause();
-			mMediaPlayerState = MediaPlayerState.Paused;
-
-			updatePalyerButton();
-		}
+            doPauseResume();
+        }
 	};
+	
+	private void doPauseResume() {
+        try {
+            if(mService != null) {
+                if (mService.isPlaying()) {
+                    mService.pause();
+                } else {
+                    mService.play();
+                }
+                refreshNow();
+                setPauseButtonImage();
+            }
+        } catch (RemoteException ex) {
+        }
+    }
 
 	private OnErrorListener mErrorListener = new OnErrorListener() {
 
@@ -443,28 +411,6 @@ public class Show extends Activity {
 	};
 
 	private LyricView mLyricView;
-
-	private void updatePalyerButton() {
-		switch (mMediaPlayerState) {
-		case Preparing:
-		case Prepared:
-			mBtnStart.setEnabled(false);
-			mBtnPause.setEnabled(false);
-			break;
-		case Started:
-			mBtnStart.setEnabled(false);
-			mBtnPause.setEnabled(true);
-			break;
-		case Paused:
-		case Stopped:
-		case PlaybackCompleted:
-			mBtnStart.setEnabled(true);
-			mBtnPause.setEnabled(false);
-			break;
-		default:
-			break;
-		}
-	}
 
 	protected void resetLyricView() {
 		mLyricView.resetLyric();
@@ -805,6 +751,8 @@ public class Show extends Activity {
 		// no title bar
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
 		Utils.setKeepScreenOn(this);
 
 		setContentView(R.layout.show);
@@ -850,16 +798,15 @@ public class Show extends Activity {
 
 		mLyricView = (LyricView) findViewById(R.id.lyricview);
 
-		mBtnStart = (ImageButton) findViewById(R.id.btn_start);
-		mBtnStart.setOnClickListener(mStartButtonClickListener);
-
 		mBtnPause = (ImageButton) findViewById(R.id.btn_pause);
+		mBtnPause.requestFocus();
 		mBtnPause.setOnClickListener(mPauseButtonClickListener);
 
 		mTvEllapsedTime = (TextView) findViewById(R.id.tv_ellapsed_time);
 		mTvTotalTime = (TextView) findViewById(R.id.tv_total_time);
 
 		mProgressBar = (ProgressBar) findViewById(R.id.pb_audio);
+		mProgressBar.setMax(1000);
 	}
 
 	private void setupMediaPlayer() {
@@ -1059,6 +1006,82 @@ public class Show extends Activity {
 			break;
 		}
 	}
+	
+	private void startPlayback() {
+
+        if(mService == null)
+            return;
+        Intent intent = getIntent();
+        String filename = "";
+        Uri uri = intent.getData();
+        if (uri != null && uri.toString().length() > 0) {
+            // If this is a file:// URI, just use the path directly instead
+            // of going through the open-from-filedescriptor codepath.
+            String scheme = uri.getScheme();
+            if ("file".equals(scheme)) {
+                filename = uri.getPath();
+            } else {
+                filename = uri.toString();
+            }
+            try {
+                mOneShot = true;
+                if (! mRelaunchAfterConfigChange) {
+                    mService.stop();
+                    mService.openfile(filename);
+                    mService.play();
+                }
+            } catch (Exception ex) {
+                Log.d("MediaPlaybackActivity", "couldn't start playback: " + ex);
+            }
+        }
+
+        updateTrackInfo();
+        long next = refreshNow();
+        queueNextRefresh(next);
+    }
+
+    private ServiceConnection osc = new ServiceConnection() {
+            public void onServiceConnected(ComponentName classname, IBinder obj) {
+                mService = IMediaPlaybackService.Stub.asInterface(obj);
+                if (Utils.sService == null) {
+                    Utils.sService = mService;
+                }
+                startPlayback();
+                try {
+                    // Assume something is playing when the service says it is,
+                    // but also if the audio ID is valid but the service is paused.
+                    if (mService.isPlaying() || mService.getPath() != null) {
+                        
+                        setPauseButtonImage();
+                        return;
+                    }
+                } catch (RemoteException ex) {
+                }
+            }
+            public void onServiceDisconnected(ComponentName classname) {
+            }
+    };
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		paused = false;
+
+        if (false == Utils.bindToService(this, osc)) {
+            // something went wrong
+            mHandler.sendEmptyMessage(QUIT);
+        }
+        
+        IntentFilter f = new IntentFilter();
+        f.addAction(MediaPlaybackService.PLAYSTATE_CHANGED);
+        f.addAction(MediaPlaybackService.META_CHANGED);
+        f.addAction(MediaPlaybackService.PLAYBACK_COMPLETE);
+        registerReceiver(mStatusListener, new IntentFilter(f));
+        updateTrackInfo();
+        long next = refreshNow();
+        queueNextRefresh(next);
+	}
 
 	@Override
 	protected void onResume() {
@@ -1081,6 +1104,15 @@ public class Show extends Activity {
 
 		super.onPause();
 	}
+	
+	@Override
+	protected void onStop() {
+		paused = true;
+        mHandler.removeMessages(REFRESH);
+        unregisterReceiver(mStatusListener);
+        Utils.unbindFromService(this);
+		super.onStop();
+	}
 
 	@Override
 	protected void onDestroy() {
@@ -1090,4 +1122,130 @@ public class Show extends Activity {
 		super.onDestroy();
 	}
 
+	private IMediaPlaybackService mService;
+	private long mPosOverride = -1;
+	private long mDuration;
+	private boolean paused;
+
+	private static final int REFRESH = 1;
+	private static final int QUIT = 2;
+
+	private void queueNextRefresh(long delay) {
+		if (!paused) {
+			Message msg = mHandler.obtainMessage(REFRESH);
+			mHandler.removeMessages(REFRESH);
+			mHandler.sendMessageDelayed(msg, delay);
+		}
+	}
+
+	private long refreshNow() {
+		if (mService == null)
+			return 500;
+		try {
+			long pos = mPosOverride < 0 ? mService.position() : mPosOverride;
+			long remaining = 1000 - (pos % 1000);
+			if ((pos >= 0) && (mDuration > 0)) {
+				mTvEllapsedTime.setText(DateUtils.formatElapsedTime(mRecycle,
+						pos / 1000));
+
+				if (mService.isPlaying()) {
+					mTvEllapsedTime.setVisibility(View.VISIBLE);
+				} else {
+					// blink the counter
+					int vis = mTvEllapsedTime.getVisibility();
+					mTvEllapsedTime
+							.setVisibility(vis == View.INVISIBLE ? View.VISIBLE
+									: View.INVISIBLE);
+					remaining = 500;
+				}
+
+				mProgressBar.setProgress((int) (1000 * pos / mDuration));
+			} else {
+				mTvEllapsedTime.setText("--:--");
+				mProgressBar.setProgress(1000);
+			}
+			// return the number of milliseconds until the next full second, so
+			// the counter can be updated at just the right time
+			return remaining;
+		} catch (RemoteException ex) {
+		}
+		return 500;
+	}
+
+	private final Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+
+			case REFRESH:
+				long next = refreshNow();
+				queueNextRefresh(next);
+				break;
+
+			case QUIT:
+				// This can be moved back to onCreate once the bug that prevents
+				// Dialogs from being started from onCreate/onResume is fixed.
+				new AlertDialog.Builder(Show.this).setTitle(
+						R.string.service_start_error_title).setMessage(
+						R.string.service_start_error_msg).setPositiveButton(
+						R.string.service_start_error_button,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								finish();
+							}
+						}).setCancelable(false).show();
+				break;
+
+			default:
+				break;
+			}
+		}
+	};
+
+	private BroadcastReceiver mStatusListener = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action.equals(MediaPlaybackService.META_CHANGED)) {
+				// redraw the artist/title info and
+				// set new max for progress bar
+				updateTrackInfo();
+				setPauseButtonImage();
+				queueNextRefresh(1);
+			} else if (action.equals(MediaPlaybackService.PLAYBACK_COMPLETE)) {
+				setPauseButtonImage();
+			} else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
+				setPauseButtonImage();
+			}
+		}
+	};
+
+	private void setPauseButtonImage() {
+		try {
+            if (mService != null && mService.isPlaying()) {
+                mBtnPause.setImageResource(android.R.drawable.ic_media_pause);
+            } else {
+                mBtnPause.setImageResource(android.R.drawable.ic_media_play);
+            }
+        } catch (RemoteException ex) {
+        }
+	}
+
+	private void updateTrackInfo() {
+		if (mService == null) {
+			return;
+		}
+		try {
+			String path = mService.getPath();
+			if (path == null) {
+				finish();
+				return;
+			}
+			mTotalTime = mService.duration();
+			mTvTotalTime.setText(DateUtils.formatElapsedTime(mRecycle, mDuration / 1000));
+		} catch (RemoteException ex) {
+			finish();
+		}
+	}
 }

@@ -69,6 +69,13 @@
 	
 	<string name="alert_msg_loadlist_error">无法加载列表</string>
 	
+	<!-- Dialog box title -->
+    <string name="service_start_error_title">播放错误</string>
+    <!-- Dialog box message -->
+    <string name="service_start_error_msg">对不起，不能播放音频</string>
+    <!-- Dialog box button -->
+    <string name="service_start_error_button">是</string>
+	
 	<string name="progressbar_download_title">正在下载音频文件</string>
 	<string name="progressspin_loadpage_msg">加载中...</string>
 	<string name="progressspin_loadlist_msg">加载中...</string>
