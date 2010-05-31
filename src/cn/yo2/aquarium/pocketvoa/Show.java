@@ -147,7 +147,7 @@ public class Show extends Activity {
 
 	private StringBuilder mRecycle = new StringBuilder(10);
 
-	private MediaPlayer mMediaPlayer;
+	private IMediaPlaybackService mPlayerService;
 
 	private MediaPlayerState mMediaPlayerState;
 
@@ -284,7 +284,7 @@ public class Show extends Activity {
 					// TODO update LyricView
 					Log.d(CLASSTAG, "in mLyricHandler");
 					if (mCurrentView == VIEW_LYRIC) {
-						mLyricView.update(mMediaPlayer.getCurrentPosition());
+						mLyricView.update(mPlayerService.position());
 						mLyricHandler.sendEmptyMessageDelayed(
 								WHAT_PLAYER_PROGRESS, 100);
 					}
@@ -304,7 +304,7 @@ public class Show extends Activity {
 			switch (msg.what) {
 			case WHAT_PLAYER_PROGRESS:
 				if (mMediaPlayerState == MediaPlayerState.Started) {
-					mEllapsedTime = mMediaPlayer.getCurrentPosition();
+					mEllapsedTime = mPlayerService.position();					
 					// Log.d(CLASSTAG, "playing millis -- " + mEllapsedTime
 					// + " duration -- " + mTotalTime);
 					updateProgressBar();
