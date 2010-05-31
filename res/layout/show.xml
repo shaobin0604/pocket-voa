@@ -78,6 +78,7 @@
         		android:secondaryProgress="0" />
         </LinearLayout>
 	</LinearLayout>
+	<!-- 
 	<com.admob.android.ads.AdView
     	android:id="@+id/ad" 
     	android:layout_width="fill_parent" 
@@ -86,4 +87,13 @@
     	pocketvoa:primaryTextColor="#FFFFFF"
     	pocketvoa:secondaryTextColor="#CCCCCC"
     	pocketvoa:refreshInterval="60" />
+    -->
+    
+    <net.youmi.android.AdView 
+    	android:id="@+id/ad"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		pocketvoa:refreshInterval="30" 
+		pocketvoa:changeAdAnimation="true"
+		pocketvoa:backgroundTransparent="255" />
 </LinearLayout>

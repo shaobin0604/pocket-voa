@@ -24,7 +24,12 @@
 		<service android:name=".DownloadService"></service>
 		
 		<!-- The application's publisher ID assigned by AdMob -->
+		<!-- 
         <meta-data android:value="a14b2909c8cc25e" android:name="ADMOB_PUBLISHER_ID" />
+		-->
+		<!-- UmAd -->
+		<meta-data android:value="cda08071c63186d0" android:name="UmAd_APP_SEC" />
+  		<meta-data android:value="45693356c1fb0c63" android:name="UmAd_APP_ID" /> 
 	</application>
 	<uses-sdk android:minSdkVersion="3" />
 

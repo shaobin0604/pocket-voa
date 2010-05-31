@@ -35,7 +35,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 
-import com.admob.android.ads.AdView;
+//import com.admob.android.ads.AdView;
 
 public class Show extends Activity {
 	private static final String CLASSTAG = Show.class.getSimpleName();
@@ -122,7 +122,7 @@ public class Show extends Activity {
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
 
-	private AdView mAdView;
+//	private AdView mAdView;
 	private ViewFlipper mViewFlipper;
 	private WebView mWebViewEn;
 	private WebView mWebViewZh;
@@ -894,12 +894,12 @@ public class Show extends Activity {
 	}
 
 	private void setupWidgets() {
-		mAdView = (AdView) findViewById(R.id.ad);
-
-		String keywords = KEYWORDS[new Random(System.currentTimeMillis())
-				.nextInt(KEYWORDS.length)];
-		Log.d(CLASSTAG, "keywords -- " + keywords);
-		mAdView.setKeywords(keywords);
+//		mAdView = (AdView) findViewById(R.id.ad);
+//
+//		String keywords = KEYWORDS[new Random(System.currentTimeMillis())
+//				.nextInt(KEYWORDS.length)];
+//		Log.d(CLASSTAG, "keywords -- " + keywords);
+//		mAdView.setKeywords(keywords);
 
 		mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
 
