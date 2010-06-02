@@ -27,9 +27,16 @@
 		<!-- 
         <meta-data android:value="a14b2909c8cc25e" android:name="ADMOB_PUBLISHER_ID" />
 		-->
+		
 		<!-- UmAd -->
+		<!-- 
 		<meta-data android:value="cda08071c63186d0" android:name="UmAd_APP_SEC" />
-  		<meta-data android:value="45693356c1fb0c63" android:name="UmAd_APP_ID" /> 
+  		<meta-data android:value="45693356c1fb0c63" android:name="UmAd_APP_ID" />
+  		-->
+        
+        <!-- The application's publisher ID assigned by Wooboo Ad -->
+       	<meta-data android:value="190d2111a7d140fc8ca9deea453b9003" android:name="Wooboo_PID"/>
+	 	<meta-data android:value="03" android:name="Market_ID"/>
 	</application>
 	<uses-sdk android:minSdkVersion="3" />
 

@@ -32,23 +32,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int backgroundColor=0x7f010001;
-        /** <p>Must be an integer value, such as "<code>100</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-         */
-        public static final int backgroundTransparent=0x7f010007;
-        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-         */
-        public static final int changeAdAnimation=0x7f010006;
+        public static final int backgroundColor=0x7f010000;
         /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -56,7 +40,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int errorMessage=0x7f01000b;
+        public static final int errorMessage=0x7f010007;
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
 <p>This may also be a reference to a resource (in the form
@@ -65,23 +49,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int focusLineColor=0x7f010008;
-        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-         */
-        public static final int isGoneWithoutAd=0x7f010005;
-        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-         */
-        public static final int keywords=0x7f010003;
+        public static final int focusLineColor=0x7f010004;
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
 <p>This may also be a reference to a resource (in the form
@@ -90,7 +58,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int otherLineColor=0x7f010009;
+        public static final int otherLineColor=0x7f010005;
         /** <p>Must be an integer value, such as "<code>100</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -98,7 +66,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int refreshInterval=0x7f010004;
+        public static final int refreshInterval=0x7f010003;
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -106,7 +74,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int testing=0x7f010000;
+        public static final int testing=0x7f010002;
         /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
 <p>This may also be a reference to a resource (in the form
@@ -115,7 +83,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int textColor=0x7f010002;
+        public static final int textColor=0x7f010001;
         /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
 Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
 in (inches), mm (millimeters).
@@ -125,7 +93,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int textSize=0x7f01000a;
+        public static final int textSize=0x7f010006;
     }
     public static final class drawable {
         public static final int blank=0x7f020000;
@@ -142,7 +110,6 @@ containing a value of this type.
         public static final int web_small=0x7f02000b;
     }
     public static final class id {
-        public static final int ad=0x7f070022;
         public static final int author=0x7f070005;
         public static final int btn_pause=0x7f07001e;
         public static final int btn_refresh_local=0x7f070012;
@@ -283,15 +250,7 @@ containing a value of this type.
         public static final int settings=0x7f040000;
     }
     public static final class styleable {
-        /**  
-	<declare-styleable name="com.admob.android.ads.AdView">
-		<attr name="backgroundColor" format="color" />
-		<attr name="primaryTextColor" format="color" />
-		<attr name="secondaryTextColor" format="color" />
-		<attr name="keywords" format="string" />
-		<attr name="refreshInterval" format="integer" />
-	</declare-styleable>
- 	
+        /** Attributes that can be used with a cn_yo2_aquarium_pocketvoa_lyric_LyricView.
            <p>Includes the following attributes:</p>
            <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
            <colgroup align="left" />
@@ -308,7 +267,7 @@ containing a value of this type.
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize
          */
         public static final int[] cn_yo2_aquarium_pocketvoa_lyric_LyricView = {
-            0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b
+            0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007
         };
         /**
           <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#errorMessage}
@@ -370,37 +329,48 @@ containing a value of this type.
           @attr name android:textSize
         */
         public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize = 2;
-        /** Attributes that can be used with a net_youmi_android_AdView.
+        /**  
+	<declare-styleable name="net.youmi.android.AdView">
+		<attr name="testing" format="boolean" />
+		<attr name="backgroundColor" format="color" />
+		<attr name="textColor" format="color" />
+		<attr name="keywords" format="string" />
+		<attr name="refreshInterval" format="integer" />
+		<attr name="isGoneWithoutAd" format="boolean" />
+		<attr name="changeAdAnimation" format="boolean" />
+		<attr name="backgroundTransparent" format="integer" />
+	</declare-styleable>
+	 
+ 
+	<declare-styleable name="com.admob.android.ads.AdView">
+		<attr name="backgroundColor" format="color" />
+		<attr name="primaryTextColor" format="color" />
+		<attr name="secondaryTextColor" format="color" />
+		<attr name="keywords" format="string" />
+		<attr name="refreshInterval" format="integer" />
+	</declare-styleable>
+ 	
            <p>Includes the following attributes:</p>
            <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute<th>Summary</tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_backgroundTransparent cn.yo2.aquarium.pocketvoa:backgroundTransparent}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_changeAdAnimation cn.yo2.aquarium.pocketvoa:changeAdAnimation}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_isGoneWithoutAd cn.yo2.aquarium.pocketvoa:isGoneWithoutAd}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_keywords cn.yo2.aquarium.pocketvoa:keywords}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_testing cn.yo2.aquarium.pocketvoa:testing}</code><td></tr>
-           <tr><th><code>{@link #net_youmi_android_AdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code><td></tr>
+           <tr><th><code>{@link #com_wooboo_adlib_android_WoobooAdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code><td></tr>
+           <tr><th><code>{@link #com_wooboo_adlib_android_WoobooAdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code><td></tr>
+           <tr><th><code>{@link #com_wooboo_adlib_android_WoobooAdView_testing cn.yo2.aquarium.pocketvoa:testing}</code><td></tr>
+           <tr><th><code>{@link #com_wooboo_adlib_android_WoobooAdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code><td></tr>
            </table>
-           @see #net_youmi_android_AdView_backgroundColor
-           @see #net_youmi_android_AdView_backgroundTransparent
-           @see #net_youmi_android_AdView_changeAdAnimation
-           @see #net_youmi_android_AdView_isGoneWithoutAd
-           @see #net_youmi_android_AdView_keywords
-           @see #net_youmi_android_AdView_refreshInterval
-           @see #net_youmi_android_AdView_testing
-           @see #net_youmi_android_AdView_textColor
+           @see #com_wooboo_adlib_android_WoobooAdView_backgroundColor
+           @see #com_wooboo_adlib_android_WoobooAdView_refreshInterval
+           @see #com_wooboo_adlib_android_WoobooAdView_testing
+           @see #com_wooboo_adlib_android_WoobooAdView_textColor
          */
-        public static final int[] net_youmi_android_AdView = {
-            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003,
-            0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007
+        public static final int[] com_wooboo_adlib_android_WoobooAdView = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003
         };
         /**
           <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#backgroundColor}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
+          attribute's value can be found in the {@link #com_wooboo_adlib_android_WoobooAdView} array.
 
 
           <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
@@ -412,66 +382,10 @@ theme attribute (in the form
 containing a value of this type.
           @attr name android:backgroundColor
         */
-        public static final int net_youmi_android_AdView_backgroundColor = 1;
-        /**
-          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#backgroundTransparent}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
-
-
-          <p>Must be an integer value, such as "<code>100</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-          @attr name android:backgroundTransparent
-        */
-        public static final int net_youmi_android_AdView_backgroundTransparent = 7;
-        /**
-          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#changeAdAnimation}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
-
-
-          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-          @attr name android:changeAdAnimation
-        */
-        public static final int net_youmi_android_AdView_changeAdAnimation = 6;
-        /**
-          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#isGoneWithoutAd}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
-
-
-          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-          @attr name android:isGoneWithoutAd
-        */
-        public static final int net_youmi_android_AdView_isGoneWithoutAd = 5;
-        /**
-          <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#keywords}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
-
-
-          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
-<p>This may also be a reference to a resource (in the form
-"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
-theme attribute (in the form
-"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
-containing a value of this type.
-          @attr name android:keywords
-        */
-        public static final int net_youmi_android_AdView_keywords = 3;
+        public static final int com_wooboo_adlib_android_WoobooAdView_backgroundColor = 0;
         /**
           <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#refreshInterval}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
+          attribute's value can be found in the {@link #com_wooboo_adlib_android_WoobooAdView} array.
 
 
           <p>Must be an integer value, such as "<code>100</code>".
@@ -482,10 +396,10 @@ theme attribute (in the form
 containing a value of this type.
           @attr name android:refreshInterval
         */
-        public static final int net_youmi_android_AdView_refreshInterval = 4;
+        public static final int com_wooboo_adlib_android_WoobooAdView_refreshInterval = 3;
         /**
           <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#testing}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
+          attribute's value can be found in the {@link #com_wooboo_adlib_android_WoobooAdView} array.
 
 
           <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
@@ -496,10 +410,10 @@ theme attribute (in the form
 containing a value of this type.
           @attr name android:testing
         */
-        public static final int net_youmi_android_AdView_testing = 0;
+        public static final int com_wooboo_adlib_android_WoobooAdView_testing = 2;
         /**
           <p>This symbol is the offset where the {@link cn.yo2.aquarium.pocketvoa.R.attr#textColor}
-          attribute's value can be found in the {@link #net_youmi_android_AdView} array.
+          attribute's value can be found in the {@link #com_wooboo_adlib_android_WoobooAdView} array.
 
 
           <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
@@ -511,6 +425,6 @@ theme attribute (in the form
 containing a value of this type.
           @attr name android:textColor
         */
-        public static final int net_youmi_android_AdView_textColor = 2;
+        public static final int com_wooboo_adlib_android_WoobooAdView_textColor = 1;
     };
 }
