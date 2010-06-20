@@ -22,12 +22,14 @@
 		</activity>
 
 		<service android:name=".DownloadService"></service>
+		<service android:name=".MediaPlaybackService"/>
 		
 		<!-- The application's publisher ID assigned by AdMob -->
         <meta-data android:value="a14b2909c8cc25e" android:name="ADMOB_PUBLISHER_ID" />
 	</application>
 	<uses-sdk android:minSdkVersion="3" />
 
+	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest> 
