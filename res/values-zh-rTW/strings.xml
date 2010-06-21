@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, Main!</string>
+	<string name="app_name">口袋VOA</string>
+	<string name="app_version_label">版本: </string>
+	<string name="app_version">1.1.1</string>
+	<string name="app_author_label">作者: </string>
+	<string name="app_author">邵彬</string>
+	<string name="app_email">shaobin0604@qq.com</string>
+	<string name="app_license_label">協議: </string>
+	<string name="app_license">Apache License, Version 2.0</string>
+	<string name="app_website_label">網站: </string>
+	<string name="app_website">http://aquarium.yo2.cn/</string>
+	
+	<!-- for activity title -->
+	<string name="ac_title_help">幫助</string>
+	<string name="ac_title_settings">設定</string>
+	
+	<string name="no_data">沒有資料 :-(</string>
+	<string name="no_lyric">無法載入歌詞:-(</string>
+	
+	<string name="alert_title_what_is_new">更新日誌</string>
+	<string name="alert_msg_what_is_new">口袋VOA - 在線/離線美國之音閱讀器\n
+\n
+版本1.1.1 [18/04/2010]\n
+	\t- 修正：在閱讀界面下載翻譯文本出錯。\n
+	\t- 改進: 增加繁體中文支持。\n
+\n
+版本 1.1.0 [11/03/2010]\n
+	\t- 改進: 增加更新記錄對話框。\n
+	\t- 改進: 增加幫助選單。\n
+	\t- 改進: 文章列表增加翻譯和歌詞的圖標。T表示有中文翻譯，L表示有歌詞同步。\n
+	\t- 改進: 增加中文翻譯。\n
+	\t- 改進: 增加歌詞同步。\n
+	\t- 改進: 出錯對話框增加重試按鈕。\n
+	\t- 改進: 當程序位於前台時保持屏幕長亮。\n
+	\t- 改進: 由於 www.iciba.com 資料庫沒有提供中文翻譯和歌詞同步，故刪除該資料庫。\n
+\n
+版本 1.0.2 [14/01/2010]\n
+	\t- 改進: 增加簡體中文支持。\n	
+\n
+版本 1.0.1 [18/12/2009]\n
+	\t- 修正: 當下載沒有發佈日期的文章時，程序崩潰。\n
+\n	
+版本 1.0.0 [17/12/2009]\n
+	\t- 初始版本</string>
+	
+	<string name="alert_title_internet_status">網路連接狀態</string>
+	<string name="alert_msg_internet_status_connected">已連接</string>
+	<string name="alert_msg_internet_status_disconnected">已斷開</string>
+	
+	<string name="alert_title_about">關於</string>
+	
+	<string name="alert_title_select_action">請選擇操作方式</string>
+	
+	<string name="alert_title_confirm_delete">確認刪除</string>
+	<string name="alert_msg_confirm_delete">你確定要刪除文章 - \"%1$s\"?</string>
+	
+	<string name="alert_title_confirm_download">確認刪除</string>
+	<string name="alert_msg_confirm_download">你之前已經下載過文章 - \"%1$s\", 你確認要重新下載嗎?</string>
+	
+	<string name="alert_title_error">注意</string>
+	
+	<string name="alert_msg_load_remote_page_error">無法載入遠端網頁</string>
+	<string name="alert_msg_load_local_page_error">無法載入本地網頁</string>
+	
+	<string name="alert_msg_play_remote_audio_error">無法播放遠端聲音</string>
+	<string name="alert_msg_play_local_audio_error">無法播放本地聲音</string>
+	
+	<string name="alert_msg_download_error">無法下載文章</string>
+	<string name="alert_msg_download_audio_error">無法下載聲音</string>
+	<string name="alert_msg_download_text_error">無法下載文本</string>
+	
+	<string name="alert_msg_loadlist_error">無法載入列表</string>
+	
+	<string name="progressbar_download_title">正在下載聲音文件</string>
+	<string name="progressspin_loadpage_msg">載入中...</string>
+	<string name="progressspin_loadlist_msg">載入中...</string>
+	
+	<string name="toast_open_context_menu">長按列表項彈出環境選單</string>
+	<string name="toast_article_deleted">文章已刪除</string>
+	<string name="toast_download_start">開始下載...</string>
+	<string name="toast_download_audio_complete">聲音下載完成</string>
+	<string name="toast_download_text_complete">文本下載完成</string>
+	
+	<string name="menu_help">幫助</string>
+	<string name="menu_change_log">更新記錄</string>
+	<string name="menu_internet_status">網路狀態</string>
+	
+	<string name="menu_download">下載</string>
+	<string name="menu_original">原文</string>
+	<string name="menu_translation">譯文</string>
+	<string name="menu_lrc">歌詞</string>
+	
+	<string name="menu_about">關於</string>
+	<string name="menu_settings">設定</string>
+	<string name="menu_exit">退出</string>
+	<string name="menu_view">查看</string>
+	<string name="menu_delete">刪除</string>
+	
+	<string name="btn_retry">重試</string>
+	<string name="btn_cancel">取消</string>
+	<string name="btn_ok">確定</string>
+	<string name="btn_refresh">重新讀取</string>
+	<string name="btn_yes">是</string>
+	<string name="btn_no">否</string>
+	
+	<string name="tab_local">本地</string>
+	<string name="tab_remote">遠端</string>
+	
+	<string name="prefs_list_count_key">list_count</string>
+	<string name="prefs_list_count_title">最大條目</string>
+	<string name="prefs_list_count_summary">選擇遠端文章列表中顯示的最大條目數</string>
+	<string name="prefs_list_count_dialog_title">請選擇一個最大條目數量</string>
+	
+	<string name="prefs_datasource_key">data_source</string>
+	<string name="prefs_datasource_title">資料來源</string>
+	<string name="prefs_datasource_summary">選擇文章的資料來源</string>
+	<string name="prefs_datasource_dialog_title">請選擇一個資料來源</string>
+	
+	<string name="notification_download_text_error_ticker">下載文本出錯</string>
+	<string name="notification_download_audio_error_ticker">下載聲音出錯</string>
+	<string name="notification_download_textzh_error_ticker">下載翻譯文本出錯</string>
+	<string name="notification_download_lyric_error_ticker">下載歌詞出錯</string>
+	
+	<string name="notification_download_text_success_ticker">下載文本已完成</string>
+	<string name="notification_download_audio_success_ticker">下載聲音已完成</string>
+	<string name="notification_download_textzh_success_ticker">下載翻譯文本已完成</string>
+	<string name="notification_download_lyric_success_ticker">下載歌詞已完成</string>
+	
+	<string name="notification_download_text_progress_ticker">文本下載中</string>
+	<string name="notification_download_audio_progress_ticker">聲音下載中</string>
+	<string name="notification_download_textzh_progress_ticker">翻譯文本下載中</string>
+	<string name="notification_download_lyric_progress_ticker">歌詞下載中</string>
+	
+	<string name="notification_download_text_progress_content">文本 %1$d%% 下載中  [%2$d/%3$d]KB</string>
+	<string name="notification_download_audio_progress_content">聲音 %1$d%% 下載中  [%2$d/%3$d]KB</string>
+	<string name="notification_download_textzh_progress_content">翻譯文本 %1$d%% 下載中  [%2$d/%3$d]KB</string>
+	<string name="notification_download_lyric_progress_content">歌詞 %1$d%% 下載中  [%2$d/%3$d]KB</string>
+</resources>
