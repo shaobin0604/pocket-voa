@@ -51,11 +51,15 @@
 					android:src="@drawable/blank" 
 					android:layout_gravity="center"
 					android:layout_weight="1.5" />
+				<LinearLayout android:layout_width="fill_parent" 
+					android:layout_height="wrap_content" 
+					style="@android:style/ButtonBar">
 				<Button
 					android:id="@+id/btn_refresh_local"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:text="@string/btn_refresh" />
+				</LinearLayout>
 			</LinearLayout>
 			
 			<!-- tab 1, remote -->
@@ -96,11 +100,15 @@
 					android:layout_gravity="center"
 					android:layout_weight="1.5" />
 	
-				<Button
-					android:id="@+id/btn_refresh_remote"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/btn_refresh" />
+				<LinearLayout android:layout_width="fill_parent" 
+					android:layout_height="wrap_content" 
+					style="@android:style/ButtonBar">
+					<Button
+						android:id="@+id/btn_refresh_remote"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/btn_refresh" />
+				</LinearLayout>
 			</LinearLayout>
 		</FrameLayout>
 	</TabHost>

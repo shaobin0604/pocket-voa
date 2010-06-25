@@ -45,9 +45,21 @@ public class MediaPlaybackService extends Service {
 	private static final int RELEASE_WAKELOCK = 2;
 	private static final int SERVER_DIED = 3;
 	private static final int FADEIN = 4;
+	
+	public static final int STATE_IDLE = 0;
+	public static final int STATE_INITIALIZED = 1;
+	public static final int STATE_PREPARING = 2;
+	public static final int STATE_PREPARED = 3;
+	public static final int STATE_STARTED = 4;
+	public static final int STATE_PAUSED = 5;
+	public static final int STATE_STOPPED = 6;
+	public static final int STATE_PLAYBACK_COMPLETED = 7;
+	public static final int STATE_END = 8;
+	public static final int STATE_ERROR = 9;
+	
 
 	private MultiPlayer mPlayer;
-	private String mFileToPlay;
+	private Uri mFileToPlay;
 	// interval after which we stop the service when idle
 	private static final int IDLE_DELAY = 60000;
 
@@ -179,11 +191,18 @@ public class MediaPlaybackService extends Service {
 
 	@Override
 	public void onDestroy() {
+		Log.d(TAG, "[onDestroy]");
 		// Check that we're not being destroyed while something is still
 		// playing.
+		
+		
 		if (isPlaying()) {
-			Log.e(TAG, "Service being destroyed while still playing.");
+			Log.e(TAG, "[onDestroy] Service being destroyed while still playing.");
 		}
+		
+		// remove notification icon
+		gotoIdleState();
+		
 		// release all MediaPlayer resources, including the native player and
 		// wakelocks
 		mPlayer.release();
@@ -202,6 +221,8 @@ public class MediaPlaybackService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
+		Log.d(TAG, "[onBind] intent -- " + intent);
+		
 		mDelayedStopHandler.removeCallbacksAndMessages(null);
 		mServiceInUse = true;
 		return mBinder;
@@ -209,9 +230,12 @@ public class MediaPlaybackService extends Service {
 
 	@Override
 	public void onRebind(Intent intent) {
+		Log.d(TAG, "[onReBind] intent -- " + intent);
 		mDelayedStopHandler.removeCallbacksAndMessages(null);
 		mServiceInUse = true;
 	}
+	
+	
 
 	@Override
 	public void onStart(Intent intent, int startId) {
@@ -245,9 +269,10 @@ public class MediaPlaybackService extends Service {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
+		Log.d(TAG, "[onUnbind] intent --" + intent);
 		mServiceInUse = false;
 
-		if (isPlaying() || mResumeAfterCall) {
+		if (isPlaying() || mResumeAfterCall || isPaused()) {
 			// something is currently playing, or will be playing once
 			// an in-progress call ends, so don't stop the service now.
 			return true;
@@ -273,18 +298,20 @@ public class MediaPlaybackService extends Service {
 		public void handleMessage(Message msg) {
 			// Check again to make sure nothing is playing right now
 			if (isPlaying() || mResumeAfterCall || mServiceInUse
-					|| mMediaplayerHandler.hasMessages(TRACK_ENDED)) {
+					|| mMediaplayerHandler.hasMessages(TRACK_ENDED) || isPaused()) {
 				return;
 			}
 			stopSelf(mServiceStartId);
 		}
 	};
 	
+	
+	
     /**
      * Returns the path of the currently playing file, or null if
      * no file is currently playing.
      */
-    public String getPath() {
+    public Uri getPath() {
         return mFileToPlay;
     }
 
@@ -295,13 +322,13 @@ public class MediaPlaybackService extends Service {
 		}
 	}
 
-	public void openAsync(String path) {
+	public void openAsync(Uri uri) {
 		synchronized (this) {
-			if (path == null) {
+			if (uri == null) {
 				return;
 			}
 
-			mFileToPlay = path;
+			mFileToPlay = uri;
 			mPlayer.setDataSourceAsync(mFileToPlay);
 		}
 	}
@@ -312,15 +339,21 @@ public class MediaPlaybackService extends Service {
 	public void play() {
 		if (mPlayer.isInitialized()) {
 			mPlayer.start();
+			
 			setForeground(true);
 
 			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 			Notification status = new Notification();
 			status.flags |= Notification.FLAG_ONGOING_EVENT;
-			status.icon = R.drawable.stat_notify_musicplayer;
-			status.contentIntent = PendingIntent.getActivity(this, 0,
-					new Intent(this, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK), 0);
+			status.icon = R.drawable.media_play;
+			
+			Intent intent = new Intent(this, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			Utils.putArticleToIntent(mArticle, intent);
+			
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+			status.setLatestEventInfo(this, getString(R.string.app_name), mArticle.title, pendingIntent);
+			
 			nm.notify(PLAYBACKSERVICE_STATUS, status);
 			
 			if (!mWasPlaying) {
@@ -330,6 +363,8 @@ public class MediaPlaybackService extends Service {
 			
 		}
 	}
+	
+	
 
 	private void stop(boolean remove_status_icon) {
 		if (mPlayer.isInitialized()) {
@@ -359,7 +394,8 @@ public class MediaPlaybackService extends Service {
 	public void pause() {
 		if (isPlaying()) {
 			mPlayer.pause();
-			gotoIdleState();
+//			gotoIdleState();
+			gotoPauseState();
 			setForeground(false);
 			mWasPlaying = false;
 			notifyChange(PLAYSTATE_CHANGED);
@@ -376,6 +412,31 @@ public class MediaPlaybackService extends Service {
 			return mPlayer.isPlaying();
 		}
 		return false;
+	}
+	
+	private boolean isPaused() {
+		return mPlayer.getState() == STATE_PAUSED;
+	}
+	
+	private void gotoPauseState() {
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+		Notification status = new Notification();
+		status.flags |= Notification.FLAG_ONGOING_EVENT;
+		status.icon = R.drawable.media_pause;
+		
+		Intent intent = new Intent(this, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		Utils.putArticleToIntent(mArticle, intent);
+		
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		status.setLatestEventInfo(this, getString(R.string.app_name), mArticle.title, pendingIntent);
+		
+		nm.notify(PLAYBACKSERVICE_STATUS, status);
+		
+		
+		mDelayedStopHandler.removeCallbacksAndMessages(null);
+		Message msg = mDelayedStopHandler.obtainMessage();
+		mDelayedStopHandler.sendMessageDelayed(msg, IDLE_DELAY);
 	}
 
 	private void gotoIdleState() {
@@ -432,33 +493,44 @@ public class MediaPlaybackService extends Service {
 		private MediaPlayer mMediaPlayer = new MediaPlayer();
 		private Handler mHandler;
 		private boolean mIsInitialized = false;
-
+		
+		private int mState = STATE_IDLE;
+		
 		public MultiPlayer() {
 			mMediaPlayer.setWakeMode(MediaPlaybackService.this,
 					PowerManager.PARTIAL_WAKE_LOCK);
 		}
 
-		public void setDataSourceAsync(String path) {
+		public void setDataSourceAsync(Uri uri) {
 			try {
 				mMediaPlayer.reset();
-				mMediaPlayer.setDataSource(path);
+				mState = STATE_IDLE;
+				
+				Log.d(TAG, "[setDatasourceAsync] uri -- " + uri);
+				
+				mMediaPlayer.setDataSource(MediaPlaybackService.this, uri);
+				mState = STATE_INITIALIZED;
+				
 				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 				mMediaPlayer.setOnPreparedListener(preparedlistener);
 				mMediaPlayer.setOnBufferingUpdateListener(bufferingUpdateListener);
 				mMediaPlayer.prepareAsync();
+				mState = STATE_PREPARING;
 			} catch (IOException ex) {
 				// TODO: notify the user why the file couldn't be opened
 				mIsInitialized = false;
+				mState = STATE_ERROR;
 				return;
 			} catch (IllegalArgumentException ex) {
 				// TODO: notify the user why the file couldn't be opened
 				mIsInitialized = false;
+				mState = STATE_ERROR;
 				return;
 			}
 			mMediaPlayer.setOnCompletionListener(completionListener);
 			mMediaPlayer.setOnErrorListener(errorListener);
 
-			mIsInitialized = true;
+			
 		}
 
 		public boolean isInitialized() {
@@ -467,11 +539,13 @@ public class MediaPlaybackService extends Service {
 
 		public void start() {
 			mMediaPlayer.start();
+			mState = STATE_STARTED;
 		}
 
 		public void stop() {
 			mMediaPlayer.reset();
 			mIsInitialized = false;
+			mState = STATE_STOPPED;
 		}
 
 		/**
@@ -484,6 +558,7 @@ public class MediaPlaybackService extends Service {
 
 		public void pause() {
 			mMediaPlayer.pause();
+			mState = STATE_PAUSED;
 		}
 		
         public boolean isPlaying() {
@@ -497,7 +572,8 @@ public class MediaPlaybackService extends Service {
 		MediaPlayer.OnBufferingUpdateListener bufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
 			
 			public void onBufferingUpdate(MediaPlayer mp, int percent) {
-				// TODO 
+				// TODO add buffering update notification
+				
 			}
 		};
 
@@ -508,6 +584,9 @@ public class MediaPlaybackService extends Service {
 				// and allow the device to go to sleep.
 				// This temporary wakelock is released when the RELEASE_WAKELOCK
 				// message is processed, but just in case, put a timeout on it.
+				
+				mState = STATE_PLAYBACK_COMPLETED;
+				
 				mWakeLock.acquire(30000);
 				mHandler.sendEmptyMessage(TRACK_ENDED);
 				mHandler.sendEmptyMessage(RELEASE_WAKELOCK);
@@ -516,6 +595,8 @@ public class MediaPlaybackService extends Service {
 
 		MediaPlayer.OnPreparedListener preparedlistener = new MediaPlayer.OnPreparedListener() {
 			public void onPrepared(MediaPlayer mp) {
+				mIsInitialized = true;
+				mState = STATE_PREPARED;
 				notifyChange(ASYNC_OPEN_COMPLETE);
 			}
 		};
@@ -532,6 +613,7 @@ public class MediaPlaybackService extends Service {
 					// while the
 					// service is still being restarted
 					mMediaPlayer = new MediaPlayer();
+					mState = STATE_IDLE;
 					mMediaPlayer.setWakeMode(MediaPlaybackService.this,
 							PowerManager.PARTIAL_WAKE_LOCK);
 					mHandler.sendMessageDelayed(mHandler
@@ -561,15 +643,39 @@ public class MediaPlaybackService extends Service {
 		public void setVolume(float vol) {
 			mMediaPlayer.setVolume(vol, vol);
 		}
+		
+		public int getState() {
+			return mState;
+		}
 	}
+	
+	private int getState() {
+		return mPlayer.getState();
+	}
+	
+	private Article mArticle;
 	
 	private final IMediaPlaybackService.Stub mBinder = new IMediaPlaybackService.Stub()
     {
-        public void openfileAsync(String path)
-        {
-            MediaPlaybackService.this.openAsync(path);
-        }
-        public boolean isPlaying() {
+		@Override
+		public Article getArticle(){
+			return MediaPlaybackService.this.mArticle;
+		}
+		@Override
+		public int getState() {
+			return MediaPlaybackService.this.getState();
+		}
+		@Override
+		public void setArticle(Article article)  {
+			MediaPlaybackService.this.mArticle = article;
+	
+			Uri uri = mArticle.id == -1 ? Uri
+					.parse(MediaPlaybackService.this.mArticle.urlmp3) : Uri
+					.fromFile(Utils.localMp3File(MediaPlaybackService.this.mArticle));
+			Log.d(TAG, "[setArticle] uri -- " + uri);
+			MediaPlaybackService.this.openAsync(uri);
+		}
+		public boolean isPlaying() {
             return MediaPlaybackService.this.isPlaying();
         }
         public void stop() {
@@ -580,9 +686,6 @@ public class MediaPlaybackService extends Service {
         }
         public void play() {
             MediaPlaybackService.this.play();
-        }
-        public String getPath() {
-            return MediaPlaybackService.this.getPath();
         }
         public long position() {
             return MediaPlaybackService.this.position();

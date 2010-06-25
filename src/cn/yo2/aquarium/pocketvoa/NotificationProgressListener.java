@@ -19,7 +19,9 @@ public class NotificationProgressListener implements IProgressListener {
 	private Notification mNotificationSuccess;
 	private Notification mNotificationError;
 
-	private PendingIntent mContentIntent;
+	private PendingIntent mMainPendingIntent;
+	private PendingIntent mShowPendingIntent;
+	
 	
 	private NotificationManager mNotificationManager;
 
@@ -28,7 +30,19 @@ public class NotificationProgressListener implements IProgressListener {
 		this.mContext = context;
 		this.mArticle = article;
 		
-		mContentIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext, Main.class), 0);
+		Intent mainIntent = new Intent(
+				mContext, Main.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		
+		long threadId = Thread.currentThread().getId();
+		
+		mMainPendingIntent = PendingIntent.getActivity(mContext, (int) threadId, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		
+		Intent showIntent = new Intent(
+				mContext, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		Utils.putArticleToIntent(mArticle, showIntent);
+		mShowPendingIntent = PendingIntent.getActivity(mContext, (int) threadId, showIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		
@@ -66,7 +80,7 @@ public class NotificationProgressListener implements IProgressListener {
 		
 		mNotificationError.flags = Notification.FLAG_AUTO_CANCEL;
 		     	
-		mNotificationError.setLatestEventInfo(mContext, contentTitle, contentText, mContentIntent);
+		mNotificationError.setLatestEventInfo(mContext, contentTitle, contentText, mMainPendingIntent);
 		
 		long threadId = Thread.currentThread().getId();
 
@@ -106,7 +120,7 @@ public class NotificationProgressListener implements IProgressListener {
 		 	
 		mNotificationSuccess.flags = Notification.FLAG_AUTO_CANCEL;
 		
-		mNotificationSuccess.setLatestEventInfo(mContext, contentTitle, contentText, mContentIntent);
+		mNotificationSuccess.setLatestEventInfo(mContext, contentTitle, contentText, mShowPendingIntent);
 		
 		long threadId = Thread.currentThread().getId();
 
@@ -150,7 +164,7 @@ public class NotificationProgressListener implements IProgressListener {
 		
 		mNotificationProgress.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
 		    	
-		mNotificationProgress.setLatestEventInfo(mContext, contentTitle, contentText, mContentIntent);
+		mNotificationProgress.setLatestEventInfo(mContext, contentTitle, contentText, mMainPendingIntent);
 		
 		long threadId = Thread.currentThread().getId();
 		

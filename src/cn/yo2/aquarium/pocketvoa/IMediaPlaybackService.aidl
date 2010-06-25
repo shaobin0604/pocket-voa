@@ -1,8 +1,12 @@
 package cn.yo2.aquarium.pocketvoa;
 
+import cn.yo2.aquarium.pocketvoa.Article;
+
 interface IMediaPlaybackService
 {
-    void openfileAsync(String path);
+    void setArticle(in Article article); 
+    Article getArticle();
+    int getState();
     boolean isPlaying();
     void stop();
     void pause();
@@ -10,5 +14,4 @@ interface IMediaPlaybackService
     long duration();
     long position();
     long seek(long pos);
-    String getPath();
 }

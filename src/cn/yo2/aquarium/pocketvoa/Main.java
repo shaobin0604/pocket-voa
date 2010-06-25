@@ -63,7 +63,7 @@ public class Main extends Activity {
 
 	private static final int DLG_ERROR = 0;
 	private static final int DLG_PROGRESS = 1;
-	private static final int DLG_MENU_LOCAL_LIST_ = 2;
+	private static final int DLG_MENU_LOCAL_LIST = 2;
 	private static final int DLG_MENU_REMOTE_LIST = 3;
 	private static final int DLG_CONFIRM_DELETE = 4;
 	private static final int DLG_CONFIRM_DOWNLOAD = 5;
@@ -79,6 +79,7 @@ public class Main extends Activity {
 	private static final int CMD_REFRESH_REMOTE_LIST = 0;
 	private static final int CMD_REFRESH_LOCAL_LIST = 1;
 	private static final int CMD_DOWNLOAD_ARTICLE = 2;
+	private static final int CMD_SHOW_ARTICLE = 3;
 
 	private static final String[] TYPES_REMOTE = { "Standard English",
 			"Special English", "English Learning", };
@@ -115,7 +116,8 @@ public class Main extends Activity {
 
 	private App mApp;
 
-	private Article mLongClickArticle;
+	// selected article in list
+	private Article mCurrArticle;
 
 	private ArrayAdapter<CharSequence>[] mAdaptersRemote;
 	private ArrayAdapter<CharSequence>[] mAdaptersLocal;
@@ -146,6 +148,25 @@ public class Main extends Activity {
 			}
 		}
 	};
+	
+	private Handler mShowHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case WHAT_SUCCESS:
+				dismissDialog(DLG_PROGRESS);
+				startShowActivity(mCurrArticle);
+				break;
+			case WHAT_FAIL_IO:
+			case WHAT_FAIL_PARSE:
+				dismissDialog(DLG_PROGRESS);
+				mLastError = Error.DownloadError;
+				showDialog(DLG_ERROR);
+				break;
+			default:
+				break;
+			}
+		}
+	};
 
 	private Handler mDownloadHandler = new Handler() {
 
@@ -155,10 +176,10 @@ public class Main extends Activity {
 			case WHAT_SUCCESS:
 				dismissDialog(DLG_PROGRESS);
 				// TODO check if the article has been downloaded
-				if (mDatabaseHelper.isArticleExist(mLongClickArticle)) {
+				if (mDatabaseHelper.isArticleExist(mCurrArticle)) {
 					showDialog(DLG_CONFIRM_DOWNLOAD);
 				} else {
-					downloadArticleInService(mLongClickArticle);
+					downloadArticleInService(mCurrArticle);
 					Toast.makeText(Main.this, R.string.toast_download_start,
 							Toast.LENGTH_SHORT).show();
 				}
@@ -349,7 +370,8 @@ public class Main extends Activity {
 
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				startShowActivity(mList.get(position));
+				mCurrArticle = mList.get(position);
+				commandShowArticle(mCurrArticle);
 			}
 
 		});
@@ -358,7 +380,7 @@ public class Main extends Activity {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mLongClickArticle = mList.get(position);
+				mCurrArticle = mList.get(position);
 				showDialog(DLG_MENU_REMOTE_LIST);
 				return true;
 			}
@@ -409,8 +431,8 @@ public class Main extends Activity {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mLongClickArticle = mDatabaseHelper.queryArticle(id);
-				showDialog(DLG_MENU_LOCAL_LIST_);
+				mCurrArticle = mDatabaseHelper.queryArticle(id);
+				showDialog(DLG_MENU_LOCAL_LIST);
 				return true;
 			}
 
@@ -543,6 +565,7 @@ public class Main extends Activity {
 			return true;
 		case MENU_EXIT:
 			stopService(new Intent(this, DownloadService.class));
+			stopService(new Intent(this, MediaPlaybackService.class));
 			finish();
 			return true;
 		case MENU_CHANGE_LOG:
@@ -629,7 +652,9 @@ public class Main extends Activity {
 								commandRefreshRemoteList();
 								break;
 							case CMD_DOWNLOAD_ARTICLE:
-								commandDownloadArticle(mLongClickArticle);
+								commandDownloadArticle(mCurrArticle);
+							case CMD_SHOW_ARTICLE:
+								commandShowArticle(mCurrArticle);
 								break;
 							default:
 								break;
@@ -652,7 +677,7 @@ public class Main extends Activity {
 			progressDialog
 					.setMessage(getString(R.string.progressspin_loadlist_msg));
 			return progressDialog;
-		case DLG_MENU_LOCAL_LIST_:
+		case DLG_MENU_LOCAL_LIST:
 			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
 			builder2.setTitle(R.string.alert_title_select_action);
 			builder2.setItems(R.array.local_list_action,
@@ -662,7 +687,7 @@ public class Main extends Activity {
 							dialog.dismiss();
 							switch (which) {
 							case 0:
-								startShowActivity(mLongClickArticle);
+								startShowActivity(mCurrArticle);
 								break;
 							case 1:
 								showDialog(DLG_CONFIRM_DELETE);
@@ -684,10 +709,10 @@ public class Main extends Activity {
 							dialog.dismiss();
 							switch (which) {
 							case 0:
-								startShowActivity(mLongClickArticle);
+								commandShowArticle(mCurrArticle);
 								break;
 							case 1:
-								commandDownloadArticle(mLongClickArticle);
+								commandDownloadArticle(mCurrArticle);
 								break;
 							default:
 								break;
@@ -708,21 +733,21 @@ public class Main extends Activity {
 
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
-							Utils.delete(Utils.localTextFile(mLongClickArticle)
+							Utils.delete(Utils.localTextFile(mCurrArticle)
 									.getAbsolutePath());
 
-							Utils.delete(Utils.localMp3File(mLongClickArticle)
+							Utils.delete(Utils.localMp3File(mCurrArticle)
 									.getAbsolutePath());
 
-							if (mLongClickArticle.hastextzh)
+							if (mCurrArticle.hastextzh)
 								Utils.delete(Utils.localTextZhFile(
-										mLongClickArticle).getAbsolutePath());
+										mCurrArticle).getAbsolutePath());
 
-							if (mLongClickArticle.haslrc)
+							if (mCurrArticle.haslrc)
 								Utils.delete(Utils.localLyricFile(
-										mLongClickArticle).getAbsolutePath());
+										mCurrArticle).getAbsolutePath());
 
-							mDatabaseHelper.deleteArticle(mLongClickArticle.id);
+							mDatabaseHelper.deleteArticle(mCurrArticle.id);
 							Toast.makeText(Main.this,
 									R.string.toast_article_deleted,
 									Toast.LENGTH_SHORT).show();
@@ -764,7 +789,7 @@ public class Main extends Activity {
 
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
-							downloadArticleInService(mLongClickArticle);
+							downloadArticleInService(mCurrArticle);
 							Toast.makeText(Main.this,
 									R.string.toast_download_start,
 									Toast.LENGTH_SHORT).show();
@@ -852,11 +877,11 @@ public class Main extends Activity {
 		case DLG_CONFIRM_DOWNLOAD:
 			alertDialog.setMessage(getString(
 					R.string.alert_msg_confirm_download,
-					mLongClickArticle.title));
+					mCurrArticle.title));
 			break;
 		case DLG_CONFIRM_DELETE:
 			alertDialog.setMessage(getString(R.string.alert_msg_confirm_delete,
-					mLongClickArticle.title));
+					mCurrArticle.title));
 			break;
 		default:
 			break;
@@ -1011,6 +1036,23 @@ public class Main extends Activity {
 		Utils.putArticleToIntent(article, intent);
 		startService(intent);
 	}
+	
+	private void commandShowArticle(final Article article) {
+		mLastCommand = CMD_SHOW_ARTICLE;
+		showDialog(DLG_PROGRESS);
+		new Thread() {
+			public void run() {
+				try {
+					parseArticleInfo(article);
+					mShowHandler.sendEmptyMessage(WHAT_SUCCESS);
+				} catch (IOException e) {
+					mShowHandler.sendEmptyMessage(WHAT_FAIL_IO);
+				} catch (IllegalContentFormatException e) {
+					mShowHandler.sendEmptyMessage(WHAT_FAIL_PARSE);
+				}
+			}
+		}.start();
+	}
 
 	/**
 	 * Load remote article, parse page
@@ -1024,27 +1066,8 @@ public class Main extends Activity {
 
 			@Override
 			public void run() {
-
-				int typeIndex = spnTypeRemote.getSelectedItemPosition();
-				int subtypeIndex = spnSubtypeRemote.getSelectedItemPosition();
-
-				if (subtypeIndex == -1) {
-					subtypeIndex = 0;
-				}
-
-				String key = TYPES_REMOTE[typeIndex] + "_"
-						+ SUBTYPES_REMOTE[typeIndex][subtypeIndex];
-				// Log.d(CLASSTAG, "key -- " + key);
-				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
-						.get(key);
-
 				try {
-					mApp.mPageGenerator.getArticle(article, false);
-					if (article.hastextzh) {
-						mApp.mPageGenerator.mParser = mApp.mDataSource
-								.getPageZhParsers().get(key);
-						mApp.mPageGenerator.getArticle(article, true);
-					}
+					parseArticleInfo(article);
 					mDownloadHandler.sendEmptyMessage(WHAT_SUCCESS);
 				} catch (IOException e) {
 					mDownloadHandler.sendEmptyMessage(WHAT_FAIL_IO);
@@ -1098,6 +1121,28 @@ public class Main extends Activity {
 		Editor editor = preferences.edit();
 		editor.putInt(KEY_VERSION_CODE, getCurrentVersionCode());
 		editor.commit();
+	}
+
+	private void parseArticleInfo(final Article article) throws IOException,
+			IllegalContentFormatException {
+		int typeIndex = spnTypeRemote.getSelectedItemPosition();
+		int subtypeIndex = spnSubtypeRemote.getSelectedItemPosition();
+
+		if (subtypeIndex == -1) {
+			subtypeIndex = 0;
+		}
+
+		String key = TYPES_REMOTE[typeIndex] + "_"
+				+ SUBTYPES_REMOTE[typeIndex][subtypeIndex];
+		// Log.d(CLASSTAG, "key -- " + key);
+		mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers().get(key);
+		
+		mApp.mPageGenerator.getArticle(article, false);
+		if (article.hastextzh) {
+			mApp.mPageGenerator.mParser = mApp.mDataSource
+					.getPageZhParsers().get(key);
+			mApp.mPageGenerator.getArticle(article, true);
+		}
 	}
 }
 

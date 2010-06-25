@@ -18,12 +18,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -45,7 +40,7 @@ import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 import com.admob.android.ads.AdView;
 
 public class Show extends Activity {
-	private static final String CLASSTAG = Show.class.getSimpleName();
+	private static final String TAG = Show.class.getSimpleName();
 
 	private static final String[] KEYWORDS = { "android game farm",
 			"food sport", "life auto outdoor", "iphone", };
@@ -101,11 +96,9 @@ public class Show extends Activity {
 	private static final int WHAT_LOAD_LOCAL_LYRIC_FAIL_IO = 7;
 
 	// MediaPlayer handler message type
-	private static final int WHAT_PLAYER_PROGRESS = 0;
+	private static final int WHAT_LYRIC_UPDATE = 0;
 
-	private enum MediaPlayerState {
-		Idle, Initialized, Preparing, Prepared, Started, Paused, Stopped, PlaybackCompleted, End, Error,
-	}
+	
 
 	private enum Error {
 		LoadRemotePageError, LoadLocalPageError, PlayRemoteAudioError, PlayLocalAudioError, DownloadAudioError, DownloadTextError,
@@ -140,15 +133,9 @@ public class Show extends Activity {
 	private boolean mLocalOriginalLoaded;
 	private boolean mLocalTranslationLoaded;
 	private boolean mLocalLyricLoaded;
-
-	private int mPlayProgress; // 1..1000
-	private long mEllapsedTime; // in millis
-
+	
 	private StringBuilder mRecycle = new StringBuilder(10);
 
-	private IMediaPlaybackService mPlayerService;
-
-	private MediaPlayerState mMediaPlayerState;
 
 	private DatabaseHelper mDatabaseHelper;
 
@@ -160,6 +147,7 @@ public class Show extends Activity {
 			case WHAT_LOAD_REMOTE_ORIGINAL_SUCCESS:
 				mWebViewEn.loadDataWithBaseURL("", mArticle.text, "text/html",
 						"utf-8", "");
+				
 				dismissDialog(DLG_PROGRESS_SPIN);
 				setCurrentView(VIEW_ORIGINAL);
 				break;
@@ -172,7 +160,7 @@ public class Show extends Activity {
 			case WHAT_LOAD_REMOTE_LYRIC_SUCCESS:
 				dismissDialog(DLG_PROGRESS_SPIN);
 				setCurrentView(VIEW_LYRIC);
-				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+				mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
 				break;
 			case WHAT_LOAD_REMOTE_ORIGINAL_FAIL_IO:
 			case WHAT_LOAD_REMOTE_ORIGINAL_FAIL_PARSE:
@@ -214,7 +202,7 @@ public class Show extends Activity {
 			case WHAT_LOAD_LOCAL_LYRIC_SUCCESS:
 				dismissDialog(DLG_PROGRESS_SPIN);
 				setCurrentView(VIEW_LYRIC);
-				mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+				mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
 				break;
 			case WHAT_LOAD_LOCAL_ORIGINAL_FAIL_IO:
 			case WHAT_LOAD_LOCAL_ORIGINAL_FAIL_PARSE:
@@ -237,61 +225,30 @@ public class Show extends Activity {
 
 	};
 
-	// private Handler mDownloadHandler = new Handler() {
-	// @Override
-	// public void handleMessage(Message msg) {
-	// switch (msg.what) {
-	// case HandlerProgressListener.WHAT_DOWNLOAD_PROGRESS:
-	// // msg.arg1 store progress
-	// mProgressDialogBar.setProgress(msg.arg1);
-	// break;
-	// case HandlerProgressListener.WHAT_DOWNLOAD_SUCCESS:
-	// if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_TEXT)
-	// Toast.makeText(Show.this,
-	// R.string.toast_download_text_complete,
-	// Toast.LENGTH_SHORT).show();
-	// else if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_MP3) {
-	// dismissDialog(DLG_PROGRESS_BAR);
-	// Toast.makeText(Show.this,
-	// R.string.toast_download_audio_complete,
-	// Toast.LENGTH_SHORT).show();
-	// }
-	// break;
-	// case HandlerProgressListener.WHAT_DOWNLOAD_ERROR:
-	// if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_TEXT) {
-	// mLastError = Error.DownloadTextError;
-	// showDialog(DLG_ERROR);
-	// } else if (msg.arg2 == DownloadTask.WHICH_DOWNLOAD_MP3) {
-	// dismissDialog(DLG_PROGRESS_BAR);
-	// mLastError = Error.DownloadAudioError;
-	// showDialog(DLG_ERROR);
-	// }
-	// break;
-	// default:
-	// break;
-	// }
-	// }
-	// };
-
 	private Handler mLyricHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case WHAT_PLAYER_PROGRESS:
-				if (mMediaPlayerState == MediaPlayerState.Started) {
-					// TODO update LyricView
-					Log.d(CLASSTAG, "in mLyricHandler");
-					if (mCurrentView == VIEW_LYRIC) {
-						try {
-							mLyricView.update(mService.position());
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+			case WHAT_LYRIC_UPDATE:
+				try {
+					if (mService.isPlaying()) {
+						// TODO update LyricView
+						Log.d(TAG, "in mLyricHandler");
+						if (mCurrentView == VIEW_LYRIC) {
+							try {
+								mLyricView.update(mService.position());
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							mLyricHandler.sendEmptyMessageDelayed(
+									WHAT_LYRIC_UPDATE, 100);
 						}
-						mLyricHandler.sendEmptyMessageDelayed(
-								WHAT_PLAYER_PROGRESS, 100);
 					}
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				break;
 			default:
@@ -303,16 +260,8 @@ public class Show extends Activity {
 
 	private OnClickListener mPauseButtonClickListener = new OnClickListener() {
 
-		private boolean mInitialized;
-
 		public void onClick(View v) {
-				
-			if (mInitialized)
-				doPauseResume();
-			else {
-				startPlayback();
-				mInitialized = true;
-			}
+			doPauseResume();
 		}
 	};
 
@@ -321,24 +270,47 @@ public class Show extends Activity {
 			if (mService != null) {
 				if (mService.isPlaying()) {
 					mService.pause();
+					refreshNow();
 				} else {
 					mService.play();
-				}
-				refreshNow();
+			        long next = refreshNow();
+			        queueNextRefresh(next);
+			        mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
+				}	
 				setPauseButtonImage();
 			}
 		} catch (RemoteException ex) {
+			ex.printStackTrace();
 		}
 	}
 
 	private LyricView mLyricView;
 
+	private OnClickListener mStopButtonClickListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			if (mService != null) {
+				int state;
+				try {
+					state = mService.getState();
+
+					if (state != MediaPlaybackService.STATE_IDLE
+							&& state != MediaPlaybackService.STATE_INITIALIZED
+							&& state != MediaPlaybackService.STATE_ERROR)
+						mService.stop();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			
+		}
+	};
+
 	protected void resetLyricView() {
 		mLyricView.resetLyric();
-	}
-
-	private void updateProgressBar() {
-		mProgressBar.setProgress(mPlayProgress);
 	}
 
 	private boolean isRemote() {
@@ -449,7 +421,7 @@ public class Show extends Activity {
 	private void commandLoadRemoteLyric() {
 		if (mRemoteLyricLoaded) {
 			setCurrentView(VIEW_LYRIC);
-			mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+			mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
 		} else
 			loadRemoteLyricView();
 	}
@@ -481,7 +453,7 @@ public class Show extends Activity {
 	private void commandLoadLocalLyric() {
 		if (mLocalLyricLoaded) {
 			setCurrentView(VIEW_LYRIC);
-			mLyricHandler.sendEmptyMessage(WHAT_PLAYER_PROGRESS);
+			mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
 		} else
 			loadLocalLyricView();
 	}
@@ -545,7 +517,7 @@ public class Show extends Activity {
 						mLoadLocalHandler
 								.sendEmptyMessage(WHAT_LOAD_LOCAL_LYRIC_SUCCESS);
 				} catch (FileNotFoundException e) {
-					Log.d(CLASSTAG, "loadLocalLyricView fail.", e);
+					Log.d(TAG, "loadLocalLyricView fail.", e);
 					mLocalLyricLoaded = false;
 					mLyricView.clearLyricLoaded();
 					mLoadLocalHandler
@@ -567,7 +539,7 @@ public class Show extends Activity {
 					mRemoteLyricLoaded = mLyricView.loadLyric(Utils
 							.getInputStreamFromUrl(mApp.mHttpClient,
 									mArticle.urllrc));
-					Log.d(CLASSTAG, "loadRemoteLyricView: "
+					Log.d(TAG, "loadRemoteLyricView: "
 							+ mRemoteLyricLoaded);
 					if (mRemoteLyricLoaded) {
 						mLoadRemoteHandler
@@ -578,7 +550,7 @@ public class Show extends Activity {
 								.sendEmptyMessage(WHAT_LOAD_REMOTE_LYRIC_FAIL_IO);
 					}
 				} catch (IOException e) {
-					Log.d(CLASSTAG, "loadRemoteLyricView fail.", e);
+					Log.d(TAG, "loadRemoteLyricView fail.", e);
 					mRemoteLyricLoaded = false;
 					mLyricView.clearLyricLoaded();
 					mLoadRemoteHandler
@@ -595,23 +567,26 @@ public class Show extends Activity {
 
 			@Override
 			public void run() {
-				mApp.mPageGenerator.mParser = mApp.mDataSource
-						.getPageZhParsers().get(
-								mArticle.type + "_" + mArticle.subtype);
-				try {
-					mApp.mPageGenerator.getArticle(mArticle, true);
-					mRemoteTranslationLoaded = true;
-					mLoadRemoteHandler
-							.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_SUCCESS);
-				} catch (IOException e) {
-					mRemoteTranslationLoaded = false;
-					mLoadRemoteHandler
-							.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_FAIL_IO);
-				} catch (IllegalContentFormatException e) {
-					mRemoteTranslationLoaded = false;
-					mLoadRemoteHandler
-							.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_FAIL_PARSE);
-				}
+//				mApp.mPageGenerator.mParser = mApp.mDataSource
+//						.getPageZhParsers().get(
+//								mArticle.type + "_" + mArticle.subtype);
+//				try {
+//					mApp.mPageGenerator.getArticle(mArticle, true);
+//					mRemoteTranslationLoaded = true;
+//					mLoadRemoteHandler
+//							.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_SUCCESS);
+//				} catch (IOException e) {
+//					mRemoteTranslationLoaded = false;
+//					mLoadRemoteHandler
+//							.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_FAIL_IO);
+//				} catch (IllegalContentFormatException e) {
+//					mRemoteTranslationLoaded = false;
+//					mLoadRemoteHandler
+//							.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_FAIL_PARSE);
+//				}
+				
+				mRemoteTranslationLoaded = true;
+				mLoadRemoteHandler.sendEmptyMessage(WHAT_LOAD_REMOTE_TRANSLATION_SUCCESS);
 			}
 
 		}.start();
@@ -627,8 +602,7 @@ public class Show extends Activity {
 				try {
 					mArticle.textzh = Utils.loadTextZh(mArticle);
 					mLocalTranslationLoaded = true;
-					mLoadLocalHandler
-							.sendEmptyMessage(WHAT_LOAD_LOCAL_TRANSLATION_SUCCESS);
+					mLoadLocalHandler.sendEmptyMessage(WHAT_LOAD_LOCAL_TRANSLATION_SUCCESS);
 				} catch (IOException e) {
 					mLocalTranslationLoaded = false;
 					mLoadLocalHandler
@@ -696,7 +670,7 @@ public class Show extends Activity {
 
 		String keywords = KEYWORDS[new Random(System.currentTimeMillis())
 				.nextInt(KEYWORDS.length)];
-		Log.d(CLASSTAG, "keywords -- " + keywords);
+		Log.d(TAG, "keywords -- " + keywords);
 		mAdView.setKeywords(keywords);
 
 		mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
@@ -707,8 +681,11 @@ public class Show extends Activity {
 		mLyricView = (LyricView) findViewById(R.id.lyricview);
 
 		mBtnPause = (ImageButton) findViewById(R.id.btn_pause);
-		mBtnPause.requestFocus();
+		
 		mBtnPause.setOnClickListener(mPauseButtonClickListener);
+		
+//		mBtnStop = (ImageButton) findViewById(R.id.btn_stop);
+//		mBtnStop.setOnClickListener(mStopButtonClickListener);
 
 		mTvEllapsedTime = (TextView) findViewById(R.id.tv_ellapsed_time);
 		mTvTotalTime = (TextView) findViewById(R.id.tv_total_time);
@@ -744,22 +721,25 @@ public class Show extends Activity {
 
 			@Override
 			public void run() {
-				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
-						.get(mArticle.type + "_" + mArticle.subtype);
-				try {
-					mApp.mPageGenerator.getArticle(mArticle, false);
-					mRemoteOriginalLoaded = true;
-					mLoadRemoteHandler
-							.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_SUCCESS);
-				} catch (IOException e) {
-					mRemoteOriginalLoaded = false;
-					mLoadRemoteHandler
-							.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_FAIL_IO);
-				} catch (IllegalContentFormatException e) {
-					mRemoteOriginalLoaded = false;
-					mLoadRemoteHandler
-							.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_FAIL_PARSE);
-				}
+//				mApp.mPageGenerator.mParser = mApp.mDataSource.getPageParsers()
+//						.get(mArticle.type + "_" + mArticle.subtype);
+//				try {
+//					mApp.mPageGenerator.getArticle(mArticle, false);
+//					mRemoteOriginalLoaded = true;
+//					mLoadRemoteHandler
+//							.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_SUCCESS);
+//				} catch (IOException e) {
+//					mRemoteOriginalLoaded = false;
+//					mLoadRemoteHandler
+//							.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_FAIL_IO);
+//				} catch (IllegalContentFormatException e) {
+//					mRemoteOriginalLoaded = false;
+//					mLoadRemoteHandler
+//							.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_FAIL_PARSE);
+//				}
+				
+				mRemoteOriginalLoaded = true;
+				mLoadRemoteHandler.sendEmptyMessage(WHAT_LOAD_REMOTE_ORIGINAL_SUCCESS);
 			}
 
 		}.start();
@@ -905,47 +885,64 @@ public class Show extends Activity {
 		}
 	}
 
-	private void startPlayback() {
-
-        if(mService == null)
-            return;
-        Uri uri = (mArticle.id == -1 ? Uri.parse(mArticle.urlmp3) : Uri.fromFile(Utils.localMp3File(mArticle)));
-		Log.d(CLASSTAG, "mp3 url -- " + uri);
-		
-		try {
-			mService.openfileAsync(uri.toString());
-			mService.play();
-
-		} catch (Exception ex) {
-			Log.d(CLASSTAG, "couldn't start playback: " + ex);
-		}
-        
-
-        updateTrackInfo();
-        long next = refreshNow();
-        queueNextRefresh(next);
-    }
-
-	private ServiceConnection osc = new ServiceConnection() {
+	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName classname, IBinder obj) {
 			mService = IMediaPlaybackService.Stub.asInterface(obj);
 			if (Utils.sService == null) {
 				Utils.sService = mService;
 			}
-			
-			try {
-				// Assume something is playing when the service says it is,
-				// but also if the audio ID is valid but the service is paused.
-				if (mService.isPlaying() || mService.getPath() != null) {
 
-					setPauseButtonImage();
-					return;
+			try {
+
+				Article article = mService.getArticle();
+
+				if (article == null) {
+					mService.setArticle(mArticle);
+				} else {
+					if (article.id == mArticle.id && article.urlmp3.equals(mArticle.urlmp3)) {
+						// Check the player's current state
+						int state;
+
+						state = mService.getState();
+						Log.d(TAG, "[onServiceConnected] service state -- "
+								+ state);
+
+						switch (state) {
+						case MediaPlaybackService.STATE_IDLE:
+							mService.setArticle(mArticle);
+							break;
+						case MediaPlaybackService.STATE_PAUSED:
+
+							if (mService.isPlaying())
+								setPauseButtonImage();
+							updateTrackInfo();
+							refreshNow();
+							break;
+						case MediaPlaybackService.STATE_STARTED:
+							if (mService.isPlaying()) {
+								setPauseButtonImage();
+								updateTrackInfo();
+								long next = refreshNow();
+								queueNextRefresh(next);
+							}
+
+						default:
+							break;
+						}
+					} else {
+						mService.stop();
+						mService.setArticle(mArticle);
+					}
 				}
-			} catch (RemoteException ex) {
+
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
 		public void onServiceDisconnected(ComponentName classname) {
+			mService = null;
 		}
 	};
 
@@ -955,19 +952,21 @@ public class Show extends Activity {
 
 		paused = false;
 
-		if (false == Utils.bindToService(this, osc)) {
+		if (false == Utils.bindToService(this, mConnection)) {
 			// something went wrong
+			Log.e(TAG, "[onStart] bind to service fail");
 			mHandler.sendEmptyMessage(QUIT);
 		}
 
 		IntentFilter f = new IntentFilter();
+		
 		f.addAction(MediaPlaybackService.PLAYSTATE_CHANGED);
 		f.addAction(MediaPlaybackService.META_CHANGED);
 		f.addAction(MediaPlaybackService.PLAYBACK_COMPLETE);
+		f.addAction(MediaPlaybackService.ASYNC_OPEN_COMPLETE);
+		
 		registerReceiver(mStatusListener, new IntentFilter(f));
-		updateTrackInfo();
-		long next = refreshNow();
-		queueNextRefresh(next);
+		
 	}
 
 	@Override
@@ -1085,6 +1084,8 @@ public class Show extends Activity {
 				setPauseButtonImage();
 			} else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
 				setPauseButtonImage();
+			} else if (action.equals(MediaPlaybackService.ASYNC_OPEN_COMPLETE)) {
+				updateTrackInfo();
 			}
 		}
 	};
@@ -1105,8 +1106,10 @@ public class Show extends Activity {
 			return;
 		}
 		try {
-			String path = mService.getPath();
-			if (path == null) {
+
+			int state = mService.getState();
+			if (state == MediaPlaybackService.STATE_IDLE || state == MediaPlaybackService.STATE_INITIALIZED
+					|| state == MediaPlaybackService.STATE_ERROR) {
 				finish();
 				return;
 			}
