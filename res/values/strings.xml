@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">Pocket VOA</string>
 	<string name="app_version_label">Version: </string>
-	<string name="app_version">1.1.0</string>
+	<string name="app_version">1.2.0</string>
 	<string name="app_author_label">Author: </string>
 	<string name="app_author">Bin Shao</string>
 	<string name="app_email">shaobin0604@qq.com</string>
 	<string name="app_license_label">License: </string>
 	<string name="app_license">Apache License, Version 2.0</string>
 	<string name="app_website_label">Website: </string>
-	<string name="app_website">http://aquarium.yo2.cn/</string>
+	<string name="app_website">http://pocketvoa.72pines.com</string>
 	
 	<!-- for activity title -->
 	<string name="ac_title_help">Help</string>
@@ -20,26 +20,6 @@
 	<string name="no_lyric">Cannot Load Lyric :-(</string>
 	
 	<string name="alert_title_what_is_new">What\'s New?</string>
-	<string name="alert_msg_what_is_new">Pocket VOA - An online/offline reader for Voice of America program.\n
-\n
-Version 1.1.0 [11/03/2010]\n
-	\t- New: Add What is New? dialog when first run.\n
-	\t- New: Add Help menu item.\n
-	\t- New: Add indicator icon to article list. Letter T for which has Chinese translation, and letter L for which has Lyric.\n
-	\t- New: Show Chinese translation in Show Activity.\n
-	\t- New: Show Lyric in Show Activity.\n
-	\t- New: Add Retry button to error alert dialog.\n
-	\t- New: Keep screen on when application is in the foreground.\n
-	\t- New: Remove www.iciba.com DataSource for it does not provide Chinese translation and Lyric.\n
-\n
-Version 1.0.2 [14/01/2010]\n
-	\t- New: Support Simplified Chinese\n  
-\n
-Version 1.0.1 [18/12/2009]\n
-	\t- Fix Bug: Application crash when download article which does not have publish date.\n
-\n	
-Version 1.0.0 [17/12/2009]\n
-	\t- Initial release</string>
 	
 	<string name="alert_title_internet_status">Internet Connection Status</string>
 	<string name="alert_msg_internet_status_connected">Connected</string>
@@ -141,4 +121,14 @@ Version 1.0.0 [17/12/2009]\n
 	<string name="notification_download_textzh_progress_content">Downloading Text Translated %1$d%% [%2$d/%3$d]KB</string>
 	<string name="notification_download_lyric_progress_content">Downloading Lyric %1$d%% [%2$d/%3$d]KB</string>
 	
+	<string name="prefs_category_title_general_settings">General Settings</string>
+    <string name="prefs_category_title_info">Information</string>
+    
+    <string name="prefs_title_whatsnew">What\'s New?</string>
+    <string name="prefs_title_help">Help</string>
+    <string name="prefs_title_about">About</string>
+    
+    <string name="prefs_key_whatsnew">prefs_key_whatsnew</string>
+    <string name="prefs_key_help">prefs_key_help</string>
+    <string name="prefs_key_about">prefs_key_about</string>
 </resources>

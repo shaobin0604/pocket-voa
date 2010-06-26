@@ -3,7 +3,6 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,20 +29,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 
 import com.admob.android.ads.AdView;
+import com.wooboo.adlib_android.WoobooAdView;
 
 public class Show extends Activity {
 	private static final String TAG = Show.class.getSimpleName();
 
-	private static final String[] KEYWORDS = { "android game farm",
+	private static final String[] ADMOB_KEYWORDS = { "android game farm",
 			"food sport", "life auto outdoor", "iphone", };
 
 	// Current View in ViewFlipper
@@ -98,6 +102,7 @@ public class Show extends Activity {
 	// MediaPlayer handler message type
 	private static final int WHAT_LYRIC_UPDATE = 0;
 
+	private static final int PROGRESS_MAX = 1000;
 	
 
 	private enum Error {
@@ -133,6 +138,12 @@ public class Show extends Activity {
 	private boolean mLocalOriginalLoaded;
 	private boolean mLocalTranslationLoaded;
 	private boolean mLocalLyricLoaded;
+	
+	
+	private Button mBtnOriginal;
+	private Button mBtnTranslation;
+	private Button mBtnLyric;
+	private Button mBtnDownload;
 	
 	private StringBuilder mRecycle = new StringBuilder(10);
 
@@ -431,6 +442,9 @@ public class Show extends Activity {
 		if (mDatabaseHelper.isArticleExist(mArticle)) {
 			showDialog(DLG_CONFIRM_DOWNLOAD);
 		} else {
+			Toast.makeText(this,
+					R.string.toast_download_start,
+					Toast.LENGTH_SHORT).show();
 			downloadArticleInService(mArticle);
 		}
 	}
@@ -666,13 +680,35 @@ public class Show extends Activity {
 	}
 
 	private void setupWidgets() {
-		mAdView = (AdView) findViewById(R.id.ad);
-
-		String keywords = KEYWORDS[new Random(System.currentTimeMillis())
-				.nextInt(KEYWORDS.length)];
-		Log.d(TAG, "keywords -- " + keywords);
-		mAdView.setKeywords(keywords);
-
+//		mAdView = (AdView) findViewById(R.id.ad);
+//
+//		String keywords = ADMOB_KEYWORDS[new Random(System.currentTimeMillis())
+//				.nextInt(ADMOB_KEYWORDS.length)];
+//		Log.d(TAG, "keywords -- " + keywords);
+//		mAdView.setKeywords(keywords);
+		
+		///////////////////////////////////////////////////////////////////////
+		// top button bar widget
+		///////////////////////////////////////////////////////////////////////
+//		mBtnOriginal = (Button) findViewById(R.id.btn_original);
+//		mBtnTranslation = (Button) findViewById(R.id.btn_translation);
+//		mBtnLyric = (Button) findViewById(R.id.btn_lyric);
+//		mBtnDownload = (Button) findViewById(R.id.btn_download);
+//		if (!isRemote()) {
+//			mBtnDownload.setVisibility(View.GONE);
+//		}
+		
+		LinearLayout root = (LinearLayout) findViewById(R.id.root);
+		
+		WoobooAdView ad = new WoobooAdView(this,
+				"190d2111a7d140fc8ca9deea453b9003", Color.TRANSPARENT,
+				Color.WHITE, true, 22, 48, 8);
+		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
+				LayoutParams.WRAP_CONTENT);
+		ad.setLayoutParams(params);
+		
+		root.addView(ad);
+		
 		mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
 
 		mWebViewEn = (WebView) findViewById(R.id.webview_en);
@@ -691,8 +727,24 @@ public class Show extends Activity {
 		mTvTotalTime = (TextView) findViewById(R.id.tv_total_time);
 
 		mProgressBar = (ProgressBar) findViewById(R.id.pb_audio);
-		mProgressBar.setMax(1000);
+		mProgressBar.setMax(PROGRESS_MAX);
 	}
+	
+	private View.OnClickListener mToolBarBtnOnClickListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			if (v == mBtnOriginal) {
+				
+			} else if (v == mBtnTranslation) {
+				
+			} else if (v == mBtnLyric) {
+				
+			} else if (v == mBtnDownload) {
+				
+			}
+		}
+	};
 
 	private void loadLocalOriginal() {
 		showDialog(DLG_PROGRESS_SPIN);
@@ -820,6 +872,9 @@ public class Show extends Activity {
 
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
+							Toast.makeText(Show.this,
+									R.string.toast_download_start,
+									Toast.LENGTH_SHORT).show();
 							downloadArticleInService(mArticle);
 						}
 					});
@@ -911,21 +966,13 @@ public class Show extends Activity {
 						case MediaPlaybackService.STATE_IDLE:
 							mService.setArticle(mArticle);
 							break;
-						case MediaPlaybackService.STATE_PAUSED:
-
-							if (mService.isPlaying())
-								setPauseButtonImage();
-							updateTrackInfo();
-							refreshNow();
-							break;
 						case MediaPlaybackService.STATE_STARTED:
-							if (mService.isPlaying()) {
-								setPauseButtonImage();
-								updateTrackInfo();
-								long next = refreshNow();
-								queueNextRefresh(next);
-							}
-
+						case MediaPlaybackService.STATE_PAUSED:
+							setPauseButtonImage();
+							updateTrackInfo();
+							long next = refreshNow();
+							queueNextRefresh(next);
+							break;
 						default:
 							break;
 						}
@@ -964,6 +1011,7 @@ public class Show extends Activity {
 		f.addAction(MediaPlaybackService.META_CHANGED);
 		f.addAction(MediaPlaybackService.PLAYBACK_COMPLETE);
 		f.addAction(MediaPlaybackService.ASYNC_OPEN_COMPLETE);
+		f.addAction(MediaPlaybackService.BUFFERING_CHANGED);
 		
 		registerReceiver(mStatusListener, new IntentFilter(f));
 		
@@ -1004,6 +1052,10 @@ public class Show extends Activity {
 			mHandler.sendMessageDelayed(msg, delay);
 		}
 	}
+	
+	private void stopRefresh() {
+		mHandler.removeMessages(REFRESH);
+	}
 
 	private long refreshNow() {
 		if (mService == null)
@@ -1029,7 +1081,7 @@ public class Show extends Activity {
 				mProgressBar.setProgress((int) (1000 * pos / mDuration));
 			} else {
 				mTvEllapsedTime.setText("--:--");
-				mProgressBar.setProgress(1000);
+				mProgressBar.setProgress(PROGRESS_MAX);
 			}
 			// return the number of milliseconds until the next full second, so
 			// the counter can be updated at just the right time
@@ -1082,13 +1134,22 @@ public class Show extends Activity {
 				queueNextRefresh(1);
 			} else if (action.equals(MediaPlaybackService.PLAYBACK_COMPLETE)) {
 				setPauseButtonImage();
+				stopRefresh();
 			} else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
 				setPauseButtonImage();
 			} else if (action.equals(MediaPlaybackService.ASYNC_OPEN_COMPLETE)) {
 				updateTrackInfo();
+			} else if (action.equals(MediaPlaybackService.BUFFERING_CHANGED)) {
+				updateBuffering(intent.getExtras().getInt(MediaPlaybackService.BUFFERING_CHANGED_EXTRA_KEY));
 			}
 		}
+
+		
 	};
+	
+	private void updateBuffering(int percent) {
+		mProgressBar.setSecondaryProgress(percent * 10);
+	}
 
 	private void setPauseButtonImage() {
 		try {
@@ -1098,6 +1159,8 @@ public class Show extends Activity {
 				mBtnPause.setImageResource(android.R.drawable.ic_media_play);
 			}
 		} catch (RemoteException ex) {
+			Log.e(TAG, "[setPauseButtonImage] RemoteException ", ex);
+
 		}
 	}
 

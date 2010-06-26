@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">口袋VOA</string>
 	<string name="app_version_label">版本: </string>
-	<string name="app_version">1.1.0</string>
+	<string name="app_version">1.2.0</string>
 	<string name="app_author_label">作者: </string>
 	<string name="app_author">邵彬</string>
 	<string name="app_email">shaobin0604@qq.com</string>
 	<string name="app_license_label">协议: </string>
 	<string name="app_license">Apache License, Version 2.0</string>
 	<string name="app_website_label">网站: </string>
-	<string name="app_website">http://aquarium.yo2.cn/</string>
+	<string name="app_website">http://pocketvoa.72pines.com</string>
 	
 	<!-- for activity title -->
 	<string name="ac_title_help">帮助</string>
@@ -20,26 +20,6 @@
 	<string name="no_lyric">无法加载歌词:-(</string>
 	
 	<string name="alert_title_what_is_new">更新日志</string>
-	<string name="alert_msg_what_is_new">口袋VOA - 在线/离线美国之音阅读器\n
-\n
-版本 1.1.0 [11/03/2010]\n
-	\t- 改进: 增加更新记录对话框。\n
-	\t- 改进: 增加帮助菜单。\n
-	\t- 改进: 文章列表增加翻译和歌词的图标。T表示有中文翻译，L表示有歌词同步。\n
-	\t- 改进: 增加中文翻译。\n
-	\t- 改进: 增加歌词同步。\n
-	\t- 改进: 出错对话框增加重试按钮。\n
-	\t- 改进: 当程序位于前台时保持屏幕长亮。\n
-	\t- 改进: 由于 www.iciba.com 数据源没有提供中文翻译和歌词同步，故删除该数据源。\n
-\n
-版本 1.0.2 [14/01/2010]\n
-	\t- 改进: 增加简体中文支持。\n
-\n
-版本 1.0.1 [18/12/2009]\n
-	\t- 修正: 当下载没有发布日期的文章时，程序崩溃。\n
-\n	
-版本 1.0.0 [17/12/2009]\n
-	\t- 初始版本</string>
 	
 	<string name="alert_title_internet_status">网络连接状态</string>
 	<string name="alert_msg_internet_status_connected">已连接</string>
@@ -140,4 +120,15 @@
 	<string name="notification_download_audio_progress_content">音频 %1$d%% 下载中  [%2$d/%3$d]KB</string>
 	<string name="notification_download_textzh_progress_content">翻译文本 %1$d%% 下载中  [%2$d/%3$d]KB</string>
 	<string name="notification_download_lyric_progress_content">歌词 %1$d%% 下载中  [%2$d/%3$d]KB</string>
+	
+	<string name="prefs_category_title_general_settings">常规设置</string>
+    <string name="prefs_category_title_info">信息</string>
+    
+    <string name="prefs_title_whatsnew">有何更新?</string>
+    <string name="prefs_title_help">帮助</string>
+    <string name="prefs_title_about">关于</string>
+    
+    <string name="prefs_key_whatsnew">prefs_key_whatsnew</string>
+    <string name="prefs_key_help">prefs_key_help</string>
+    <string name="prefs_key_about">prefs_key_about</string>
 </resources>

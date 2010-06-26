@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class NotificationProgressListener implements IProgressListener {
 	
@@ -20,8 +19,6 @@ public class NotificationProgressListener implements IProgressListener {
 	private Notification mNotificationError;
 
 	private PendingIntent mMainPendingIntent;
-	private PendingIntent mShowPendingIntent;
-	
 	
 	private NotificationManager mNotificationManager;
 
@@ -36,13 +33,8 @@ public class NotificationProgressListener implements IProgressListener {
 		
 		long threadId = Thread.currentThread().getId();
 		
-		mMainPendingIntent = PendingIntent.getActivity(mContext, (int) threadId, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		mMainPendingIntent = PendingIntent.getActivity(mContext, (int) threadId, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		
-		Intent showIntent = new Intent(
-				mContext, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		Utils.putArticleToIntent(mArticle, showIntent);
-		mShowPendingIntent = PendingIntent.getActivity(mContext, (int) threadId, showIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 		
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		
@@ -120,7 +112,7 @@ public class NotificationProgressListener implements IProgressListener {
 		 	
 		mNotificationSuccess.flags = Notification.FLAG_AUTO_CANCEL;
 		
-		mNotificationSuccess.setLatestEventInfo(mContext, contentTitle, contentText, mShowPendingIntent);
+		mNotificationSuccess.setLatestEventInfo(mContext, contentTitle, contentText, mMainPendingIntent);
 		
 		long threadId = Thread.currentThread().getId();
 

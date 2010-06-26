@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/root"
 	xmlns:pocketvoa="http://schemas.android.com/apk/res/cn.yo2.aquarium.pocketvoa"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
+	<!-- 
+	
+	<LinearLayout android:id="@+id/tool_bar" android:layout_width="fill_parent" android:layout_height="wrap_content"
+		style="@android:style/ButtonBar" android:orientation="horizontal">
+		<Button android:id="@+id/btn_original" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_weight="1"/>
+		<Button android:id="@+id/btn_translation" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_weight="1"/>
+		<Button android:id="@+id/btn_lyric" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_weight="1"/>
+		<Button android:id="@+id/btn_download" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_weight="1"/>
+	</LinearLayout>
+	
+	 --> 
 	<ViewFlipper 
 		android:id="@+id/flipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:persistentDrawingCache="animation"
-        android:inAnimation="@android:anim/fade_in"
-        android:outAnimation="@android:anim/fade_out"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right"
         android:layout_weight="1.0">
 		<WebView 
 			android:id="@+id/webview_en" 
@@ -70,6 +86,7 @@
         		android:secondaryProgress="0" />
         </LinearLayout>
 	</LinearLayout>
+	<!-- 
 	<com.admob.android.ads.AdView
     	android:id="@+id/ad" 
     	android:layout_width="fill_parent" 
@@ -78,4 +95,5 @@
     	pocketvoa:textColor="#FFFFFF" 
     	pocketvoa:isGoneWithoutAd="true" 
     	pocketvoa:refreshInterval="60" />
+     -->
 </LinearLayout>

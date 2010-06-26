@@ -31,7 +31,9 @@ public class MediaPlaybackService extends Service {
 	public static final String QUEUE_CHANGED = "cn.yo2.aquarium.pocketvoa.queuechanged";
 	public static final String PLAYBACK_COMPLETE = "cn.yo2.aquarium.pocketvoa.playbackcomplete";
 	public static final String ASYNC_OPEN_COMPLETE = "cn.yo2.aquarium.pocketvoa.asyncopencomplete";
-
+	public static final String BUFFERING_CHANGED = "cn.yo2.aquarium.pocketvoa.bufferingchanged";
+	public static final String BUFFERING_CHANGED_EXTRA_KEY = "BUFFERING_CHANGED_EXTRA_KEY";
+	
 	public static final String SERVICECMD = "cn.yo2.aquarium.pocketvoa.musicservicecommand";
 	public static final String CMDNAME = "command";
 	public static final String CMDTOGGLEPAUSE = "togglepause";
@@ -131,6 +133,7 @@ public class MediaPlaybackService extends Service {
 				openCurrent();
 				break;
 			case TRACK_ENDED:
+				gotoIdleState();
 				notifyChange(PLAYBACK_COMPLETE);
 				break;
 			case RELEASE_WAKELOCK:
@@ -164,6 +167,17 @@ public class MediaPlaybackService extends Service {
     private void notifyChange(String what) {
         Intent i = new Intent(what);
         sendBroadcast(i);
+    }
+    
+    /**
+     * Notify buffering status of a media resource being streamed over the network
+     * 
+     * @param percent 0~100
+     */
+    private void notifyBufferingChange(int percent) {
+    	Intent i = new Intent(BUFFERING_CHANGED);
+    	i.putExtra(BUFFERING_CHANGED_EXTRA_KEY, percent);
+    	sendBroadcast(i);
     }
 
 	@Override
@@ -572,8 +586,7 @@ public class MediaPlaybackService extends Service {
 		MediaPlayer.OnBufferingUpdateListener bufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
 			
 			public void onBufferingUpdate(MediaPlayer mp, int percent) {
-				// TODO add buffering update notification
-				
+				notifyBufferingChange(percent);
 			}
 		};
 

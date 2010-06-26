@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="type">
+		<item>標準英語</item>
+		<item>慢速英語</item>
+		<item>英語學習</item>
+	</string-array>
+
+	<string-array name="standard_english">
+		<item>英語新聞</item>
+	</string-array>
+	<string-array name="special_english">
+		<item>發展報導</item>
+		<item>今日美國</item>
+		<item>農業報導</item>
+		<item>科學報導</item>
+		<item>健康報導</item>
+		<item>自然探索</item>
+		<item>教育報導</item>
+		<item>建國史話</item>
+		<item>經濟報導</item>
+		<item>美國萬花筒</item>
+		<item>時事新聞</item>
+		<item>美國故事</item>
+		<item>詞彙掌故</item>
+		<item>美國人物誌</item>
+	</string-array>
+	<string-array name="english_learning">
+		<item>流行美語教學</item>
+	</string-array>
+	
+	<string-array name="type_local">
+		<item>標準英語</item>
+		<item>慢速英語</item>
+		<item>英語學習</item>
+	</string-array>
+	
+	<string-array name="standard_english_local">
+		<item>全部</item>
+		<item>英語新聞</item>
+	</string-array>
+	
+	<string-array name="special_english_local">
+		<item>全部</item>
+		<item>發展報導</item>
+		<item>今日美國</item>
+		<item>農業報導</item>
+		<item>科學報導</item>
+		<item>健康報導</item>
+		<item>自然探索</item>
+		<item>教育報導</item>
+		<item>建國史話</item>
+		<item>經濟報導</item>
+		<item>美國萬花筒</item>
+		<item>時事新聞</item>
+		<item>美國故事</item>
+		<item>詞彙掌故</item>
+		<item>美國人物誌</item>
+	</string-array>
+	
+	<string-array name="english_learning_local">
+		<item>全部</item>
+		<item>流行美語教學</item>
+	</string-array>
+	
+	<string-array name="prefs_list_count">
+		<item>5</item>
+		<item>10</item>
+		<item>15</item>
+		<item>20</item>
+	</string-array>
+	
+	<string-array name="prefs_datasource">
+		<item>www.51voa.com</item>
+		<item>www.iciba.com</item>
+	</string-array>
+	
+	<string-array name="prefs_datasource_value">
+		<item>cn.yo2.aquarium.pocketvoa.parser.voa51.DataSource</item>
+		<item>cn.yo2.aquarium.pocketvoa.parser.iciba.DataSource</item>
+	</string-array>
+	
+	<string-array name="local_list_action">
+		<item>查看</item>
+		<item>刪除</item>
+	</string-array>
+	
+	<string-array name="remote_list_action">
+		<item>查看</item>
+		<item>下載</item>
+	</string-array>
+</resources>

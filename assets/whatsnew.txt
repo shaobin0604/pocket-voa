@@ -1,4 +1,11 @@
-Pocket VOA - An online/offline reader for Voice of America program.
+Pocket VOA - An online/offline reader for Voice of America news program.
+
+Version 1.2.0 [26/06/2010]
+	- New: Play audio in background
+
+Version 1.1.1 [18/04/2010]
+	- Fix Bug: When in Show Activity, download translation will fail if user have not navigated to translation page before.
+	- New: Add Traditional Chinese language support.
 
 Version 1.1.0 [11/03/2010]
 	- New: Add What is New? dialog when first run.
@@ -11,10 +18,10 @@ Version 1.1.0 [11/03/2010]
 	- New: Remove www.iciba.com DataSource for it does not provide Chinese translation and Lyric.
 
 Version 1.0.2 [14/01/2010]
-	- New: Support Simplified Chinese  
+	- New: Add Simplified Chinese language support.  
 
 Version 1.0.1 [18/12/2009]
 	- Fix Bug: Application crash when download article which does not have publish date.
-	
+
 Version 1.0.0 [17/12/2009]
 	- Initial release

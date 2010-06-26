@@ -3,7 +3,6 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,12 +19,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,16 +47,15 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
 import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class Main extends Activity {
+
 	private static final String CLASSTAG = Main.class.getSimpleName();
 
 	private static final String KEY_VERSION_CODE = "versionCode";
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
 	private static final int MENU_TEST = Menu.FIRST + 1;
-	private static final int MENU_ABOUT = Menu.FIRST + 2;
-	private static final int MENU_EXIT = Menu.FIRST + 3;
-	private static final int MENU_CHANGE_LOG = Menu.FIRST + 4;
-	private static final int MENU_HELP = Menu.FIRST + 5;
+	private static final int MENU_EXIT = Menu.FIRST + 2;
+
 
 	private static final int DLG_ERROR = 0;
 	private static final int DLG_PROGRESS = 1;
@@ -67,10 +63,9 @@ public class Main extends Activity {
 	private static final int DLG_MENU_REMOTE_LIST = 3;
 	private static final int DLG_CONFIRM_DELETE = 4;
 	private static final int DLG_CONFIRM_DOWNLOAD = 5;
-	private static final int DLG_ABOUT = 6;
-	private static final int DLG_INTERNET_STATUS_CONNECTED = 7;
-	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 8;
-	private static final int DLG_CHANGE_LOG = 9;
+	private static final int DLG_INTERNET_STATUS_CONNECTED = 6;
+	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 7;
+	private static final int DLG_CHANGE_LOG = 8;
 
 	private static final int WHAT_SUCCESS = 0;
 	private static final int WHAT_FAIL_IO = 1;
@@ -532,17 +527,9 @@ public class Main extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings)
 				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu
-				.add(Menu.NONE, MENU_TEST, Menu.NONE,
+		menu.add(Menu.NONE, MENU_TEST, Menu.NONE,
 						R.string.menu_internet_status).setIcon(
 						R.drawable.signal);
-		menu.add(Menu.NONE, MENU_ABOUT, Menu.NONE, R.string.menu_about)
-				.setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(Menu.NONE, MENU_CHANGE_LOG, Menu.NONE,
-				R.string.menu_change_log).setIcon(
-				android.R.drawable.ic_menu_info_details);
-		menu.add(Menu.NONE, MENU_HELP, Menu.NONE, R.string.menu_help).setIcon(
-				android.R.drawable.ic_menu_help);
 		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(
 				android.R.drawable.ic_menu_close_clear_cancel);
 
@@ -560,28 +547,15 @@ public class Main extends Activity {
 		case MENU_TEST:
 			testInternet();
 			return true;
-		case MENU_ABOUT:
-			showDialog(DLG_ABOUT);
-			return true;
 		case MENU_EXIT:
 			stopService(new Intent(this, DownloadService.class));
 			stopService(new Intent(this, MediaPlaybackService.class));
 			finish();
 			return true;
-		case MENU_CHANGE_LOG:
-			showDialog(DLG_CHANGE_LOG);
-			return true;
-		case MENU_HELP:
-			showHelp();
-			return true;
 		default:
 			break;
 		}
 		return result;
-	}
-
-	private void showHelp() {
-		startActivity(new Intent(this, Help.class));
 	}
 
 	private void testInternet() {
@@ -763,20 +737,6 @@ public class Main extends Activity {
 						}
 					});
 			return builder4.create();
-		case DLG_ABOUT:
-			AlertDialog.Builder builder5 = new AlertDialog.Builder(this);
-
-			builder5.setView(mInflater.inflate(R.layout.about, null));
-			builder5.setTitle(R.string.alert_title_about);
-			builder5.setNeutralButton(R.string.btn_ok,
-					new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							// 
-
-						}
-					});
-			return builder5.create();
 		case DLG_CONFIRM_DOWNLOAD:
 			AlertDialog.Builder builder6 = new AlertDialog.Builder(this);
 			builder6.setIcon(android.R.drawable.ic_dialog_alert);
@@ -837,19 +797,7 @@ public class Main extends Activity {
 					});
 			return builder8.create();
 		case DLG_CHANGE_LOG:
-			AlertDialog.Builder builder9 = new AlertDialog.Builder(this);
-			builder9.setIcon(android.R.drawable.ic_dialog_info);
-			builder9.setTitle(R.string.alert_title_what_is_new);
-			builder9.setMessage(R.string.alert_msg_what_is_new);
-			builder9.setNeutralButton(R.string.btn_ok,
-					new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							// 
-
-						}
-					});
-			return builder9.create();
+			return Utils.createWhatsNewDialog(this);
 		default:
 			break;
 		}

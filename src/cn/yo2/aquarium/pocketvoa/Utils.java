@@ -1,28 +1,37 @@
 package cn.yo2.aquarium.pocketvoa;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.zip.Inflater;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
 
 public class Utils {
 	
+	private static final String TAG = Utils.class.getSimpleName();
 	public static IMediaPlaybackService sService = null;
     private static HashMap<Context, ServiceBinder> sConnectionMap = new HashMap<Context, ServiceBinder>();
 
@@ -339,5 +348,117 @@ public class Utils {
 			get.abort();
 			throw e;
 		}
+	}
+	
+	/**
+	 * Support just zh_CN, zh_TW, en
+	 * 
+	 * @param context
+	 * @param name
+	 * @return
+	 */
+	public static String getLocaleName(Context context, String name) {
+		Log.d(TAG, "[getLocaleName] name -- " + name);
+		String localeSuffix = getLocaleSuffix(context);
+		
+		if (localeSuffix == null)
+			return name;
+		
+		StringBuilder sb = new StringBuilder(name);
+		int lastDotIdx = name.lastIndexOf('.');
+		if (lastDotIdx > -1) {
+			sb.insert(lastDotIdx, localeSuffix);
+		} else {
+			sb.append(localeSuffix);
+		}
+		
+		Log.d(TAG, "[getLocaleName] localeName -- " + sb);
+		
+		return sb.toString();
+			
+	}
+
+	/**
+	 * 
+	 * @param context
+	 * @return null if current locale is not in [zh_CN, zh_TW]
+	 */
+	private static String getLocaleSuffix(Context context) {
+		Locale locale = context.getResources().getConfiguration().locale;
+		
+		String localeSuffix = null;
+		
+		if (locale.equals(Locale.SIMPLIFIED_CHINESE)) {
+			localeSuffix = "_zh_CN";
+		} else if (locale.equals(Locale.TRADITIONAL_CHINESE)) {
+			localeSuffix = "_zh_TW";
+		}
+		
+		return localeSuffix;
+	}
+	
+	public static CharSequence getTextFromAssets(Context context, String name) {
+		
+		String filename = getLocaleName(context, name);
+		
+		BufferedReader in = null;
+		StringBuilder sb = new StringBuilder();
+		try {
+			in = new BufferedReader(new InputStreamReader(context.getAssets().open(filename)));
+
+			String line;
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+				sb.append('\n');
+			}
+			
+		} catch (IOException e) {
+			Log.e(TAG, "[getTextFromAssets]", e);
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return sb;
+	}
+	
+	public static Dialog createAboutDialog(Context context) {
+		LayoutInflater inflater = LayoutInflater.from(context);
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setView(inflater.inflate(R.layout.about, null));
+		builder.setTitle(R.string.alert_title_about);
+		builder.setNeutralButton(R.string.btn_ok,
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						// 
+
+					}
+				});
+		return builder.create();
+	}
+	
+	public static Dialog createWhatsNewDialog(Context context) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setIcon(android.R.drawable.ic_dialog_info);
+		builder.setTitle(R.string.alert_title_what_is_new);
+		
+		builder.setMessage(Utils.getTextFromAssets(context, "whatsnew.txt"));
+		
+		builder.setNeutralButton(R.string.btn_ok,
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						// 
+
+					}
+				});
+		return builder.create();
 	}
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="@string/prefs_category_title_general_settings">
  	<ListPreference
  		android:key="@string/prefs_list_count_key"
  		android:title="@string/prefs_list_count_title"
@@ -19,4 +20,12 @@
  		android:entryValues="@array/prefs_datasource_value"
  		/>
  	 -->
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/prefs_category_title_info">
+  	<Preference android:title="@string/prefs_title_whatsnew" android:key="@string/prefs_key_whatsnew" android:persistent="false"/>
+  	
+  	<Preference android:title="@string/prefs_title_about" android:key="@string/prefs_key_about" android:persistent="false"/>
+  	
+  	<Preference android:title="@string/prefs_title_help" android:key="@string/prefs_key_help" android:persistent="false"/>
+  </PreferenceCategory>
 </PreferenceScreen>
