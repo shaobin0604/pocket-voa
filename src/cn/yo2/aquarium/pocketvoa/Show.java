@@ -339,7 +339,7 @@ public class Show extends Activity {
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_LYRIC, Menu.NONE,
 				R.string.menu_lrc);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
-				R.string.menu_download).setIcon(R.drawable.file_download);
+				R.string.menu_download);
 
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_ORIGINAL, Menu.NONE,
 				R.string.menu_original);
@@ -702,7 +702,7 @@ public class Show extends Activity {
 		
 		WoobooAdView ad = new WoobooAdView(this,
 				"190d2111a7d140fc8ca9deea453b9003", Color.TRANSPARENT,
-				Color.WHITE, true, 22, 48, 8);
+				Color.WHITE, false, 30, 48, 8);
 		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.WRAP_CONTENT);
 		ad.setLayoutParams(params);

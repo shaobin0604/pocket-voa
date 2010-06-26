@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cn.yo2.aquarium.pocketvoa" android:versionName="@string/app_version" android:versionCode="4">
+	package="cn.yo2.aquarium.pocketvoa" android:versionName="@string/app_version" android:versionCode="6">
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:name=".App">
 		<activity android:name=".Main" android:label="@string/app_name"
@@ -25,7 +25,9 @@
 		<service android:name=".MediaPlaybackService" android:process=":remote"/>
 		
 		<!-- The application's publisher ID assigned by AdMob -->
+		<!-- 
         <meta-data android:value="a14b2909c8cc25e" android:name="ADMOB_PUBLISHER_ID" />
+		 -->
 	</application>
 	<uses-sdk android:minSdkVersion="3" />
 
