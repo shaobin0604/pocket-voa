@@ -33,6 +33,8 @@ public class MediaPlaybackService extends Service {
 	public static final String ASYNC_OPEN_COMPLETE = "cn.yo2.aquarium.pocketvoa.asyncopencomplete";
 	public static final String BUFFERING_CHANGED = "cn.yo2.aquarium.pocketvoa.bufferingchanged";
 	public static final String BUFFERING_CHANGED_EXTRA_KEY = "BUFFERING_CHANGED_EXTRA_KEY";
+	public static final String SET_DATASOURCE_ERROR = "cn.yo2.aquarium.pocketvoa.setdatasourceerror";
+	
 	
 	public static final String SERVICECMD = "cn.yo2.aquarium.pocketvoa.musicservicecommand";
 	public static final String CMDNAME = "command";
@@ -375,6 +377,12 @@ public class MediaPlaybackService extends Service {
 				notifyChange(PLAYSTATE_CHANGED);
 			}
 			
+		} else {
+			Uri uri = mArticle.id == -1 ? Uri
+					.parse(mArticle.urlmp3) : Uri
+					.fromFile(Utils.localMp3File(mArticle));
+			Log.d(TAG, "[setArticle] uri -- " + uri);
+			openAsync(uri);
 		}
 	}
 	
@@ -531,14 +539,17 @@ public class MediaPlaybackService extends Service {
 				mMediaPlayer.prepareAsync();
 				mState = STATE_PREPARING;
 			} catch (IOException ex) {
-				// TODO: notify the user why the file couldn't be opened
 				mIsInitialized = false;
 				mState = STATE_ERROR;
+				// notify cannot open media file
+				notifyChange(SET_DATASOURCE_ERROR);
 				return;
 			} catch (IllegalArgumentException ex) {
-				// TODO: notify the user why the file couldn't be opened
 				mIsInitialized = false;
 				mState = STATE_ERROR;
+				
+				// notify  cannot open media file 
+				notifyChange(SET_DATASOURCE_ERROR);
 				return;
 			}
 			mMediaPlayer.setOnCompletionListener(completionListener);
@@ -611,6 +622,7 @@ public class MediaPlaybackService extends Service {
 				mIsInitialized = true;
 				mState = STATE_PREPARED;
 				notifyChange(ASYNC_OPEN_COMPLETE);
+				play();
 			}
 		};
 
@@ -678,16 +690,15 @@ public class MediaPlaybackService extends Service {
 		public int getState() {
 			return MediaPlaybackService.this.getState();
 		}
+		
+		
 		@Override
 		public void setArticle(Article article)  {
 			MediaPlaybackService.this.mArticle = article;
-	
-			Uri uri = mArticle.id == -1 ? Uri
-					.parse(MediaPlaybackService.this.mArticle.urlmp3) : Uri
-					.fromFile(Utils.localMp3File(MediaPlaybackService.this.mArticle));
-			Log.d(TAG, "[setArticle] uri -- " + uri);
-			MediaPlaybackService.this.openAsync(uri);
 		}
+		
+		
+		
 		public boolean isPlaying() {
             return MediaPlaybackService.this.isPlaying();
         }

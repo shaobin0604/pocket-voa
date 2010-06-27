@@ -950,11 +950,17 @@ public class Show extends Activity {
 			try {
 
 				Article article = mService.getArticle();
-
+				
+				// 1. start from Main Activity or Notification, no article in MediaPlaybackService
+				// 2. start from Main Activity or Notification, same article in MediaPlaybackService
+				// 3. start from Main Activity or Notification, different article in MediaPlaybackService
 				if (article == null) {
 					mService.setArticle(mArticle);
 				} else {
-					if (article.id == mArticle.id && article.urlmp3.equals(mArticle.urlmp3)) {
+					
+					// same article
+					if (article.id == mArticle.id
+							&& article.urlmp3.equals(mArticle.urlmp3)) {
 						// Check the player's current state
 						int state;
 
@@ -963,15 +969,16 @@ public class Show extends Activity {
 								+ state);
 
 						switch (state) {
-						case MediaPlaybackService.STATE_IDLE:
-							mService.setArticle(mArticle);
-							break;
 						case MediaPlaybackService.STATE_STARTED:
 						case MediaPlaybackService.STATE_PAUSED:
 							setPauseButtonImage();
 							updateTrackInfo();
 							long next = refreshNow();
 							queueNextRefresh(next);
+							break;
+						case MediaPlaybackService.STATE_PLAYBACK_COMPLETED:
+							setPauseButtonImage();
+							refreshNow();
 							break;
 						default:
 							break;
@@ -1081,7 +1088,7 @@ public class Show extends Activity {
 				mProgressBar.setProgress((int) (1000 * pos / mDuration));
 			} else {
 				mTvEllapsedTime.setText("--:--");
-				mProgressBar.setProgress(PROGRESS_MAX);
+				mProgressBar.setProgress(0);
 			}
 			// return the number of milliseconds until the next full second, so
 			// the counter can be updated at just the right time
@@ -1141,6 +1148,10 @@ public class Show extends Activity {
 				updateTrackInfo();
 			} else if (action.equals(MediaPlaybackService.BUFFERING_CHANGED)) {
 				updateBuffering(intent.getExtras().getInt(MediaPlaybackService.BUFFERING_CHANGED_EXTRA_KEY));
+			} else if (action.equals(MediaPlaybackService.SET_DATASOURCE_ERROR)) {
+				mLastError = isRemote() ? Error.PlayRemoteAudioError : Error.PlayLocalAudioError;
+				showDialog(DLG_ERROR);
+				mBtnPause.setEnabled(false);
 			}
 		}
 
