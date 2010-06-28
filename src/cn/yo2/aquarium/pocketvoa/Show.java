@@ -100,7 +100,7 @@ public class Show extends Activity {
 	private static final int WHAT_LOAD_LOCAL_LYRIC_FAIL_IO = 7;
 
 	// MediaPlayer handler message type
-	private static final int WHAT_LYRIC_UPDATE = 0;
+	private static final int WHAT_REFRESH_LYRIC = 0;
 
 	private static final int PROGRESS_MAX = 1000;
 	
@@ -171,7 +171,14 @@ public class Show extends Activity {
 			case WHAT_LOAD_REMOTE_LYRIC_SUCCESS:
 				dismissDialog(DLG_PROGRESS_SPIN);
 				setCurrentView(VIEW_LYRIC);
-				mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
+				refreshLyric();
+				try {
+					if (mService.isPlaying())
+						queueNextRefreshLyric();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			case WHAT_LOAD_REMOTE_ORIGINAL_FAIL_IO:
 			case WHAT_LOAD_REMOTE_ORIGINAL_FAIL_PARSE:
@@ -213,7 +220,14 @@ public class Show extends Activity {
 			case WHAT_LOAD_LOCAL_LYRIC_SUCCESS:
 				dismissDialog(DLG_PROGRESS_SPIN);
 				setCurrentView(VIEW_LYRIC);
-				mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
+				refreshLyric();
+				try {
+					if (mService.isPlaying())
+						queueNextRefreshLyric();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			case WHAT_LOAD_LOCAL_ORIGINAL_FAIL_IO:
 			case WHAT_LOAD_LOCAL_ORIGINAL_FAIL_PARSE:
@@ -241,26 +255,9 @@ public class Show extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case WHAT_LYRIC_UPDATE:
-				try {
-					if (mService.isPlaying()) {
-						// TODO update LyricView
-						Log.d(TAG, "in mLyricHandler");
-						if (mCurrentView == VIEW_LYRIC) {
-							try {
-								mLyricView.update(mService.position());
-							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							mLyricHandler.sendEmptyMessageDelayed(
-									WHAT_LYRIC_UPDATE, 100);
-						}
-					}
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			case WHAT_REFRESH_LYRIC:
+				refreshLyric();
+				queueNextRefreshLyric();
 				break;
 			default:
 				break;
@@ -281,18 +278,47 @@ public class Show extends Activity {
 			if (mService != null) {
 				if (mService.isPlaying()) {
 					mService.pause();
-					refreshNow();
+					refreshProgress();
+					if (mCurrentView == VIEW_LYRIC)
+						stopRefreshLyric();
 				} else {
 					mService.play();
-			        long next = refreshNow();
-			        queueNextRefresh(next);
-			        mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
+			        long next = refreshProgress();
+			        queueNextRefreshProgress(next);
+			        
+			        if (mCurrentView == VIEW_LYRIC) {
+			        	refreshLyric();
+			        	queueNextRefreshLyric();
+			        }
+			   
 				}	
 				setPauseButtonImage();
 			}
 		} catch (RemoteException ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	private void refreshLyric() {
+		try {
+			long position = mService.position();
+			if (position < 0)
+				position = 0;
+//			Log.d(TAG, "[refreshLyric] position -- " + position);
+			mLyricView.update(position);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void queueNextRefreshLyric() {
+		mLyricHandler.removeMessages(WHAT_REFRESH_LYRIC);
+		if (mCurrentView == VIEW_LYRIC)
+			mLyricHandler.sendEmptyMessageDelayed(WHAT_REFRESH_LYRIC, 100);
+	}
+	
+	private void stopRefreshLyric() {
+		mLyricHandler.removeMessages(WHAT_REFRESH_LYRIC);
 	}
 
 	private LyricView mLyricView;
@@ -432,7 +458,14 @@ public class Show extends Activity {
 	private void commandLoadRemoteLyric() {
 		if (mRemoteLyricLoaded) {
 			setCurrentView(VIEW_LYRIC);
-			mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
+			refreshLyric();
+			try {
+				if (mService.isPlaying()) 
+					queueNextRefreshLyric();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else
 			loadRemoteLyricView();
 	}
@@ -467,7 +500,14 @@ public class Show extends Activity {
 	private void commandLoadLocalLyric() {
 		if (mLocalLyricLoaded) {
 			setCurrentView(VIEW_LYRIC);
-			mLyricHandler.sendEmptyMessage(WHAT_LYRIC_UPDATE);
+			refreshLyric();
+			try {
+				if (mService.isPlaying())
+					queueNextRefreshLyric();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else
 			loadLocalLyricView();
 	}
@@ -973,12 +1013,12 @@ public class Show extends Activity {
 						case MediaPlaybackService.STATE_PAUSED:
 							setPauseButtonImage();
 							updateTrackInfo();
-							long next = refreshNow();
-							queueNextRefresh(next);
+							long next = refreshProgress();
+							queueNextRefreshProgress(next);
 							break;
 						case MediaPlaybackService.STATE_PLAYBACK_COMPLETED:
 							setPauseButtonImage();
-							refreshNow();
+							refreshProgress();
 							break;
 						default:
 							break;
@@ -1052,7 +1092,7 @@ public class Show extends Activity {
 	private static final int REFRESH = 1;
 	private static final int QUIT = 2;
 
-	private void queueNextRefresh(long delay) {
+	private void queueNextRefreshProgress(long delay) {
 		if (!paused) {
 			Message msg = mHandler.obtainMessage(REFRESH);
 			mHandler.removeMessages(REFRESH);
@@ -1060,15 +1100,18 @@ public class Show extends Activity {
 		}
 	}
 	
-	private void stopRefresh() {
+	private void stopRefreshProgress() {
 		mHandler.removeMessages(REFRESH);
 	}
 
-	private long refreshNow() {
+	private long refreshProgress() {
 		if (mService == null)
 			return 500;
 		try {
 			long pos = mPosOverride < 0 ? mService.position() : mPosOverride;
+			
+//			Log.d(TAG, "[refreshProgress] position -- " + pos);
+			
 			long remaining = 1000 - (pos % 1000);
 			if ((pos >= 0) && (mDuration > 0)) {
 				mTvEllapsedTime.setText(DateUtils.formatElapsedTime(mRecycle,
@@ -1104,8 +1147,8 @@ public class Show extends Activity {
 			switch (msg.what) {
 
 			case REFRESH:
-				long next = refreshNow();
-				queueNextRefresh(next);
+				long next = refreshProgress();
+				queueNextRefreshProgress(next);
 				break;
 
 			case QUIT:
@@ -1138,10 +1181,12 @@ public class Show extends Activity {
 				// set new max for progress bar
 				updateTrackInfo();
 				setPauseButtonImage();
-				queueNextRefresh(1);
+				queueNextRefreshProgress(1);
 			} else if (action.equals(MediaPlaybackService.PLAYBACK_COMPLETE)) {
 				setPauseButtonImage();
-				stopRefresh();
+				stopRefreshProgress();
+				stopRefreshLyric();
+				mLyricView.resetLyric();
 			} else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
 				setPauseButtonImage();
 			} else if (action.equals(MediaPlaybackService.ASYNC_OPEN_COMPLETE)) {

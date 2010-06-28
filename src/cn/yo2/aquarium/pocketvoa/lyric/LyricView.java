@@ -117,9 +117,12 @@ public class LyricView extends View {
 					.getSentence(i).mContent)) / 2);
 		}
 	}
+	
+	
 
+	
 	public boolean update(long time) {
-		Log.d(TAG, "in update time -- " + time);
+		Log.d(TAG, "[update] time -- " + time);
 		if (mCurrentLineIndex == mLyric.getSize() - 1)
 			return false;
 
@@ -218,7 +221,7 @@ public class LyricView extends View {
 	}
 
 	private void drawFocusedLine(Canvas canvas) {
-		Log.d(TAG, "CurrentIndex -- " + mCurrentLineIndex);
+		Log.d(TAG, "[drawFocusedLine] CurrentIndex -- " + mCurrentLineIndex);
 
 		mTextPaint.setColor(mFocusLineColor);
 
