@@ -768,6 +768,10 @@ public class Show extends Activity {
 
 		mProgressBar = (ProgressBar) findViewById(R.id.pb_audio);
 		mProgressBar.setMax(PROGRESS_MAX);
+		
+		if (!isRemote()) {
+			mProgressBar.setSecondaryProgress(PROGRESS_MAX);
+		}
 	}
 	
 	private View.OnClickListener mToolBarBtnOnClickListener = new View.OnClickListener() {
@@ -1186,7 +1190,9 @@ public class Show extends Activity {
 				setPauseButtonImage();
 				stopRefreshProgress();
 				stopRefreshLyric();
-				mLyricView.resetLyric();
+				if (mCurrentView == VIEW_LYRIC) {
+					mLyricView.resetLyric();
+				}
 			} else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
 				setPauseButtonImage();
 			} else if (action.equals(MediaPlaybackService.ASYNC_OPEN_COMPLETE)) {
