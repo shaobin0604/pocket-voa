@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">口袋VOA</string>
 	<string name="app_version_label">版本: </string>
-	<string name="app_version">1.2.0</string>
 	<string name="app_author_label">作者: </string>
 	<string name="app_author">邵彬</string>
-	<string name="app_email">shaobin0604@qq.com</string>
 	<string name="app_license_label">協議: </string>
-	<string name="app_license">Apache License, Version 2.0</string>
 	<string name="app_website_label">網站: </string>
-	<string name="app_website">http://pocketvoa.72pines.com</string>
 
 	<!-- for activity title -->
 	<string name="ac_title_help">幫助</string>
@@ -127,4 +122,18 @@
 	<string name="prefs_key_whatsnew">prefs_key_whatsnew</string>
 	<string name="prefs_key_help">prefs_key_help</string>
 	<string name="prefs_key_about">prefs_key_about</string>
+	
+	<!-- crash report dialog resource -->
+    <string name="crash_notif_ticker_text">意想不到的錯誤發生了,請發送錯誤報告...</string>
+	<string name="crash_notif_title">口袋VOA崩潰了...</string>
+	<string name="crash_notif_text">請點擊這裏以幫助我們修正錯誤.</string>
+
+	<string name="crash_dialog_title">錯誤報告</string>
+	<string name="crash_dialog_text">口袋VOA遇到未知錯誤需要關閉，我們對此引起的不便表示抱歉。我們已經產生了一個關於此錯誤的報告，希望您選擇發送此報告給我們以幫助改善口袋VOA的質量。</string>
+	<string name="crash_dialog_comment_prompt">這個問題是如何出現的？</string>
+	<string name="crash_dialog_ok_toast">謝謝 !</string>
+	
+	<!-- crash report preference -->
+	<string name="prefs_key_acra.disable">acra.disable</string>
+	<string name="prefs_title_disable_acra">關閉錯誤報告</string>
 </resources>

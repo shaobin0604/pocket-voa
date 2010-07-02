@@ -105,6 +105,10 @@ public class LyricView extends View {
 		return mLyricLoaded;
 	}
 	
+	public boolean isLyricLoaded() {
+		return mLyricLoaded;
+	}
+	
 	public void resetLyric() {
 		mCurrentLineIndex = 0;
 		mCurrentSentence = mLyric.getSentence(mCurrentLineIndex);
@@ -123,8 +127,9 @@ public class LyricView extends View {
 	
 	public boolean update(long time) {
 		Log.d(TAG, "[update] time -- " + time);
-		if (mCurrentLineIndex == mLyric.getSize() - 1)
-			return false;
+		
+//		if (mCurrentLineIndex == mLyric.getSize() - 1)
+//			return false;
 
 		// if (mCurrentSentence == null) {
 		// mCurrentIndex = 0;

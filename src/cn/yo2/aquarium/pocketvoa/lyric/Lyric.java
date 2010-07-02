@@ -85,7 +85,7 @@ public class Lyric {
 		}
 		Sentence last = list.get(list.size() - 1);
 		last.mToTime = Integer.MAX_VALUE;
-
+		
 		return true;
 	}
 

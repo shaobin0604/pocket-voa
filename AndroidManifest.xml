@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cn.yo2.aquarium.pocketvoa" android:versionName="@string/app_version" android:versionCode="7">
+	package="cn.yo2.aquarium.pocketvoa" android:versionName="@string/app_version" android:versionCode="8">
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:name=".App">
 		<activity android:name=".Main" android:label="@string/app_name"
@@ -20,6 +20,10 @@
 		
 		<activity android:name=".Help" android:configChanges="keyboardHidden|orientation" android:label="@string/ac_title_help">
 		</activity>
+		
+		<activity android:name="org.acra.CrashReportDialog"
+        	android:theme="@android:style/Theme.Dialog"
+        	android:launchMode="singleInstance" />
 
 		<service android:name=".DownloadService"></service>
 		<service android:name=".MediaPlaybackService" android:process=":remote"/>
@@ -34,4 +38,5 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 </manifest> 

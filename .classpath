@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="libs/admob-sdk-android.jar"/>
 	<classpathentry kind="lib" path="libs/adlib_android.jar"/>
 	<classpathentry kind="lib" path="libs/youmiad-android1.1.jar"/>
+	<classpathentry kind="lib" path="libs/acra-2.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

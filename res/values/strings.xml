@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+	
+	
+	<string name="app_version">1.2.1</string>
+	
+	
+	<string name="app_website">http://pocketvoa.72pines.com</string>
+	<string name="app_license">Apache License, Version 2.0</string>
+	<string name="app_email">shaobin0604@qq.com</string>
+
 	<string name="hello">Hello World, Main!</string>
 	<string name="app_name">Pocket VOA</string>
-	<string name="app_version_label">Version: </string>
-	<string name="app_version">1.2.0</string>
+	<string name="app_version_label">Version: </string>	
 	<string name="app_author_label">Author: </string>
 	<string name="app_author">Bin Shao</string>
-	<string name="app_email">shaobin0604@qq.com</string>
 	<string name="app_license_label">License: </string>
-	<string name="app_license">Apache License, Version 2.0</string>
 	<string name="app_website_label">Website: </string>
-	<string name="app_website">http://pocketvoa.72pines.com</string>
+	
 	
 	<!-- for activity title -->
 	<string name="ac_title_help">Help</string>
@@ -131,4 +137,21 @@
     <string name="prefs_key_whatsnew">prefs_key_whatsnew</string>
     <string name="prefs_key_help">prefs_key_help</string>
     <string name="prefs_key_about">prefs_key_about</string>
+    
+    <!-- crash report dialog resource -->
+    <string name="crash_notif_ticker_text">Unexpected error, please send a report...</string>
+	<string name="crash_notif_title">Pocket VOA has crashed...</string>
+	<string name="crash_notif_text">Please click here to help fix the issue.</string>
+
+	<string name="crash_dialog_title">Pocket VOA has crashed</string>
+	<string name="crash_dialog_text">An unexpected error occurred forcing the
+		application to stop. Please help us fix this by sending us error data,
+		all you have to do is click \'OK\'.</string>
+	<string name="crash_dialog_comment_prompt">You might add your comments about the problem
+		below:</string>
+	<string name="crash_dialog_ok_toast">Thank you !</string>
+	
+	<!-- crash report preference -->
+	<string name="prefs_key_acra.disable">acra.disable</string>
+	<string name="prefs_title_disable_acra">Disable Crash Report</string>
 </resources>

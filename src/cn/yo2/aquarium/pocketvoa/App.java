@@ -2,6 +2,7 @@ package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
 
+import org.acra.CrashReportingApplication;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -19,15 +20,15 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
-import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
-public class App extends Application {
+public class App extends CrashReportingApplication {
 	private static final String CLASSTAG = App.class.getSimpleName();
 
 	private static final int CONN_TIME_OUT = 1000 * 3; // millis
@@ -37,6 +38,27 @@ public class App extends Application {
 	private static final String DEFAULT_CHARSET = "utf-8";
 
 	public SharedPreferences mSharedPreferences;
+	
+	@Override
+	public String getFormId() {
+		
+		return "dFRJZDI3QWN0bnN6emRBb2tnMWRwSEE6MQ";
+	}
+	
+	@Override
+	public Bundle getCrashResources() {
+	    Bundle result = new Bundle();
+	    result.putInt(RES_NOTIF_TICKER_TEXT, R.string.crash_notif_ticker_text);
+	    result.putInt(RES_NOTIF_TITLE, R.string.crash_notif_title);
+	    result.putInt(RES_NOTIF_TEXT, R.string.crash_notif_text);
+	    result.putInt(RES_NOTIF_ICON, android.R.drawable.stat_notify_error); // optional. default is a warning sign
+	    result.putInt(RES_DIALOG_TEXT, R.string.crash_dialog_text);
+	    result.putInt(RES_DIALOG_ICON, android.R.drawable.ic_dialog_info); //optional. default is a warning sign
+	    result.putInt(RES_DIALOG_TITLE, R.string.crash_dialog_title); // optional. default is your application name 
+	    result.putInt(RES_DIALOG_COMMENT_PROMPT, R.string.crash_dialog_comment_prompt); // optional. when defined, adds a user text field input with this text resource as a label
+	    result.putInt(RES_DIALOG_OK_TOAST, R.string.crash_dialog_ok_toast); // optional. Displays a Toast when the user accepts to send a report ("Thank you !" for example)
+	    return result;
+	}
 
 	@Override
 	public void onCreate() {
@@ -126,9 +148,7 @@ public class App extends Application {
 
 			public void process(HttpRequest request, HttpContext context)
 					throws HttpException, IOException {
-				request
-						.addHeader(
-								"User-Agent",
+				request.addHeader("User-Agent",
 								"Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 GTB6 (.NET CLR 3.5.30729)");
 
 			}

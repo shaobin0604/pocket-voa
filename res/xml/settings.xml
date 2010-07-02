@@ -9,6 +9,7 @@
  		android:dialogTitle="@string/prefs_list_count_dialog_title"
  		android:entries="@array/prefs_list_count"
  		android:entryValues="@array/prefs_list_count"
+ 		android:defaultValue="10"
  		/>
  	<!-- 
  	<ListPreference
@@ -20,7 +21,15 @@
  		android:entryValues="@array/prefs_datasource_value"
  		/>
  	 -->
+ 	 
+
+ 	 <CheckBoxPreference android:key="@string/prefs_key_acra.disable"
+        android:title="@string/prefs_title_disable_acra"
+        android:defaultValue="false"/>
+        
+      
   </PreferenceCategory>
+  
   <PreferenceCategory android:title="@string/prefs_category_title_info">
   	<Preference android:title="@string/prefs_title_whatsnew" android:key="@string/prefs_key_whatsnew" android:persistent="false"/>
   	

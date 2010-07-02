@@ -1,7 +1,11 @@
 Pocket VOA - An online/offline reader for Voice of America news program.
 
+Version 1.2.1 [02/07/2010]
+	- New: Add crash report system.
+	- Fix Bug: Crash when play audio complete.
+
 Version 1.2.0 [26/06/2010]
-	- New: Play audio in background
+	- New: Play audio in background.
 
 Version 1.1.1 [18/04/2010]
 	- Fix Bug: When in Show Activity, download translation will fail if user have not navigated to translation page before.

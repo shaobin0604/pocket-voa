@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: D:\\SDK\\eclipse-java-galileo-SR1-win32\\workspace\\Pocket VOA\\src\\cn\\yo2\\aquarium\\pocketvoa\\IMediaPlaybackService.aidl
+ * Original file: E:\\SDK\\Motorola\\workspace\\pocket-voa\\src\\cn\\yo2\\aquarium\\pocketvoa\\IMediaPlaybackService.aidl
  */
 package cn.yo2.aquarium.pocketvoa;
 import java.lang.String;
@@ -39,7 +39,7 @@ public android.os.IBinder asBinder()
 {
 return this;
 }
-public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int flags) throws android.os.RemoteException
+@Override public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int flags) throws android.os.RemoteException
 {
 switch (code)
 {
