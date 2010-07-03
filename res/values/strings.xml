@@ -2,7 +2,7 @@
 <resources>
 	
 	
-	<string name="app_version">1.2.1</string>
+	<string name="app_version">1.2.2</string>
 	
 	
 	<string name="app_website">http://pocketvoa.72pines.com</string>
@@ -154,4 +154,9 @@
 	<!-- crash report preference -->
 	<string name="prefs_key_acra.disable">acra.disable</string>
 	<string name="prefs_title_disable_acra">Disable Crash Report</string>
+	
+	<!-- keep screen on preference -->
+	<string name="prefs_key_keep_screen_on">prefs_key_keep_screen_on</string>
+	<string name="prefs_title_keep_screen_on">Keep Screen On</string>
+	<string name="prefs_summary_keep_screen_on">keep screen on when show article</string>
 </resources>

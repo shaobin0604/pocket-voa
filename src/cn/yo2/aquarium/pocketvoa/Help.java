@@ -1,7 +1,5 @@
 package cn.yo2.aquarium.pocketvoa;
 
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -17,8 +15,6 @@ public class Help extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		Utils.setKeepScreenOn(this);
 		
 		setContentView(R.layout.help);
 		

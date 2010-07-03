@@ -1,5 +1,9 @@
 Pocket VOA - An online/offline reader for Voice of America news program.
 
+Version 1.2.2 [04/07/2010]
+	- New: Add "Keep Screen On" option in Settings page.
+	- Fix Bug: Text is truncated when article is viewed in local.
+
 Version 1.2.1 [02/07/2010]
 	- New: Add crash report system.
 	- Fix Bug: Crash when play audio complete.

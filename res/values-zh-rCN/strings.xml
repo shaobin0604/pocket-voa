@@ -141,4 +141,7 @@
 	<!-- crash report preference -->
 	<string name="prefs_key_acra.disable">acra.disable</string>
 	<string name="prefs_title_disable_acra">关闭错误报告</string>
+	
+	<string name="prefs_title_keep_screen_on">常亮背景灯</string>
+	<string name="prefs_summary_keep_screen_on">阅读文章时保持屏幕常亮</string>
 </resources>

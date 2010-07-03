@@ -1,5 +1,6 @@
 package cn.yo2.aquarium.pocketvoa;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -97,13 +98,14 @@ public class DownloadTask implements Runnable {
 			}
 			return false;
 		} else {
-			FileWriter fw = null;
+			BufferedWriter bw = null;
+			
 			try {
 				if (!local.exists())
 					local.createNewFile();
 
-				fw = new FileWriter(local);
-				fw.write(text);
+				bw = new BufferedWriter(new FileWriter(local));
+				bw.write(text);
 				for (IProgressListener listener : mListeners) {
 					listener.setSuccess(which);
 				}
@@ -115,11 +117,12 @@ public class DownloadTask implements Runnable {
 				}
 				return false;
 			} finally {
-				if (fw != null)
+				if (bw != null)
 					try {
-						fw.close();
+						bw.close();
 					} catch (IOException e) {
 						// ignore
+						Log.e(CLASSTAG, "[downloadTextFile] error close Writer", e);
 					}
 			}
 		}

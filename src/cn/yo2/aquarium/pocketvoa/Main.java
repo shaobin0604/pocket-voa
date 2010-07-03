@@ -283,7 +283,7 @@ public class Main extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		Utils.setKeepScreenOn(this);
+//		Utils.setKeepScreenOn(this);
 		
 		setContentView(R.layout.main);
 

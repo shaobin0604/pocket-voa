@@ -83,8 +83,17 @@ public class Utils {
         }
     }
 	
-	public static void setKeepScreenOn(Activity activity) {
-		activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    /**
+     * set screen on or off
+     * 
+     * @param activity
+     * @param on
+     */
+	public static void setKeepScreenOn(Activity activity, boolean on) {
+		if (on)
+			activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		else 
+			activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	public static Article getArticleFromIntent(Intent intent) {
@@ -134,11 +143,12 @@ public class Utils {
 	}
 
 	public static String loadTextFile(File file) throws IOException {
-		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		
 		StringBuilder text = new StringBuilder();
-		char[] buf = new char[1024];
-		while (fr.read(buf) != -1) {
-			text.append(buf);
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			text.append(line);
 		}
 		return text.toString();
 	}

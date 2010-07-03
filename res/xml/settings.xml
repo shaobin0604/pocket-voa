@@ -22,6 +22,10 @@
  		/>
  	 -->
  	 
+ 	 <CheckBoxPreference android:key="@string/prefs_key_keep_screen_on"
+        android:title="@string/prefs_title_keep_screen_on"
+        android:defaultValue="true"
+        android:summary="@string/prefs_summary_keep_screen_on"/>
 
  	 <CheckBoxPreference android:key="@string/prefs_key_acra.disable"
         android:title="@string/prefs_title_disable_acra"

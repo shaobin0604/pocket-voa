@@ -40,7 +40,7 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 
-import com.admob.android.ads.AdView;
+//import com.admob.android.ads.AdView;
 import com.wooboo.adlib_android.WoobooAdView;
 
 public class Show extends Activity {
@@ -121,7 +121,7 @@ public class Show extends Activity {
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
 
-	private AdView mAdView;
+//	private AdView mAdView;
 	private ViewFlipper mViewFlipper;
 	private WebView mWebViewEn;
 	private WebView mWebViewZh;
@@ -690,8 +690,6 @@ public class Show extends Activity {
 
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-		Utils.setKeepScreenOn(this);
-
 		setContentView(R.layout.show);
 
 		mApp = (App) getApplication();
@@ -1051,6 +1049,10 @@ public class Show extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+		boolean keepScreenOn = mApp.mSharedPreferences.getBoolean(getString(R.string.prefs_key_keep_screen_on), true);
+		
+		Utils.setKeepScreenOn(this, keepScreenOn);
 		
 		paused = false;
 

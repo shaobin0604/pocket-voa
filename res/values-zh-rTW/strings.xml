@@ -122,18 +122,22 @@
 	<string name="prefs_key_whatsnew">prefs_key_whatsnew</string>
 	<string name="prefs_key_help">prefs_key_help</string>
 	<string name="prefs_key_about">prefs_key_about</string>
-	
+
 	<!-- crash report dialog resource -->
-    <string name="crash_notif_ticker_text">意想不到的錯誤發生了,請發送錯誤報告...</string>
+	<string name="crash_notif_ticker_text">意想不到的錯誤發生了,請發送錯誤報告...</string>
 	<string name="crash_notif_title">口袋VOA崩潰了...</string>
 	<string name="crash_notif_text">請點擊這裏以幫助我們修正錯誤.</string>
 
 	<string name="crash_dialog_title">錯誤報告</string>
-	<string name="crash_dialog_text">口袋VOA遇到未知錯誤需要關閉，我們對此引起的不便表示抱歉。我們已經產生了一個關於此錯誤的報告，希望您選擇發送此報告給我們以幫助改善口袋VOA的質量。</string>
+	<string name="crash_dialog_text">口袋VOA遇到未知錯誤需要關閉，我們對此引起的不便表示抱歉。我們已經產生了一個關於此錯誤的報告，希望您選擇發送此報告給我們以幫助改善口袋VOA的質量。
+	</string>
 	<string name="crash_dialog_comment_prompt">這個問題是如何出現的？</string>
 	<string name="crash_dialog_ok_toast">謝謝 !</string>
-	
+
 	<!-- crash report preference -->
 	<string name="prefs_key_acra.disable">acra.disable</string>
 	<string name="prefs_title_disable_acra">關閉錯誤報告</string>
+
+	<string name="prefs_title_keep_screen_on">常亮背景燈</string>
+	<string name="prefs_summary_keep_screen_on">閱讀文章時保持屏幕常亮</string>
 </resources>
