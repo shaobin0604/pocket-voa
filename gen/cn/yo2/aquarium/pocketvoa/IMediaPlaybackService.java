@@ -106,6 +106,21 @@ this.pause();
 reply.writeNoException();
 return true;
 }
+case TRANSACTION_init:
+{
+data.enforceInterface(DESCRIPTOR);
+this.init();
+reply.writeNoException();
+return true;
+}
+case TRANSACTION_isInitialized:
+{
+data.enforceInterface(DESCRIPTOR);
+boolean _result = this.isInitialized();
+reply.writeNoException();
+reply.writeInt(((_result)?(1):(0)));
+return true;
+}
 case TRANSACTION_play:
 {
 data.enforceInterface(DESCRIPTOR);
@@ -262,6 +277,37 @@ _reply.recycle();
 _data.recycle();
 }
 }
+public void init() throws android.os.RemoteException
+{
+android.os.Parcel _data = android.os.Parcel.obtain();
+android.os.Parcel _reply = android.os.Parcel.obtain();
+try {
+_data.writeInterfaceToken(DESCRIPTOR);
+mRemote.transact(Stub.TRANSACTION_init, _data, _reply, 0);
+_reply.readException();
+}
+finally {
+_reply.recycle();
+_data.recycle();
+}
+}
+public boolean isInitialized() throws android.os.RemoteException
+{
+android.os.Parcel _data = android.os.Parcel.obtain();
+android.os.Parcel _reply = android.os.Parcel.obtain();
+boolean _result;
+try {
+_data.writeInterfaceToken(DESCRIPTOR);
+mRemote.transact(Stub.TRANSACTION_isInitialized, _data, _reply, 0);
+_reply.readException();
+_result = (0!=_reply.readInt());
+}
+finally {
+_reply.recycle();
+_data.recycle();
+}
+return _result;
+}
 public void play() throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
@@ -335,10 +381,12 @@ static final int TRANSACTION_getState = (IBinder.FIRST_CALL_TRANSACTION + 2);
 static final int TRANSACTION_isPlaying = (IBinder.FIRST_CALL_TRANSACTION + 3);
 static final int TRANSACTION_stop = (IBinder.FIRST_CALL_TRANSACTION + 4);
 static final int TRANSACTION_pause = (IBinder.FIRST_CALL_TRANSACTION + 5);
-static final int TRANSACTION_play = (IBinder.FIRST_CALL_TRANSACTION + 6);
-static final int TRANSACTION_duration = (IBinder.FIRST_CALL_TRANSACTION + 7);
-static final int TRANSACTION_position = (IBinder.FIRST_CALL_TRANSACTION + 8);
-static final int TRANSACTION_seek = (IBinder.FIRST_CALL_TRANSACTION + 9);
+static final int TRANSACTION_init = (IBinder.FIRST_CALL_TRANSACTION + 6);
+static final int TRANSACTION_isInitialized = (IBinder.FIRST_CALL_TRANSACTION + 7);
+static final int TRANSACTION_play = (IBinder.FIRST_CALL_TRANSACTION + 8);
+static final int TRANSACTION_duration = (IBinder.FIRST_CALL_TRANSACTION + 9);
+static final int TRANSACTION_position = (IBinder.FIRST_CALL_TRANSACTION + 10);
+static final int TRANSACTION_seek = (IBinder.FIRST_CALL_TRANSACTION + 11);
 }
 public void setArticle(cn.yo2.aquarium.pocketvoa.Article article) throws android.os.RemoteException;
 public cn.yo2.aquarium.pocketvoa.Article getArticle() throws android.os.RemoteException;
@@ -346,6 +394,8 @@ public int getState() throws android.os.RemoteException;
 public boolean isPlaying() throws android.os.RemoteException;
 public void stop() throws android.os.RemoteException;
 public void pause() throws android.os.RemoteException;
+public void init() throws android.os.RemoteException;
+public boolean isInitialized() throws android.os.RemoteException;
 public void play() throws android.os.RemoteException;
 public long duration() throws android.os.RemoteException;
 public long position() throws android.os.RemoteException;

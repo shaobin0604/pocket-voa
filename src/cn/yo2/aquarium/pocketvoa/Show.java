@@ -121,7 +121,7 @@ public class Show extends Activity {
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
 
-//	private AdView mAdView;
+	// private AdView mAdView;
 	private ViewFlipper mViewFlipper;
 	private WebView mWebViewEn;
 	private WebView mWebViewZh;
@@ -273,24 +273,30 @@ public class Show extends Activity {
 	private void doPauseResume() {
 		try {
 			if (mService != null) {
-				if (mService.isPlaying()) {
-					mService.pause();
-					refreshProgress();
-					if (mCurrentView == VIEW_LYRIC)
-						stopRefreshLyric();
-				} else {
-					mService.play();
-					long next = refreshProgress();
-					queueNextRefreshProgress(next);
+				if (mService.isInitialized()) {
 
-					if (mCurrentView == VIEW_LYRIC) {
-						refreshLyric();
-						queueNextRefreshLyric();
+					if (mService.isPlaying()) {
+						mService.pause();
+						refreshProgress();
+						if (mCurrentView == VIEW_LYRIC)
+							stopRefreshLyric();
+					} else {
+						mService.play();
+						long next = refreshProgress();
+						queueNextRefreshProgress(next);
+
+						if (mCurrentView == VIEW_LYRIC) {
+							refreshLyric();
+							queueNextRefreshLyric();
+						}
+
 					}
-
+					setPauseButtonImage();
+				} else {
+					mService.init();
+					mBtnPause.setEnabled(false);
 				}
-				setPauseButtonImage();
-			}
+			} 
 		} catch (RemoteException ex) {
 			ex.printStackTrace();
 		}
@@ -1049,11 +1055,12 @@ public class Show extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-		boolean keepScreenOn = mApp.mSharedPreferences.getBoolean(getString(R.string.prefs_key_keep_screen_on), true);
-		
+
+		boolean keepScreenOn = mApp.mSharedPreferences.getBoolean(
+				getString(R.string.prefs_key_keep_screen_on), true);
+
 		Utils.setKeepScreenOn(this, keepScreenOn);
-		
+
 		paused = false;
 
 		if (false == Utils.bindToService(this, mConnection)) {
@@ -1196,12 +1203,14 @@ public class Show extends Activity {
 				setPauseButtonImage();
 				stopRefreshProgress();
 				stopRefreshLyric();
-//				resetLyricView();
+				// resetLyricView();
 
 			} else if (action.equals(MediaPlaybackService.PLAYSTATE_CHANGED)) {
 				setPauseButtonImage();
 			} else if (action.equals(MediaPlaybackService.ASYNC_OPEN_COMPLETE)) {
 				updateTrackInfo();
+				mBtnPause.setEnabled(true);
+				doPauseResume();
 			} else if (action.equals(MediaPlaybackService.BUFFERING_CHANGED)) {
 				updateBuffering(intent.getExtras().getInt(
 						MediaPlaybackService.BUFFERING_CHANGED_EXTRA_KEY));

@@ -10,6 +10,8 @@ interface IMediaPlaybackService
     boolean isPlaying();
     void stop();
     void pause();
+    void init();
+    boolean isInitialized();
     void play();
     long duration();
     long position();

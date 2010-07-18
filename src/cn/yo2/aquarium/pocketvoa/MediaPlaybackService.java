@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.RemoteException;
 import android.os.PowerManager.WakeLock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -321,7 +322,13 @@ public class MediaPlaybackService extends Service {
 		}
 	};
 	
-	
+	public void init() {
+		Uri uri = mArticle.id == -1 ? Uri
+				.parse(mArticle.urlmp3) : Uri
+				.fromFile(Utils.localMp3File(mArticle));
+		Log.d(TAG, "[setArticle] uri -- " + uri);
+		openAsync(uri);
+	}
 	
     /**
      * Returns the path of the currently playing file, or null if
@@ -378,11 +385,11 @@ public class MediaPlaybackService extends Service {
 			}
 			
 		} else {
-			Uri uri = mArticle.id == -1 ? Uri
-					.parse(mArticle.urlmp3) : Uri
-					.fromFile(Utils.localMp3File(mArticle));
-			Log.d(TAG, "[setArticle] uri -- " + uri);
-			openAsync(uri);
+//			Uri uri = mArticle.id == -1 ? Uri
+//					.parse(mArticle.urlmp3) : Uri
+//					.fromFile(Utils.localMp3File(mArticle));
+//			Log.d(TAG, "[setArticle] uri -- " + uri);
+//			openAsync(uri);
 		}
 	}
 	
@@ -434,6 +441,10 @@ public class MediaPlaybackService extends Service {
 			return mPlayer.isPlaying();
 		}
 		return false;
+	}
+	
+	public boolean isInitialized() {
+		return mPlayer.isInitialized();
 	}
 	
 	private boolean isPaused() {
@@ -622,7 +633,7 @@ public class MediaPlaybackService extends Service {
 				mIsInitialized = true;
 				mState = STATE_PREPARED;
 				notifyChange(ASYNC_OPEN_COMPLETE);
-				play();
+//				play();
 			}
 		};
 
@@ -686,10 +697,23 @@ public class MediaPlaybackService extends Service {
 		public Article getArticle(){
 			return MediaPlaybackService.this.mArticle;
 		}
+		
 		@Override
 		public int getState() {
 			return MediaPlaybackService.this.getState();
 		}
+		
+		@Override
+		public boolean isInitialized() throws RemoteException {
+			return MediaPlaybackService.this.isInitialized();
+		}
+		
+		
+		@Override
+		public void init() throws RemoteException {
+			MediaPlaybackService.this.init();
+		}
+		
 		
 		
 		@Override
