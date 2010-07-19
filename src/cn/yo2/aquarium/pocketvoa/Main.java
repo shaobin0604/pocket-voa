@@ -48,6 +48,12 @@ import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class Main extends Activity {
 
+	private static final String KEY_SAVED_ERROR = "key_saved_error";
+
+	private static final String KEY_SAVED_COMMAND = "key_saved_command";
+
+	private static final String KEY_SAVED_ARTICLE = "key_saved_article";
+
 	private static final String CLASSTAG = Main.class.getSimpleName();
 
 	private static final String KEY_VERSION_CODE = "versionCode";
@@ -101,11 +107,11 @@ public class Main extends Activity {
 					"Words And Their Stories", "People in America", },
 			{ "All", "Popular American", }, };
 
-	private enum Error {
-		LoadListError, DownloadError,
-	}
+	
+	private static final int ERROR_LOAD_LIST = 1;
+	private static final int ERROR_DOWNLOAD = 2;
 
-	private Error mLastError;
+	private int mLastError;
 
 	private int mLastCommand;
 
@@ -154,7 +160,7 @@ public class Main extends Activity {
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS);
-				mLastError = Error.DownloadError;
+				mLastError = ERROR_DOWNLOAD;
 				showDialog(DLG_ERROR);
 				break;
 			default:
@@ -183,7 +189,7 @@ public class Main extends Activity {
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS);
-				mLastError = Error.DownloadError;
+				mLastError = ERROR_DOWNLOAD;
 				showDialog(DLG_ERROR);
 				break;
 			default:
@@ -205,7 +211,7 @@ public class Main extends Activity {
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS);
-				mLastError = Error.LoadListError;
+				mLastError = ERROR_LOAD_LIST;
 				showDialog(DLG_ERROR);
 				break;
 			default:
@@ -227,7 +233,7 @@ public class Main extends Activity {
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
 				dismissDialog(DLG_PROGRESS);
-				mLastError = Error.LoadListError;
+				mLastError = ERROR_LOAD_LIST;
 				showDialog(DLG_ERROR);
 				break;
 			default:
@@ -276,6 +282,26 @@ public class Main extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		//TODO more state to save. current list, tab state, selection
+		outState.putParcelable(KEY_SAVED_ARTICLE, mCurrArticle);
+		outState.putInt(KEY_SAVED_COMMAND, mLastCommand);
+		outState.putInt(KEY_SAVED_ERROR, mLastError);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		// TODO more state to restore
+		
+		mCurrArticle = savedInstanceState.getParcelable(KEY_SAVED_ARTICLE);
+		mLastCommand = savedInstanceState.getInt(KEY_SAVED_COMMAND);
+		mLastError = savedInstanceState.getInt(KEY_SAVED_ERROR);
 	}
 
 	/** Called when the activity is first created. */
@@ -810,11 +836,11 @@ public class Main extends Activity {
 		switch (id) {
 		case DLG_ERROR:
 			switch (mLastError) {
-			case LoadListError:
+			case ERROR_LOAD_LIST:
 				alertDialog
 						.setMessage(getString(R.string.alert_msg_loadlist_error));
 				break;
-			case DownloadError:
+			case ERROR_DOWNLOAD:
 				alertDialog
 						.setMessage(getString(R.string.alert_msg_download_error));
 				break;
