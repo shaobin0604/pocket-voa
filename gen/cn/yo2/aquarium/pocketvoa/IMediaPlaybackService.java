@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: D:\\SDK\\eclipse-java-galileo-SR1-win32\\workspace\\Pocket VOA\\src\\cn\\yo2\\aquarium\\pocketvoa\\IMediaPlaybackService.aidl
+ * Original file: D:\\SDK\\Motorola\\workspace\\pocket-voa\\src\\cn\\yo2\\aquarium\\pocketvoa\\IMediaPlaybackService.aidl
  */
 package cn.yo2.aquarium.pocketvoa;
 import java.lang.String;
