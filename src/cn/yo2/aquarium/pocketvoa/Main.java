@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -228,6 +229,7 @@ public class Main extends Activity {
 			switch (msg.what) {
 			case WHAT_SUCCESS:
 				dismissDialog(DLG_PROGRESS);
+				Log.d(CLASSTAG, "mLocalListHandler [handleMessage] WHAT_SUCCESS");
 				bindLocalList();
 				break;
 			case WHAT_FAIL_IO:
@@ -279,15 +281,17 @@ public class Main extends Activity {
 
 	private LayoutInflater mInflater;
 
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-	}
+//	@Override
+//	public void onConfigurationChanged(Configuration newConfig) {
+//		super.onConfigurationChanged(newConfig);
+//	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		//TODO more state to save. current list, tab state, selection
+		Log.d(CLASSTAG, "[onSaveInstanceState]");
+		
 		outState.putParcelable(KEY_SAVED_ARTICLE, mCurrArticle);
 		outState.putInt(KEY_SAVED_COMMAND, mLastCommand);
 		outState.putInt(KEY_SAVED_ERROR, mLastError);
@@ -298,6 +302,7 @@ public class Main extends Activity {
 		super.onRestoreInstanceState(savedInstanceState);
 		
 		// TODO more state to restore
+		Log.d(CLASSTAG, "[onRestoreInstanceState]");
 		
 		mCurrArticle = savedInstanceState.getParcelable(KEY_SAVED_ARTICLE);
 		mLastCommand = savedInstanceState.getInt(KEY_SAVED_COMMAND);
@@ -939,6 +944,8 @@ public class Main extends Activity {
 	}
 
 	private void commandRefreshLocalList() {
+		
+		Log.d(CLASSTAG, "[commandRefreshLocalList]");
 		mLastCommand = CMD_REFRESH_LOCAL_LIST;
 		showDialog(DLG_PROGRESS);
 
@@ -965,6 +972,7 @@ public class Main extends Activity {
 	}
 
 	private void commandRefreshRemoteList() {
+		Log.d(CLASSTAG, "[commandRefreshRemoteList]");
 		mLastCommand = CMD_REFRESH_REMOTE_LIST;
 		showDialog(DLG_PROGRESS);
 		new Thread() {

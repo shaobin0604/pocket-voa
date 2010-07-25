@@ -1,18 +1,24 @@
 Pocket VOA - An online/offline reader for Voice of America news program.
 
+Version 1.2.3 [22/07/2010]
+	- Fix: Crash when play audio. [issue 11]
+	- Fix: Crash when parse page. [issue 15]
+	- Fix: Crash when restore Main Activity State. [issue 12]
+	- Fix: Crash when download article. [issue 14]
+
 Version 1.2.2 [04/07/2010]
 	- New: Add "Keep Screen On" option in Settings page.
-	- Fix Bug: Text is truncated when article is viewed in local.
+	- Fix: Text is truncated when article is viewed in local.
 
 Version 1.2.1 [02/07/2010]
 	- New: Add crash report system.
-	- Fix Bug: Crash when play audio complete.
+	- Fix: Crash when play audio complete.
 
 Version 1.2.0 [26/06/2010]
 	- New: Play audio in background.
 
 Version 1.1.1 [18/04/2010]
-	- Fix Bug: When in Show Activity, download translation will fail if user have not navigated to translation page before.
+	- Fix: When in Show Activity, download translation will fail if user have not navigated to translation page before.
 	- New: Add Traditional Chinese language support.
 
 Version 1.1.0 [11/03/2010]
@@ -29,7 +35,7 @@ Version 1.0.2 [14/01/2010]
 	- New: Add Simplified Chinese language support.  
 
 Version 1.0.1 [18/12/2009]
-	- Fix Bug: Application crash when download article which does not have publish date.
+	- Fix: Application crash when download article which does not have publish date.
 
 Version 1.0.0 [17/12/2009]
 	- Initial release
