@@ -311,14 +311,14 @@ containing a value of this type.
     public static final class styleable {
         /** Attributes that can be used with a cn_yo2_aquarium_pocketvoa_lyric_LyricView.
            <p>Includes the following attributes:</p>
-           <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
+           <table>
            <colgroup align="left" />
            <colgroup align="left" />
-           <tr><th>Attribute<th>Summary</tr>
-           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage cn.yo2.aquarium.pocketvoa:errorMessage}</code><td></tr>
-           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor cn.yo2.aquarium.pocketvoa:focusLineColor}</code><td></tr>
-           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor cn.yo2.aquarium.pocketvoa:otherLineColor}</code><td></tr>
-           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize cn.yo2.aquarium.pocketvoa:textSize}</code><td></tr>
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage cn.yo2.aquarium.pocketvoa:errorMessage}</code></td><td></td></tr>
+           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor cn.yo2.aquarium.pocketvoa:focusLineColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor cn.yo2.aquarium.pocketvoa:otherLineColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize cn.yo2.aquarium.pocketvoa:textSize}</code></td><td></td></tr>
            </table>
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor
@@ -390,16 +390,16 @@ containing a value of this type.
         public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize = 2;
         /** Attributes that can be used with a com_admob_android_ads_AdView.
            <p>Includes the following attributes:</p>
-           <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
+           <table>
            <colgroup align="left" />
            <colgroup align="left" />
-           <tr><th>Attribute<th>Summary</tr>
-           <tr><th><code>{@link #com_admob_android_ads_AdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code><td></tr>
-           <tr><th><code>{@link #com_admob_android_ads_AdView_isGoneWithoutAd cn.yo2.aquarium.pocketvoa:isGoneWithoutAd}</code><td></tr>
-           <tr><th><code>{@link #com_admob_android_ads_AdView_keywords cn.yo2.aquarium.pocketvoa:keywords}</code><td></tr>
-           <tr><th><code>{@link #com_admob_android_ads_AdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code><td></tr>
-           <tr><th><code>{@link #com_admob_android_ads_AdView_testing cn.yo2.aquarium.pocketvoa:testing}</code><td></tr>
-           <tr><th><code>{@link #com_admob_android_ads_AdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code><td></tr>
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #com_admob_android_ads_AdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #com_admob_android_ads_AdView_isGoneWithoutAd cn.yo2.aquarium.pocketvoa:isGoneWithoutAd}</code></td><td></td></tr>
+           <tr><td><code>{@link #com_admob_android_ads_AdView_keywords cn.yo2.aquarium.pocketvoa:keywords}</code></td><td></td></tr>
+           <tr><td><code>{@link #com_admob_android_ads_AdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code></td><td></td></tr>
+           <tr><td><code>{@link #com_admob_android_ads_AdView_testing cn.yo2.aquarium.pocketvoa:testing}</code></td><td></td></tr>
+           <tr><td><code>{@link #com_admob_android_ads_AdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code></td><td></td></tr>
            </table>
            @see #com_admob_android_ads_AdView_backgroundColor
            @see #com_admob_android_ads_AdView_isGoneWithoutAd
