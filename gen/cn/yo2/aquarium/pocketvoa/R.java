@@ -129,21 +129,22 @@ containing a value of this type.
     }
     public static final class id {
         public static final int author=0x7f070005;
-        public static final int btn_pause=0x7f07001e;
+        public static final int btn_page=0x7f070018;
+        public static final int btn_pause=0x7f07001f;
         public static final int btn_refresh_local=0x7f070012;
-        public static final int btn_refresh_remote=0x7f070018;
+        public static final int btn_refresh_remote=0x7f070019;
         public static final int empty_local=0x7f070011;
         public static final int empty_remote=0x7f070017;
-        public static final int flipper=0x7f07001a;
+        public static final int flipper=0x7f07001b;
         public static final int iv_icon=0x7f070001;
         public static final int iv_lrc=0x7f070009;
         public static final int iv_textzh=0x7f07000a;
         public static final int license=0x7f070006;
         public static final int list_local=0x7f070010;
         public static final int list_remote=0x7f070016;
-        public static final int lyricview=0x7f07001d;
-        public static final int pb_audio=0x7f070021;
-        public static final int root=0x7f070019;
+        public static final int lyricview=0x7f07001e;
+        public static final int pb_audio=0x7f070022;
+        public static final int root=0x7f07001a;
         public static final int root_about=0x7f070000;
         public static final int spinner_subtype_local=0x7f07000f;
         public static final int spinner_subtype_remote=0x7f070015;
@@ -155,13 +156,13 @@ containing a value of this type.
         public static final int tv_app_name=0x7f070002;
         public static final int tv_app_version=0x7f070004;
         public static final int tv_app_version_label=0x7f070003;
-        public static final int tv_ellapsed_time=0x7f07001f;
+        public static final int tv_ellapsed_time=0x7f070020;
         public static final int tv_title=0x7f07000b;
-        public static final int tv_total_time=0x7f070020;
+        public static final int tv_total_time=0x7f070021;
         public static final int website=0x7f070007;
         public static final int webview=0x7f070008;
-        public static final int webview_en=0x7f07001b;
-        public static final int webview_zh=0x7f07001c;
+        public static final int webview_en=0x7f07001c;
+        public static final int webview_zh=0x7f07001d;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -330,14 +331,14 @@ containing a value of this type.
     public static final class styleable {
         /** Attributes that can be used with a cn_yo2_aquarium_pocketvoa_lyric_LyricView.
            <p>Includes the following attributes:</p>
-           <table>
+           <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
            <colgroup align="left" />
            <colgroup align="left" />
-           <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage cn.yo2.aquarium.pocketvoa:errorMessage}</code></td><td></td></tr>
-           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor cn.yo2.aquarium.pocketvoa:focusLineColor}</code></td><td></td></tr>
-           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor cn.yo2.aquarium.pocketvoa:otherLineColor}</code></td><td></td></tr>
-           <tr><td><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize cn.yo2.aquarium.pocketvoa:textSize}</code></td><td></td></tr>
+           <tr><th>Attribute<th>Summary</tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage cn.yo2.aquarium.pocketvoa:errorMessage}</code><td></tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor cn.yo2.aquarium.pocketvoa:focusLineColor}</code><td></tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor cn.yo2.aquarium.pocketvoa:otherLineColor}</code><td></tr>
+           <tr><th><code>{@link #cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize cn.yo2.aquarium.pocketvoa:textSize}</code><td></tr>
            </table>
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage
            @see #cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor
@@ -409,16 +410,16 @@ containing a value of this type.
         public static final int cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize = 2;
         /** Attributes that can be used with a com_admob_android_ads_AdView.
            <p>Includes the following attributes:</p>
-           <table>
+           <table border="2" width="85%" align="center" frame="hsides" rules="all" cellpadding="5">
            <colgroup align="left" />
            <colgroup align="left" />
-           <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #com_admob_android_ads_AdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code></td><td></td></tr>
-           <tr><td><code>{@link #com_admob_android_ads_AdView_isGoneWithoutAd cn.yo2.aquarium.pocketvoa:isGoneWithoutAd}</code></td><td></td></tr>
-           <tr><td><code>{@link #com_admob_android_ads_AdView_keywords cn.yo2.aquarium.pocketvoa:keywords}</code></td><td></td></tr>
-           <tr><td><code>{@link #com_admob_android_ads_AdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code></td><td></td></tr>
-           <tr><td><code>{@link #com_admob_android_ads_AdView_testing cn.yo2.aquarium.pocketvoa:testing}</code></td><td></td></tr>
-           <tr><td><code>{@link #com_admob_android_ads_AdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code></td><td></td></tr>
+           <tr><th>Attribute<th>Summary</tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_backgroundColor cn.yo2.aquarium.pocketvoa:backgroundColor}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_isGoneWithoutAd cn.yo2.aquarium.pocketvoa:isGoneWithoutAd}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_keywords cn.yo2.aquarium.pocketvoa:keywords}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_refreshInterval cn.yo2.aquarium.pocketvoa:refreshInterval}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_testing cn.yo2.aquarium.pocketvoa:testing}</code><td></tr>
+           <tr><th><code>{@link #com_admob_android_ads_AdView_textColor cn.yo2.aquarium.pocketvoa:textColor}</code><td></tr>
            </table>
            @see #com_admob_android_ads_AdView_backgroundColor
            @see #com_admob_android_ads_AdView_isGoneWithoutAd

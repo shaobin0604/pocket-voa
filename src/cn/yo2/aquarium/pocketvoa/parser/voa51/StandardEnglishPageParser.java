@@ -41,7 +41,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 		Matcher audioMatcher = audioPattern.matcher(content);
 		
 		if (audioMatcher.find()) {
-			article.urlmp3 = DataSource.HOST + audioMatcher.group(1);
+			article.urlmp3 = Voa51DataSource.HOST + audioMatcher.group(1);
 		} else {
 			throw new IllegalContentFormatException("Cannot find match mp3");
 		}
@@ -54,7 +54,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 			Matcher lrcMatcher = lrcPattern.matcher(content);
 
 			if (lrcMatcher.find()) {
-				article.urllrc = DataSource.HOST + lrcMatcher.group(1);
+				article.urllrc = Voa51DataSource.HOST + lrcMatcher.group(1);
 			}
 		}	
 		// find translate url if exist
@@ -67,7 +67,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 		// transform relative url to absolute url
 		String text = content.substring(textStart).replaceAll(
 				"src=([\"\']?)(/[^\\s\'\">]+(?:\\.jpg|\\.png|\\.bmp|\\.gif))\\1?",
-				"src=\"" + DataSource.HOST + "$2\"");
+				"src=\"" + Voa51DataSource.HOST + "$2\"");
 
 		// add necessary html tags, build full html text
 		article.text = buildHtml(article.title, text);

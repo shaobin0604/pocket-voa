@@ -26,7 +26,7 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 		Matcher audioMatcher = audioPattern.matcher(content);
 		
 		if (audioMatcher.find()) {
-			article.urlmp3 = DataSource.HOST + audioMatcher.group(1);
+			article.urlmp3 = Voa51DataSource.HOST + audioMatcher.group(1);
 		} else {
 			throw new IllegalContentFormatException("Cannot find match mp3");
 		}
@@ -45,7 +45,7 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 
 		String text = content.substring(textStart).replaceAll(
 				"src=([\"\']?)(/[^\\s\'\">]+(?:\\.jpg|\\.png|\\.bmp|\\.gif))\\1?",
-				"src=\"" + DataSource.HOST + "$2\"");
+				"src=\"" + Voa51DataSource.HOST + "$2\"");
 
 		article.text = buildHtml(article.title, text);
 	}

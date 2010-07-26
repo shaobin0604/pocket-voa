@@ -6,36 +6,36 @@ import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 import cn.yo2.aquarium.pocketvoa.parser.IPageParser;
 
-public class DataSource implements IDataSource {
+public class Voa51DataSource implements IDataSource {
 	static final String HOST = "http://www.51voa.com";
 
 	// standard English
-	static final String ENGLISH_NEWS = HOST + "/VOA_Standard_1.html";
+	static final String ENGLISH_NEWS = HOST + "/VOA_Standard_%d.html";
 
 	// special English
 	static final String DEVELOPMENT_REPORT = HOST
-			+ "/Development_Report_1.html";
-	static final String THIS_IS_AMERICA = HOST + "/This_is_America_1.html";
+			+ "/Development_Report_%d.html";
+	static final String THIS_IS_AMERICA = HOST + "/This_is_America_%d.html";
 	static final String AGRICULTURE_REPORT = HOST
-			+ "/Agriculture_Report_1.html";
+			+ "/Agriculture_Report_%d.html";
 	static final String SCIENCE_IN_THE_NEWS = HOST
-			+ "/Science_in_the_News_1.html";
-	static final String HEALTH_REPORT = HOST + "/Health_Report_1.html";
-	static final String EXPLORATIONS = HOST + "/Explorations_1.html";
-	static final String EDUCATION_REPORT = HOST + "/Education_Report_1.html";
+			+ "/Science_in_the_News_%d.html";
+	static final String HEALTH_REPORT = HOST + "/Health_Report_%d.html";
+	static final String EXPLORATIONS = HOST + "/Explorations_%d.html";
+	static final String EDUCATION_REPORT = HOST + "/Education_Report_%d.html";
 	static final String THE_MAKING_OF_A_NATION = HOST
-			+ "/The_Making_of_a_Nation_1.html";
-	static final String ECONOMICS_REPORT = HOST + "/Economics_Report_1.html";
-	static final String AMERICAN_MOSAIC = HOST + "/American_Mosaic_1.html";
-	static final String IN_THE_NEWS = HOST + "/In_the_News_1.html";
-	static final String AMERICAN_STORIES = HOST + "/American_Stories_1.html";
+			+ "/The_Making_of_a_Nation_%d.html";
+	static final String ECONOMICS_REPORT = HOST + "/Economics_Report_%d.html";
+	static final String AMERICAN_MOSAIC = HOST + "/American_Mosaic_%d.html";
+	static final String IN_THE_NEWS = HOST + "/In_the_News_%d.html";
+	static final String AMERICAN_STORIES = HOST + "/American_Stories_%d.html";
 	static final String WORDS_AND_THEIR_STORIES = HOST
-			+ "/Words_And_Their_Stories_1.html";
-	static final String PEOPLE_IN_AMERICA = HOST + "/People_in_America_1.html";
+			+ "/Words_And_Their_Stories_%d.html";
+	static final String PEOPLE_IN_AMERICA = HOST + "/People_in_America_%d.html";
 
 	// English learning
 	static final String POPULAR_AMERICAN = HOST
-			+ "/Popular_American_1.html";
+			+ "/Popular_American_%d.html";
 
 	// Article type_subtype ->
 	private final HashMap<String, String> mListUrls = new HashMap<String, String>();

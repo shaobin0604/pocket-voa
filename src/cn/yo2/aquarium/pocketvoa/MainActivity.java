@@ -126,6 +126,8 @@ public class MainActivity extends Activity {
 	private ArrayAdapter<CharSequence>[] mAdaptersLocal;
 
 	private ArrayList<Article> mList;
+	private int mCurrentPage = 1;
+	private int mTotalPage = 1;
 
 	private Cursor mCursor;
 	private SimpleCursorAdapter mSimpleCursorAdapter;
@@ -209,6 +211,7 @@ public class MainActivity extends Activity {
 			case WHAT_SUCCESS:
 				dismissDialog(DLG_PROGRESS);
 				bindRemoteList();
+				updateButtonBar();
 				break;
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
@@ -220,8 +223,37 @@ public class MainActivity extends Activity {
 				break;
 			}
 		}
-
 	};
+	
+	private void updateButtonBar() {
+		btnPage.setText(mCurrentPage + "/" + mTotalPage);
+		
+		String[] pages = new String[mTotalPage];
+		for (int i = 0; i < pages.length; i++) {
+			pages[i] = String.valueOf(i + 1);
+		}
+		
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Select Page");
+		builder.setSingleChoiceItems(pages, mCurrentPage - 1, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				mCurrentPage = which + 1;
+				btnPage.setText(mCurrentPage + "/" + mTotalPage);
+			}
+		});
+		
+		btnPage.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				builder.create().show();
+			}
+		});
+	}
 
 	private Handler mLocalListHandler = new Handler() {
 
@@ -279,6 +311,9 @@ public class MainActivity extends Activity {
 	private ListView lvRemote;
 	private Spinner spnTypeRemote;
 	private Spinner spnSubtypeRemote;
+	
+	private Button btnPage;
+
 
 	private LayoutInflater mInflater;
 
@@ -413,8 +448,10 @@ public class MainActivity extends Activity {
 			}
 
 		});
+		
+		btnPage = (Button) findViewById(R.id.btn_page);	
 	}
-
+	
 	private void setupLocalTabWidgets() {
 		spnTypeLocal = (Spinner) findViewById(R.id.spinner_type_local);
 		spnTypeLocal.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -994,8 +1031,10 @@ public class MainActivity extends Activity {
 				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
 						.get(key);
 				try {
-					mList = mApp.mListGenerator.getArticleList(mApp.mDataSource
-							.getListUrls().get(key));
+					ArticleList list = mApp.mListGenerator.getArticleList(String.format(mApp.mDataSource
+							.getListUrls().get(key), mCurrentPage));
+					mList = list.articles;
+					mTotalPage = list.totalPage;
 					mRemoteListHandler.sendEmptyMessage(WHAT_SUCCESS);
 				} catch (IOException e) {
 					mRemoteListHandler.sendEmptyMessage(WHAT_FAIL_IO);

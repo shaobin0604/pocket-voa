@@ -15,7 +15,7 @@ public class StandardEnglishPageZhParser extends AbstractPageParser {
 
 		String text = content.replaceAll(
 				"src=([\"\']?)(/[^\\s\'\">]+(?:\\.jpg|\\.png|\\.bmp|\\.gif))\\1?",
-				"src=\"" + DataSource.HOST + "$2\"");
+				"src=\"" + Voa51DataSource.HOST + "$2\"");
 
 		article.textzh = buildHtml(article.title, text);
 	}

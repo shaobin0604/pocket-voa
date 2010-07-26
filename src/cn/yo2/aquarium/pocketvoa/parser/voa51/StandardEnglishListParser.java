@@ -40,7 +40,7 @@ public class StandardEnglishListParser extends AbstractListParser {
 			Article article = new Article();
 			
 			article.id = -1;
-			article.urltext = DataSource.HOST + (urltext.startsWith("/") ? urltext : "/" + urltext);
+			article.urltext = Voa51DataSource.HOST + (urltext.startsWith("/") ? urltext : "/" + urltext);
 			article.title = title;
 			article.date = Utils.formatDateString(date);
 			article.type = mType;

@@ -92,7 +92,7 @@ public class App extends CrashReportingApplication {
 	}
 
 	private IDataSource getDefaultDataSource() {
-		return new cn.yo2.aquarium.pocketvoa.parser.voa51.DataSource();
+		return new cn.yo2.aquarium.pocketvoa.parser.voa51.Voa51DataSource();
 	}
 
 	public IDataSource getDataSourceFromPrefs(

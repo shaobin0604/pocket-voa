@@ -28,7 +28,7 @@ public class ListGenerator {
 		this.mHttpClient = httpClient;
 	}
 
-	public ArrayList<Article> getArticleList(String url) throws IOException,
+	public ArticleList getArticleList(String url) throws IOException,
 			IllegalContentFormatException {
 		if (TextUtils.isEmpty(url))
 			throw new IllegalArgumentException("Argument url should not be blank.");
@@ -37,7 +37,7 @@ public class ListGenerator {
 		HttpGet get = new HttpGet(url);
 		try {
 			String body = mHttpClient.execute(get, mResponseHandler);
-			return mParser.parse(body);
+			return new ArticleList(mParser.parse(body), mParser.parsePageCount(body));
 		} catch (IOException e) {
 			get.abort();
 			Log.e(CLASSTAG, "IO Error when get list from " + url, e);

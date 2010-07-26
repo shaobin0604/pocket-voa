@@ -7,7 +7,7 @@ import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 import cn.yo2.aquarium.pocketvoa.parser.IPageParser;
 
 
-public class DataSource implements IDataSource {
+public class IcibaDataSource implements IDataSource {
 
 	static final String HOST = "http://news.iciba.com";
 
