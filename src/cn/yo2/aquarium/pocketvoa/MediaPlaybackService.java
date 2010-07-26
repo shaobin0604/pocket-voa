@@ -208,6 +208,8 @@ public class MediaPlaybackService extends Service {
 
 	@Override
 	public void onDestroy() {
+		super.onDestroy();
+		
 		Log.d(TAG, "[onDestroy]");
 		// Check that we're not being destroyed while something is still
 		// playing.
@@ -233,7 +235,7 @@ public class MediaPlaybackService extends Service {
 		tmgr.listen(mPhoneStateListener, 0);
 
 		mWakeLock.release();
-		super.onDestroy();
+		
 	}
 
 	@Override
@@ -371,7 +373,7 @@ public class MediaPlaybackService extends Service {
 			status.flags |= Notification.FLAG_ONGOING_EVENT;
 			status.icon = R.drawable.media_play;
 			
-			Intent intent = new Intent(this, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			Intent intent = new Intent(this, ShowActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			Utils.putArticleToIntent(mArticle, intent);
 			
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -458,7 +460,7 @@ public class MediaPlaybackService extends Service {
 		status.flags |= Notification.FLAG_ONGOING_EVENT;
 		status.icon = R.drawable.media_pause;
 		
-		Intent intent = new Intent(this, Show.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		Intent intent = new Intent(this, ShowActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		Utils.putArticleToIntent(mArticle, intent);
 		
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);

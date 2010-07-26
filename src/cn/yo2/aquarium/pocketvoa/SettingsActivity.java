@@ -7,8 +7,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceClickListener;
 
-public class Settings extends PreferenceActivity {
-	private static final String TAG = Settings.class.getSimpleName();
+public class SettingsActivity extends PreferenceActivity {
+	private static final String TAG = SettingsActivity.class.getSimpleName();
 
 	private static final int DLG_ABOUT = 1;
 	private static final int DLG_CHANGE_LOG = 2;
@@ -16,16 +16,23 @@ public class Settings extends PreferenceActivity {
 	private Preference mHelp;
 	private Preference mAbout;
 	private Preference mChangeLog;
+	
+	
 
 	private OnPreferenceClickListener mOnPreferenceClickListener = new OnPreferenceClickListener() {
 
 		@Override
 		public boolean onPreferenceClick(Preference preference) {
-			if (preference == mAbout)
+			if (preference == mAbout) {
 				showDialog(DLG_ABOUT);
-			else if (preference == mChangeLog)
+				return true;
+			} else if (preference == mChangeLog) {
 				showDialog(DLG_CHANGE_LOG);
-			return true;
+				return true;
+			} 
+			
+			
+			return false;
 		}
 	};
 
@@ -45,10 +52,10 @@ public class Settings extends PreferenceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.settings);
+		addPreferencesFromResource(R.xml.prefs_settings);
 
 		mHelp = findPreference(getString(R.string.prefs_key_help));
-		mHelp.setIntent(new Intent(this, Help.class));
+		mHelp.setIntent(new Intent(this, HelpActivity.class));
 
 		mAbout = findPreference(getString(R.string.prefs_key_about));
 		mAbout.setOnPreferenceClickListener(mOnPreferenceClickListener);

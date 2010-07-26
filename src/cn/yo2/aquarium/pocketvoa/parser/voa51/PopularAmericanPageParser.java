@@ -15,6 +15,9 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 		int contentStart = body.indexOf("<div id=\"content\"");
 		int listadsStart = body.indexOf("<div id=\"listads\"");
 
+		if (contentStart < 0 || listadsStart < 0)
+			throw new IllegalContentFormatException("Cannot find content");
+		
 		String content = body.substring(contentStart, listadsStart);
 
 		Pattern audioPattern = Pattern.compile("Player\\(\"([^\\s]+)\"\\)",

@@ -140,4 +140,17 @@
 
 	<string name="prefs_title_keep_screen_on">常亮背景燈</string>
 	<string name="prefs_summary_keep_screen_on">閱讀文章時保持屏幕常亮</string>
+	
+	<string name="prefs_category_data_backup_restore">備份&amp;恢復</string>
+	<string name="prefs_title_data_backup">備份</string>
+	<string name="prefs_title_data_restore">恢復</string>
+	
+	<string name="prefs_summary_data_restore">上次備份時間: %1$s</string>
+	<string name="menu_backup">備份&amp;恢復</string>
+	
+	<string name="toast_backup_successful">數據庫備份成功！</string>
+	<string name="toast_backup_failed">數據庫備份失敗！</string>
+	
+	<string name="toast_restore_successful">數據庫恢復成功！</string>
+	<string name="toast_restore_failed">數據庫恢復失敗！</string>
 </resources>

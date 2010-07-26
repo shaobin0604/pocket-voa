@@ -112,19 +112,20 @@ containing a value of this type.
         public static final int textSize=0x7f010008;
     }
     public static final class drawable {
-        public static final int blank=0x7f020000;
-        public static final int connect_established=0x7f020001;
-        public static final int connect_no=0x7f020002;
-        public static final int download=0x7f020003;
-        public static final int hd_small=0x7f020004;
-        public static final int icon=0x7f020005;
-        public static final int lrc=0x7f020006;
-        public static final int media_pause=0x7f020007;
-        public static final int media_play=0x7f020008;
-        public static final int no=0x7f020009;
-        public static final int signal=0x7f02000a;
-        public static final int textzh=0x7f02000b;
-        public static final int web_small=0x7f02000c;
+        public static final int backup_48=0x7f020000;
+        public static final int blank=0x7f020001;
+        public static final int connect_established=0x7f020002;
+        public static final int connect_no=0x7f020003;
+        public static final int download=0x7f020004;
+        public static final int hd_small=0x7f020005;
+        public static final int icon=0x7f020006;
+        public static final int lrc=0x7f020007;
+        public static final int media_pause=0x7f020008;
+        public static final int media_play=0x7f020009;
+        public static final int no=0x7f02000a;
+        public static final int signal=0x7f02000b;
+        public static final int textzh=0x7f02000c;
+        public static final int web_small=0x7f02000d;
     }
     public static final class id {
         public static final int author=0x7f070005;
@@ -226,6 +227,7 @@ containing a value of this type.
         public static final int crash_notif_title=0x7f060062;
         public static final int hello=0x7f060004;
         public static final int menu_about=0x7f060034;
+        public static final int menu_backup=0x7f060073;
         public static final int menu_change_log=0x7f06002e;
         public static final int menu_delete=0x7f060038;
         public static final int menu_download=0x7f060030;
@@ -255,6 +257,9 @@ containing a value of this type.
         public static final int notification_download_textzh_progress_content=0x7f060057;
         public static final int notification_download_textzh_progress_ticker=0x7f060053;
         public static final int notification_download_textzh_success_ticker=0x7f06004f;
+        /**  data backup restore preference 
+         */
+        public static final int prefs_category_data_backup_restore=0x7f06006f;
         public static final int prefs_category_title_general_settings=0x7f060059;
         public static final int prefs_category_title_info=0x7f06005a;
         public static final int prefs_datasource_dialog_title=0x7f060048;
@@ -267,6 +272,10 @@ containing a value of this type.
  crash report preference 
          */
         public static final int prefs_key_acra_disable=0x7f060068;
+        /**  data backup restore preference 
+         */
+        public static final int prefs_key_data_backup=0x7f06006d;
+        public static final int prefs_key_data_restore=0x7f06006e;
         public static final int prefs_key_help=0x7f06005f;
         /**  keep screen on preference 
          */
@@ -276,10 +285,15 @@ containing a value of this type.
         public static final int prefs_list_count_key=0x7f060041;
         public static final int prefs_list_count_summary=0x7f060043;
         public static final int prefs_list_count_title=0x7f060042;
+        public static final int prefs_summary_data_restore=0x7f060072;
         public static final int prefs_summary_keep_screen_on=0x7f06006c;
         public static final int prefs_title_about=0x7f06005d;
+        public static final int prefs_title_data_backup=0x7f060070;
+        public static final int prefs_title_data_restore=0x7f060071;
         public static final int prefs_title_disable_acra=0x7f060069;
         public static final int prefs_title_help=0x7f06005c;
+        /**  keep screen on preference 
+         */
         public static final int prefs_title_keep_screen_on=0x7f06006b;
         public static final int prefs_title_whatsnew=0x7f06005b;
         public static final int progressbar_download_title=0x7f060025;
@@ -300,13 +314,18 @@ containing a value of this type.
         public static final int tab_local=0x7f06003f;
         public static final int tab_remote=0x7f060040;
         public static final int toast_article_deleted=0x7f060029;
+        public static final int toast_backup_failed=0x7f060075;
+        public static final int toast_backup_successful=0x7f060074;
         public static final int toast_download_audio_complete=0x7f06002b;
         public static final int toast_download_start=0x7f06002a;
         public static final int toast_download_text_complete=0x7f06002c;
         public static final int toast_open_context_menu=0x7f060028;
+        public static final int toast_restore_failed=0x7f060077;
+        public static final int toast_restore_successful=0x7f060076;
     }
     public static final class xml {
-        public static final int settings=0x7f040000;
+        public static final int prefs_backup_restore=0x7f040000;
+        public static final int prefs_settings=0x7f040001;
     }
     public static final class styleable {
         /** Attributes that can be used with a cn_yo2_aquarium_pocketvoa_lyric_LyricView.

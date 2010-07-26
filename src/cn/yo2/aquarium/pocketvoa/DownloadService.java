@@ -9,7 +9,6 @@ public class DownloadService extends Service {
 	
 	private App mApp;
 	
-	
 	private DatabaseHelper mDatabaseHelper;
 
 	@Override

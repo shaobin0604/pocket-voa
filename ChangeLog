@@ -1,10 +1,12 @@
 Pocket VOA - An online/offline reader for Voice of America news program.
 
-Version 1.2.3 [22/07/2010]
+Version 1.2.3 [26/07/2010]
 	- Fix: Crash when play audio. [issue 11]
 	- Fix: Crash when parse page. [issue 15]
 	- Fix: Crash when restore Main Activity State. [issue 12]
 	- Fix: Crash when download article. [issue 14]
+	- New: Remove landscape orientation support.
+	- New: Database backup&restore(just tested on rooted device).
 
 Version 1.2.2 [04/07/2010]
 	- New: Add "Keep Screen On" option in Settings page.

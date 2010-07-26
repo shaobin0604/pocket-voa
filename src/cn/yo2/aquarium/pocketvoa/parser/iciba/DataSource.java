@@ -99,11 +99,11 @@ public class DataSource implements IDataSource {
 		// standard English
 		mListParsers.put("Standard English_English News",
 				new StandardEnglishListParser("Standard English",
-						"English News", maxCount));
+						"English News"));
 		// special English
 		mListParsers.put("Special English_Development Report",
 				new StandardEnglishListParser("Special English",
-						"Development Report", maxCount));
+						"Development Report"));
 		mListParsers.put("Special English_This is America",
 				new StandardEnglishListParser("Special English",
 						"This is America"));
@@ -146,7 +146,7 @@ public class DataSource implements IDataSource {
 		// English learning
 		mListParsers.put("English Learning_Popular American",
 				new PopularAmericanListParser("English Learning",
-						"Popular American", maxCount));
+						"Popular American"));
 	}
 
 	private void setupPageParsers() {

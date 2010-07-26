@@ -159,4 +159,21 @@
 	<string name="prefs_key_keep_screen_on">prefs_key_keep_screen_on</string>
 	<string name="prefs_title_keep_screen_on">Keep Screen On</string>
 	<string name="prefs_summary_keep_screen_on">keep screen on when show article</string>
+	
+	<!-- data backup restore preference -->
+	<string name="prefs_key_data_backup">prefs_key_data_backup</string>
+	<string name="prefs_key_data_restore">prefs_key_data_restore</string>
+	
+	<string name="prefs_category_data_backup_restore">Database backup&amp;restore</string>
+	<string name="prefs_title_data_backup">Backup</string>
+	<string name="prefs_title_data_restore">Restore</string>
+	
+	<string name="prefs_summary_data_restore">Last backup time: %1$s</string>
+	<string name="menu_backup">Backup&amp;restore</string>
+	
+	<string name="toast_backup_successful">Database backup successful!</string>
+	<string name="toast_backup_failed">Database backup failed!</string>
+	
+	<string name="toast_restore_successful">Database restore successful!</string>
+	<string name="toast_restore_failed">Database restore failed!</string>
 </resources>

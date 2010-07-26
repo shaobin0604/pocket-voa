@@ -18,9 +18,6 @@ public class StandardEnglishListParser extends AbstractListParser {
 		super(type, subtype);
 	}
 
-	public StandardEnglishListParser(String type, String subtype, int maxCount) {
-		super(type, subtype, maxCount);
-	}
 
 	public ArrayList<Article> parse(String body) throws IllegalContentFormatException {
 		if (TextUtils.isEmpty(body))
@@ -30,11 +27,9 @@ public class StandardEnglishListParser extends AbstractListParser {
 		Pattern pattern = Pattern
 				.compile("<li><a href=\"([^\\s]+)\" class=\"title\">(?:<b>)?([^<]+)(?:</b>)?</a>\\s*\\((\\d+-\\d+-\\d+) \\d+:\\d+:\\d+\\)</li>");
 		Matcher matcher = pattern.matcher(body);
-		int count = 0;
-		while (matcher.find() && count < this.mMaxCount) {
-			
-			count++;
-			
+
+		while (matcher.find()) {
+
 			String url = matcher.group(1);
 			String title = matcher.group(2);
 			String date = matcher.group(3);

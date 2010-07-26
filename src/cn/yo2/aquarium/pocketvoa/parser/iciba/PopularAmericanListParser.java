@@ -14,10 +14,7 @@ import cn.yo2.aquarium.pocketvoa.parser.AbstractListParser;
 public class PopularAmericanListParser extends AbstractListParser {
 	private static final String CLASSTAG = PopularAmericanListParser.class.getSimpleName();
 	
-	public PopularAmericanListParser(String type, String subtype, int maxCount) {
-		super(type, subtype, maxCount);
-		
-	}
+
 
 	public PopularAmericanListParser(String type, String subtype) {
 		super(type, subtype);
@@ -33,10 +30,10 @@ public class PopularAmericanListParser extends AbstractListParser {
 		Pattern pattern = Pattern
 				.compile("<li><a href=\"([^\\s]+)\" class=\"title\">(?:<b>)?([^<]+)(?:</b>)?</a>\\s*\\((\\d+-\\d+-\\d+) \\d+:\\d+:\\d+\\)</li>");
 		Matcher matcher = pattern.matcher(body);
-		int count = 0;
-		while (matcher.find() && count < this.mMaxCount) {
+
+		while (matcher.find()) {
 			
-			count++;
+
 			
 			String url = matcher.group(1);
 			String title = matcher.group(2);

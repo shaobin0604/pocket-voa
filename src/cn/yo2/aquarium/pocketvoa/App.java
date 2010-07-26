@@ -88,8 +88,7 @@ public class App extends CrashReportingApplication {
 
 	public Integer getMaxCountFromPrefs(SharedPreferences sharedPreferences) {
 		return Integer.valueOf(sharedPreferences.getString(
-				getString(R.string.prefs_list_count_key), String
-						.valueOf(IListParser.DEFAULT_MAX_COUNT)));
+				getString(R.string.prefs_list_count_key), "10"));
 	}
 
 	private IDataSource getDefaultDataSource() {

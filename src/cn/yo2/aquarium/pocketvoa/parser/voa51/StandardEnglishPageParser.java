@@ -16,6 +16,9 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 	public void parse(Article article, String body) throws IllegalContentFormatException {
 		int menubarStart = body.indexOf("<div id=\"menubar\"");
 		int listadsStart = body.indexOf("<div id=\"listads\"");
+		
+		if (menubarStart < 0 || listadsStart < 0)
+			throw new IllegalContentFormatException("Cannot find content");
 
 		String content = body.substring(menubarStart, listadsStart);
 

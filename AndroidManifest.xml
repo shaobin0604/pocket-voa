@@ -1,42 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cn.yo2.aquarium.pocketvoa" android:versionName="@string/app_version" android:versionCode="20100718">
-	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:name=".App">
-		<activity android:name=".Main" android:label="@string/app_name"
-			>
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
-
-		<activity android:name=".Show" android:label="@string/app_name" android:launchMode="singleTop"
-			android:configChanges="keyboardHidden|orientation">
-		</activity>
-
-		<activity android:name=".Settings" android:configChanges="keyboardHidden|orientation" android:label="@string/ac_title_settings">
-		</activity>
-		
-		<activity android:name=".Help" android:configChanges="keyboardHidden|orientation" android:label="@string/ac_title_help">
-		</activity>
-		
-		<activity android:name="org.acra.CrashReportDialog"
-        	android:theme="@android:style/Theme.Dialog"
-        	android:launchMode="singleInstance" />
-
-		<service android:name=".DownloadService"></service>
-		<service android:name=".MediaPlaybackService" android:process=":remote"/>
-		
-		<!-- The application's publisher ID assigned by AdMob -->
-		<!-- 
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest android:versionCode="20100726"
+    android:versionName="@string/app_version"
+    package="cn.yo2.aquarium.pocketvoa" xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:icon="@drawable/icon"
+        android:label="@string/app_name" android:name=".App">
+        <activity android:label="@string/app_name" 
+        	android:name=".MainActivity" 
+        	android:screenOrientation="portrait"
+        	android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        
+        <activity android:label="@string/app_name"
+            android:launchMode="singleTop" 
+            android:name=".ShowActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"/>
+            
+        <activity android:label="@string/ac_title_settings" android:name=".SettingsActivity" android:configChanges="keyboardHidden|orientation" android:screenOrientation="portrait"/>
+        <activity android:label="@string/ac_title_help" android:name=".HelpActivity" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation"/>
+        <activity android:name=".BackupActivity" android:screenOrientation="portrait" android:configChanges="keyboardHidden|orientation"/>
+        
+        <!-- crash report dialog activity -->
+        <activity android:launchMode="singleInstance"
+            android:name="org.acra.CrashReportDialog" android:theme="@android:style/Theme.Dialog" android:screenOrientation="portrait"/>
+            
+        <service android:name=".DownloadService"/>
+        <service android:name=".MediaPlaybackService" android:process=":remote"/>
+        <!-- The application's publisher ID assigned by AdMob -->
+        <!-- 
         <meta-data android:value="a14b2909c8cc25e" android:name="ADMOB_PUBLISHER_ID" />
 		 -->
-	</application>
-	<uses-sdk android:minSdkVersion="3" />
-
-	<uses-permission android:name="android.permission.WAKE_LOCK"/>
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
-	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-</manifest> 
+        
+    </application>
+    <uses-sdk android:minSdkVersion="3"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+</manifest>

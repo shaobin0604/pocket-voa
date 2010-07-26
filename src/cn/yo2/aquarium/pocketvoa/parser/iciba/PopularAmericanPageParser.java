@@ -19,6 +19,10 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 		
 		Log.d(CLASSTAG, "contentStart -- " + contentStart);
 		Log.d(CLASSTAG, "listadsStart -- " + listadsStart);
+		
+		if (contentStart < 0 || listadsStart < 0)
+			throw new IllegalContentFormatException("Cannot find match content");
+		
 		String content = body.substring(contentStart, listadsStart);
 
 		Pattern audioPattern = Pattern.compile("src=\"([^\\s]+\\.mp3)\"",

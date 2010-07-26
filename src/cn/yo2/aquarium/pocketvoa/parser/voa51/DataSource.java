@@ -103,17 +103,18 @@ public class DataSource implements IDataSource {
 	}
 
 	private void setupListParsers(int maxCount) {
-		// standard English
+		/*
+		 *  standard English
+		 */
 		mListParsers.put("Standard English_English News",
-				new StandardEnglishListParser("Standard English",
-						"English News", maxCount));
-		// special English
+				new StandardEnglishListParser("Standard English", "English News"));
+		/*
+		 *  special English
+		 */
 		mListParsers.put("Special English_Development Report",
-				new StandardEnglishListParser("Special English",
-						"Development Report", maxCount));
+				new StandardEnglishListParser("Special English", "Development Report"));
 		mListParsers.put("Special English_This is America",
-				new StandardEnglishListParser("Special English",
-						"This is America"));
+				new StandardEnglishListParser("Special English", "This is America"));
 		mListParsers.put("Special English_Agriculture Report",
 				new StandardEnglishListParser("Special English",
 						"Agriculture Report"));
@@ -145,23 +146,26 @@ public class DataSource implements IDataSource {
 				new StandardEnglishListParser("Special English",
 						"American Stories"));
 		mListParsers.put("Special English_Words And Their Stories",
-				new StandardEnglishListParser("Special English",
-						"Words And Their Stories"));
+				new StandardEnglishListParser("Special English", "Words And Their Stories"));
 		mListParsers.put("Special English_People in America",
-				new StandardEnglishListParser("Special English",
-						"People in America"));
-		// English learning
+				new StandardEnglishListParser("Special English", "People in America"));
+		/*
+		 *  English learning
+		 */
 		mListParsers.put("English Learning_Popular American",
-				new PopularAmericanListParser("English Learning",
-						"Popular American", maxCount));
+				new PopularAmericanListParser("English Learning", "Popular American"));
 	}
 
 	private void setupPageParsers() {
-		// standard English
+		/*
+		 *  standard English
+		 */
 		mPageParsers.put("Standard English_English News",
 				new StandardEnglishPageParser());
 
-		// special English
+		/*
+		 *  special English
+		 */
 		mPageParsers.put("Special English_Development Report",
 				new StandardEnglishPageParser());
 		mPageParsers.put("Special English_This is America",
@@ -191,7 +195,9 @@ public class DataSource implements IDataSource {
 		mPageParsers.put("Special English_People in America",
 				new StandardEnglishPageParser());
 		
-		// English learning
+		/*
+		 *  English learning
+		 */
 		mPageParsers.put("English Learning_Popular American",
 				new PopularAmericanPageParser());
 	}

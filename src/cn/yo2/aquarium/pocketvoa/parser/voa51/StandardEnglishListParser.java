@@ -18,10 +18,6 @@ public class StandardEnglishListParser extends AbstractListParser {
 		super(type, subtype);
 	}
 
-	public StandardEnglishListParser(String type, String subtype, int maxCount) {
-		super(type, subtype, maxCount);
-	}
-
 	public ArrayList<Article> parse(String body) throws IllegalContentFormatException {
 		if (TextUtils.isEmpty(body))
 			throw new IllegalContentFormatException("The response body is empty.");
@@ -30,11 +26,8 @@ public class StandardEnglishListParser extends AbstractListParser {
 		Pattern pattern = Pattern
 				.compile("<li>\\s*(<img src=/images/lrc\\.gif>)?\\s*(<img src=/images/yi\\.gif>)?\\s*<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>\\s*\\((\\d+-\\d+-\\d+)\\)\\s*</li>");
 		Matcher matcher = pattern.matcher(body);
-		int count = 0;
-		int maxCount = this.mMaxCount;
-		while (matcher.find() && count < maxCount) {
-			
-			count++;
+		
+		while (matcher.find()) {
 			
 			String haslrc = matcher.group(1);
 			String hastextzh = matcher.group(2);

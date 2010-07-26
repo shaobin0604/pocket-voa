@@ -142,6 +142,22 @@
 	<string name="prefs_key_acra.disable">acra.disable</string>
 	<string name="prefs_title_disable_acra">关闭错误报告</string>
 	
+	<!-- keep screen on preference -->
 	<string name="prefs_title_keep_screen_on">常亮背景灯</string>
 	<string name="prefs_summary_keep_screen_on">阅读文章时保持屏幕常亮</string>
+	
+	<!-- data backup restore preference -->
+	
+	<string name="prefs_category_data_backup_restore">备份&amp;恢复</string>
+	<string name="prefs_title_data_backup">备份</string>
+	<string name="prefs_title_data_restore">恢复</string>
+	
+	<string name="prefs_summary_data_restore">上次备份时间: %1$s</string>
+	<string name="menu_backup">备份&amp;恢复</string>
+	
+	<string name="toast_backup_successful">数据库备份成功！</string>
+	<string name="toast_backup_failed">数据库备份失败！</string>
+	
+	<string name="toast_restore_successful">数据库恢复成功！</string>
+	<string name="toast_restore_failed">数据库恢复失败！</string>
 </resources>

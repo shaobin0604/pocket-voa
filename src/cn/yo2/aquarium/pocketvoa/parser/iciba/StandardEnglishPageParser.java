@@ -15,8 +15,13 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 	public void parse(Article article, String body) throws IllegalContentFormatException {
 		int contentStart = body.indexOf("<div class=\"content\"");
 		int listadsStart = body.indexOf("<div style=\"width:152px;margin:0 auto;clear:both;\">");
+		
 		Log.d(CLASSTAG, "contentStart -- " + contentStart);
 		Log.d(CLASSTAG, "listadsStart -- " + listadsStart);
+		
+		if (contentStart < 0 || listadsStart < 0)
+			throw new IllegalContentFormatException("Cannot find match content");
+			
 		String content = body.substring(contentStart, listadsStart);
 
 		Pattern audioPattern = Pattern.compile("<a href=\"([^\\s]+\\.mp3)\">",
@@ -28,7 +33,7 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 			textStart = audioMatcher.start();
 			article.urlmp3 = audioMatcher.group(1);
 		} else {
-			throw new IllegalContentFormatException("Cannot find match");
+			throw new IllegalContentFormatException("Cannot find match mp3");
 		}
 
 		String text = "<p>" + content.substring(textStart) + "</div>";

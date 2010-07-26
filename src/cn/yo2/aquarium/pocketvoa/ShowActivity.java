@@ -43,8 +43,8 @@ import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 //import com.admob.android.ads.AdView;
 import com.wooboo.adlib_android.WoobooAdView;
 
-public class Show extends Activity {
-	private static final String TAG = Show.class.getSimpleName();
+public class ShowActivity extends Activity {
+	private static final String TAG = ShowActivity.class.getSimpleName();
 
 	private static final String[] ADMOB_KEYWORDS = { "android game farm",
 			"food sport", "life auto outdoor", "iphone", };
@@ -905,7 +905,7 @@ public class Show extends Activity {
 
 						public void onClick(DialogInterface dialog, int which) {
 							if (mCurrentView == VIEW_INVALID)
-								Show.this.finish();
+								ShowActivity.this.finish();
 						}
 					});
 			return builder.create();
@@ -921,7 +921,7 @@ public class Show extends Activity {
 
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
-							Toast.makeText(Show.this,
+							Toast.makeText(ShowActivity.this,
 									R.string.toast_download_start,
 									Toast.LENGTH_SHORT).show();
 							downloadArticleInService(mArticle);
@@ -1171,7 +1171,7 @@ public class Show extends Activity {
 			case QUIT:
 				// This can be moved back to onCreate once the bug that prevents
 				// Dialogs from being started from onCreate/onResume is fixed.
-				new AlertDialog.Builder(Show.this).setTitle(
+				new AlertDialog.Builder(ShowActivity.this).setTitle(
 						R.string.service_start_error_title).setMessage(
 						R.string.service_start_error_msg).setPositiveButton(
 						R.string.service_start_error_button,

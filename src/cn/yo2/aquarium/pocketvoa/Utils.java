@@ -2,13 +2,15 @@ package cn.yo2.aquarium.pocketvoa;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.zip.Inflater;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -32,6 +34,8 @@ import android.view.WindowManager;
 public class Utils {
 	
 	private static final String TAG = Utils.class.getSimpleName();
+	private static final String PKG = Utils.class.getPackage().getName();
+	
 	public static IMediaPlaybackService sService = null;
     private static HashMap<Context, ServiceBinder> sConnectionMap = new HashMap<Context, ServiceBinder>();
 
@@ -470,5 +474,76 @@ public class Utils {
 					}
 				});
 		return builder.create();
+	}
+	
+	public static boolean backupDatabase() {
+		File dbFile = new File(Environment.getDataDirectory() + "/data/" + PKG + "/databases/" + DatabaseHelper.DB_NAME);
+
+		File exportDir = new File(Environment.getExternalStorageDirectory(), "pocket-voa");
+		
+		if (!exportDir.exists()) {
+			exportDir.mkdirs();
+		}
+		
+		File file = new File(exportDir, dbFile.getName());
+
+		try {
+			file.createNewFile();
+			copyFile(dbFile, file);
+			return true;
+		} catch (IOException e) {
+			Log.e(TAG, "[backupDatabase] error", e);
+			return false;
+		}
+	}
+	
+	public static boolean restoreDatabase() {
+		File dbFile = new File(Environment.getDataDirectory() + "/data/" + PKG + "/databases/" + DatabaseHelper.DB_NAME);
+
+		File exportDbFile = new File(Environment.getExternalStorageDirectory() + "/pocket-voa/" + DatabaseHelper.DB_NAME);
+		
+		if (!exportDbFile.exists())
+			return false;
+
+		try {
+			dbFile.createNewFile();
+			copyFile(exportDbFile, dbFile);
+			return true;
+		} catch (IOException e) {
+			Log.e(TAG, "[restoreDatabase] error", e);
+			return false;
+		}
+	}
+	
+	private static void copyFile(File src, File dst) throws IOException {
+		FileChannel inChannel = new FileInputStream(src).getChannel();
+		FileChannel outChannel = new FileOutputStream(dst).getChannel();
+		try {
+			inChannel.transferTo(0, inChannel.size(), outChannel);
+		} finally {
+			if (inChannel != null)
+				inChannel.close();
+			if (outChannel != null)
+				outChannel.close();
+		}
+	}
+	
+	public static boolean isBackupExist() {
+		File exportDbFile = new File(Environment.getExternalStorageDirectory() + "/pocket-voa/" + DatabaseHelper.DB_NAME);
+		return exportDbFile.exists();
+	}
+	
+	/**
+	 * 
+	 * @return -1 if file not exist
+	 */
+	public static long lastBackupTime() {
+		File exportDbFile = new File(Environment.getExternalStorageDirectory() + "/pocket-voa/" + DatabaseHelper.DB_NAME);
+		if (exportDbFile.exists()) {
+			return exportDbFile.lastModified();
+		} else {
+			return -1;
+		}
+			
 	}
 }

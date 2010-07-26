@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 
-public class Help extends Activity {
+public class HelpActivity extends Activity {
 	
 	private static final String HELP_FILE_NAME = "help.html";
 	private static final String ASSET_DIR = "file:///android_asset/";
-	private static final String TAG = Help.class.getSimpleName();
+	private static final String TAG = HelpActivity.class.getSimpleName();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

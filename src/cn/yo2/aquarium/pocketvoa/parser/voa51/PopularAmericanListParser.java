@@ -17,14 +17,6 @@ public class PopularAmericanListParser extends AbstractListParser {
 	public PopularAmericanListParser(String type, String subtype) {
 		super(type, subtype);
 	}
-	
-	
-	
-	public PopularAmericanListParser(String type, String subtype, int maxCount) {
-		super(type, subtype, maxCount);
-	}
-
-
 
 	public ArrayList<Article> parse(String body)
 			throws IllegalContentFormatException {
@@ -39,9 +31,7 @@ public class PopularAmericanListParser extends AbstractListParser {
 				.compile("<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>");
 		Matcher matcher = pattern.matcher(body);
 		
-		int count = 0;
-		while (matcher.find() && count < this.mMaxCount) {
-			count++;
+		while (matcher.find()) {
 			
 			String url = matcher.group(1);
 			String title = matcher.group(2);

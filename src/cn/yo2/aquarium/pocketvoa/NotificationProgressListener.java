@@ -28,7 +28,7 @@ public class NotificationProgressListener implements IProgressListener {
 		this.mArticle = article;
 		
 		Intent mainIntent = new Intent(
-				mContext, Main.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+				mContext, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
 				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		
 		long threadId = Thread.currentThread().getId();

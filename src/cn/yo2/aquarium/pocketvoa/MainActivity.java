@@ -47,7 +47,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
-public class Main extends Activity {
+public class MainActivity extends Activity {
 
 	private static final String KEY_SAVED_ERROR = "key_saved_error";
 
@@ -55,13 +55,14 @@ public class Main extends Activity {
 
 	private static final String KEY_SAVED_ARTICLE = "key_saved_article";
 
-	private static final String CLASSTAG = Main.class.getSimpleName();
+	private static final String CLASSTAG = MainActivity.class.getSimpleName();
 
 	private static final String KEY_VERSION_CODE = "versionCode";
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
-	private static final int MENU_TEST = Menu.FIRST + 1;
-	private static final int MENU_EXIT = Menu.FIRST + 2;
+	private static final int MENU_TEST     = Menu.FIRST + 1;
+	private static final int MENU_BACKUP   = Menu.FIRST + 2;
+	private static final int MENU_EXIT     = Menu.FIRST + 3;
 
 
 	private static final int DLG_ERROR = 0;
@@ -137,12 +138,12 @@ public class Main extends Activity {
 
 			if (getString(R.string.prefs_list_count_key).equals(key)) {
 
-				int maxCount = mApp.getMaxCountFromPrefs(sharedPreferences);
-				// Log.d(CLASSTAG, "max count: " + maxCount);
-				for (Iterator<IListParser> i = mApp.mDataSource
-						.getListParsers().values().iterator(); i.hasNext();) {
-					i.next().setMaxCount(maxCount);
-				}
+//				int maxCount = mApp.getMaxCountFromPrefs(sharedPreferences);
+//				// Log.d(CLASSTAG, "max count: " + maxCount);
+//				for (Iterator<IListParser> i = mApp.mDataSource
+//						.getListParsers().values().iterator(); i.hasNext();) {
+//					i.next().setMaxCount(maxCount);
+//				}
 			} else if (getString(R.string.prefs_datasource_key).equals(key)) {
 				mApp.mDataSource = mApp
 						.getDataSourceFromPrefs(sharedPreferences);
@@ -182,7 +183,7 @@ public class Main extends Activity {
 					showDialog(DLG_CONFIRM_DOWNLOAD);
 				} else {
 					downloadArticleInService(mCurrArticle);
-					Toast.makeText(Main.this, R.string.toast_download_start,
+					Toast.makeText(MainActivity.this, R.string.toast_download_start,
 							Toast.LENGTH_SHORT).show();
 				}
 
@@ -281,10 +282,10 @@ public class Main extends Activity {
 
 	private LayoutInflater mInflater;
 
-//	@Override
-//	public void onConfigurationChanged(Configuration newConfig) {
-//		super.onConfigurationChanged(newConfig);
-//	}
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -556,13 +557,10 @@ public class Main extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings)
-				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, MENU_TEST, Menu.NONE,
-						R.string.menu_internet_status).setIcon(
-						R.drawable.signal);
-		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(
-				android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(Menu.NONE, MENU_TEST, Menu.NONE, R.string.menu_internet_status).setIcon(R.drawable.signal);
+		menu.add(Menu.NONE, MENU_BACKUP, Menu.NONE, R.string.menu_backup).setIcon(R.drawable.backup_48);
+		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -572,11 +570,14 @@ public class Main extends Activity {
 		boolean result = super.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
 		case MENU_SETTINGS:
-			Intent intent = new Intent(this, Settings.class);
-			startActivity(intent);
+			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case MENU_TEST:
 			testInternet();
+			return true;
+		case MENU_BACKUP:
+			finish();
+			startActivity(new Intent(this, BackupActivity.class));
 			return true;
 		case MENU_EXIT:
 			stopService(new Intent(this, DownloadService.class));
@@ -595,7 +596,7 @@ public class Main extends Activity {
 
 			@Override
 			public void run() {
-				if (Utils.hasInternet(Main.this))
+				if (Utils.hasInternet(MainActivity.this))
 					mInternetStatusHandler.sendEmptyMessage(WHAT_SUCCESS);
 				else
 					mInternetStatusHandler.sendEmptyMessage(WHAT_FAIL_IO);
@@ -753,7 +754,7 @@ public class Main extends Activity {
 										mCurrArticle).getAbsolutePath());
 
 							mDatabaseHelper.deleteArticle(mCurrArticle.id);
-							Toast.makeText(Main.this,
+							Toast.makeText(MainActivity.this,
 									R.string.toast_article_deleted,
 									Toast.LENGTH_SHORT).show();
 							commandRefreshLocalList();
@@ -781,7 +782,7 @@ public class Main extends Activity {
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 							downloadArticleInService(mCurrArticle);
-							Toast.makeText(Main.this,
+							Toast.makeText(MainActivity.this,
 									R.string.toast_download_start,
 									Toast.LENGTH_SHORT).show();
 						}
@@ -1008,7 +1009,7 @@ public class Main extends Activity {
 	}
 
 	private void startShowActivity(Article article) {
-		Intent intent = new Intent(Main.this, Show.class);
+		Intent intent = new Intent(MainActivity.this, ShowActivity.class);
 		Utils.putArticleToIntent(article, intent);
 		startActivity(intent);
 	}

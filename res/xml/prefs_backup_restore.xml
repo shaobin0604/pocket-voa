@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+  	<PreferenceCategory android:title="@string/prefs_category_data_backup_restore">
+		<Preference android:title="@string/prefs_title_data_backup"
+			android:key="@string/prefs_key_data_backup"
+			android:persistent="false"/>
+		<Preference android:title="@string/prefs_title_data_restore"
+			android:key="@string/prefs_key_data_restore"
+			android:persistent="false"/>
+	</PreferenceCategory>
+</PreferenceScreen>

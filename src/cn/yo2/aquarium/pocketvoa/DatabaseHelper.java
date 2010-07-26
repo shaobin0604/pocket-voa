@@ -13,7 +13,7 @@ public class DatabaseHelper {
 
 	private static final String EXEC_SQL_PREFIX = "SQL EXEC -- ";
 
-	private static final String DB_NAME = "pocketvoa.db";
+	public static final String DB_NAME = "pocketvoa.db";
 
 	private static final int DB_VER = 4;
 
