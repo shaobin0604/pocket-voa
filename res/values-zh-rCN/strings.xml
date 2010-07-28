@@ -160,4 +160,6 @@
 	
 	<string name="toast_restore_successful">数据库恢复成功！</string>
 	<string name="toast_restore_failed">数据库恢复失败！</string>
+	
+	<string name="prefs_title_font_size">字体大小</string>
 </resources>

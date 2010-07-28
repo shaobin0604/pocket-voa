@@ -89,4 +89,13 @@
 		<item>查看</item>
 		<item>下载</item>
 	</string-array>
+	
+	<string-array name="prefs_font_size_names">
+		<item>最小</item>
+		<item>较小</item>
+		<item>中等</item>
+		<item>较大</item>
+		<item>最大</item>
+	</string-array>
+	
 </resources>

@@ -6,7 +6,10 @@ Version 1.2.3 [26/07/2010]
 	- Fix: Crash when restore Main Activity State. [issue 12]
 	- Fix: Crash when download article. [issue 14]
 	- New: Remove landscape orientation support.
-	- New: Database backup&restore(just tested on rooted g1).
+	- New: Database backup&restore(just tested on rooted device).
+	- New: Remove article max count constraint.
+	- New: Text size settings.
+	- New: Zoom support.
 
 Version 1.2.2 [04/07/2010]
 	- New: Add "Keep Screen On" option in Settings page.

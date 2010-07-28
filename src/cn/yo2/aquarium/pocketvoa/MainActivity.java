@@ -2,7 +2,6 @@ package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -45,25 +44,20 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.SimpleCursorAdapter.ViewBinder;
-import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class MainActivity extends Activity {
 
 	private static final String KEY_SAVED_ERROR = "key_saved_error";
-
 	private static final String KEY_SAVED_COMMAND = "key_saved_command";
-
 	private static final String KEY_SAVED_ARTICLE = "key_saved_article";
-
-	private static final String CLASSTAG = MainActivity.class.getSimpleName();
-
 	private static final String KEY_VERSION_CODE = "versionCode";
+	
+	private static final String CLASSTAG = MainActivity.class.getSimpleName();
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
 	private static final int MENU_TEST     = Menu.FIRST + 1;
 	private static final int MENU_BACKUP   = Menu.FIRST + 2;
 	private static final int MENU_EXIT     = Menu.FIRST + 3;
-
 
 	private static final int DLG_ERROR = 0;
 	private static final int DLG_PROGRESS = 1;
@@ -128,6 +122,9 @@ public class MainActivity extends Activity {
 	private ArrayList<Article> mList;
 	private int mCurrentPage = 1;
 	private int mTotalPage = 1;
+	
+	private boolean mIsRemoteTypeChanged;
+	private String mLastRemoteTypeKey = "";
 
 	private Cursor mCursor;
 	private SimpleCursorAdapter mSimpleCursorAdapter;
@@ -211,7 +208,9 @@ public class MainActivity extends Activity {
 			case WHAT_SUCCESS:
 				dismissDialog(DLG_PROGRESS);
 				bindRemoteList();
-				updateButtonBar();
+				if (mIsRemoteTypeChanged) {
+					updatePageSpinner();
+				}
 				break;
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
@@ -225,34 +224,17 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-	private void updateButtonBar() {
-		btnPage.setText(mCurrentPage + "/" + mTotalPage);
+	private void updatePageSpinner() {
 		
 		String[] pages = new String[mTotalPage];
 		for (int i = 0; i < pages.length; i++) {
 			pages[i] = String.valueOf(i + 1);
 		}
 		
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Select Page");
-		builder.setSingleChoiceItems(pages, mCurrentPage - 1, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				mCurrentPage = which + 1;
-				btnPage.setText(mCurrentPage + "/" + mTotalPage);
-			}
-		});
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, pages);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		
-		btnPage.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				builder.create().show();
-			}
-		});
+		spnPage.setAdapter(adapter);
 	}
 
 	private Handler mLocalListHandler = new Handler() {
@@ -312,7 +294,7 @@ public class MainActivity extends Activity {
 	private Spinner spnTypeRemote;
 	private Spinner spnSubtypeRemote;
 	
-	private Button btnPage;
+	private Spinner spnPage;
 
 
 	private LayoutInflater mInflater;
@@ -449,7 +431,22 @@ public class MainActivity extends Activity {
 
 		});
 		
-		btnPage = (Button) findViewById(R.id.btn_page);	
+		spnPage = (Spinner) findViewById(R.id.spn_page);
+		spnPage.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				mCurrentPage = position + 1;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 	}
 	
 	private void setupLocalTabWidgets() {
@@ -1027,6 +1024,14 @@ public class MainActivity extends Activity {
 				// TODO change here to support i18n
 				String key = TYPES_REMOTE[typeIndex] + "_"
 						+ SUBTYPES_REMOTE[typeIndex][subtypeIndex];
+				
+				if (key.equals(mLastRemoteTypeKey)) {
+					mIsRemoteTypeChanged = false;
+				} else { 
+					mIsRemoteTypeChanged = true;
+					mLastRemoteTypeKey = key;
+				}
+				
 				// Log.d(CLASSTAG, "key -- " + key);
 				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
 						.get(key);

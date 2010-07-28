@@ -89,4 +89,20 @@
 		<item>View</item>
 		<item>Download</item>
 	</string-array>
+	
+	<string-array name="prefs_font_size_names">
+		<item>Smallest</item>
+		<item>Smaller</item>
+		<item>Normal</item>
+		<item>Larger</item>
+		<item>Largest</item>
+	</string-array>
+	
+	<string-array name="prefs_font_size_values">
+		<item>SMALLEST</item>
+		<item>SMALLER</item>
+		<item>NORMAL</item>
+		<item>LARGER</item>
+		<item>LARGEST</item>
+	</string-array>
 </resources>

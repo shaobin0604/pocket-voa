@@ -30,7 +30,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebSettings.TextSize;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -756,6 +758,27 @@ public class ShowActivity extends Activity {
 
 		mWebViewEn = (WebView) findViewById(R.id.webview_en);
 		mWebViewZh = (WebView) findViewById(R.id.webview_zh);
+		
+		String fontSize = mApp.mSharedPreferences.getString(getString(R.string.prefs_key_font_size), getString(R.string.prefs_default_font_size));
+		
+		TextSize[] textSizeValues = WebSettings.TextSize.values();
+		
+		WebSettings settingsEn = mWebViewEn.getSettings();
+		WebSettings settingsZh = mWebViewZh.getSettings();
+		for (int i = 0; i < textSizeValues.length; i++) {
+			TextSize textSize = textSizeValues[i];
+			if (textSize.toString().equalsIgnoreCase(fontSize)) {
+				settingsEn.setTextSize(textSize);
+				settingsZh.setTextSize(textSize);
+				
+				break;
+			}
+		}
+		settingsEn.setSupportZoom(true);
+		settingsEn.setBuiltInZoomControls(true);
+		
+		settingsZh.setSupportZoom(true);
+		settingsZh.setBuiltInZoomControls(true);
 
 		mLyricView = (LyricView) findViewById(R.id.lyricview);
 

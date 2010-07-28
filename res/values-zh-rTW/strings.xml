@@ -153,4 +153,5 @@
 	
 	<string name="toast_restore_successful">數據庫恢復成功！</string>
 	<string name="toast_restore_failed">數據庫恢復失敗！</string>
+	<string name="prefs_title_font_size">字體大小</string>
 </resources>

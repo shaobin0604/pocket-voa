@@ -2,6 +2,8 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
   	<PreferenceCategory android:title="@string/prefs_category_title_general_settings">
+  		<!-- 
+  		
   		<ListPreference
  			android:key="@string/prefs_list_count_key"
  			android:title="@string/prefs_list_count_title"
@@ -10,7 +12,7 @@
  			android:entries="@array/prefs_list_count"
  			android:entryValues="@array/prefs_list_count"
  			android:defaultValue="10"/>
- 		<!-- 
+ 		
  		<ListPreference
  			android:key="@string/prefs_datasource_key"
  			android:title="@string/prefs_datasource_title"
@@ -20,6 +22,14 @@
  			android:entryValues="@array/prefs_datasource_value"/>
  	 	-->
  	 
+ 	 	<ListPreference
+ 			android:key="@string/prefs_key_font_size"
+ 			android:title="@string/prefs_title_font_size"
+ 			android:dialogTitle="@string/prefs_title_font_size"
+ 			android:entries="@array/prefs_font_size_names"
+ 			android:entryValues="@array/prefs_font_size_values"
+ 			android:defaultValue="@string/prefs_default_font_size"/>
+ 			
  	 	<CheckBoxPreference android:key="@string/prefs_key_keep_screen_on"
 	        android:title="@string/prefs_title_keep_screen_on"
     	    android:defaultValue="true"

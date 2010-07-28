@@ -176,4 +176,10 @@
 	
 	<string name="toast_restore_successful">Database restore successful!</string>
 	<string name="toast_restore_failed">Database restore failed!</string>
+	
+	<!-- Font size Settings -->
+	<string name="prefs_key_font_size">prefs_key_font_size</string>
+	<string name="prefs_default_font_size">NORMAL</string>
+	
+	<string name="prefs_title_font_size">Text size</string>
 </resources>
