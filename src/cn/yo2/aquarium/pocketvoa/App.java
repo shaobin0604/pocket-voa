@@ -3,6 +3,7 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 
 import org.acra.CrashReportingApplication;
+import org.acra.ErrorReporter;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -21,12 +22,14 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
-import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 
 public class App extends CrashReportingApplication {
 	private static final String CLASSTAG = App.class.getSimpleName();
@@ -71,6 +74,20 @@ public class App extends CrashReportingApplication {
 		
 		mDataSource = getDefaultDataSource();
 		mDataSource.init(getMaxCountFromPrefs(mSharedPreferences));
+		
+		ErrorReporter.getInstance().addCustomData("version", getVersionName());
+	}
+	
+	private String getVersionName() {
+		PackageManager manager = getPackageManager();
+		String packageName = getPackageName();
+		// Log.d(CLASSTAG, "package name -- " + packageName);
+		try {
+			PackageInfo info = manager.getPackageInfo(packageName, 0);
+			return info.versionName;
+		} catch (NameNotFoundException e) {
+			return "not available";
+		}
 	}
 
 	public final DefaultHttpClient mHttpClient = setupHttpClient();
