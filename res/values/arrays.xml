@@ -25,8 +25,15 @@
 		<item>Words And Their Stories</item>
 		<item>People in America</item>
 	</string-array>
+	
 	<string-array name="english_learning">
+		<item>Go English</item>
+		<item>Word Master</item>
+		<item>American Cafe</item>
 		<item>Popular American</item>
+		<item>Business Etiquette</item>
+		<item>Sports English</item>
+		<item>Words And Idioms</item>
 	</string-array>
 	
 	<string-array name="type_local">
@@ -60,7 +67,13 @@
 	
 	<string-array name="english_learning_local">
 		<item>All</item>
+		<item>Go English</item>
+		<item>Word Master</item>
+		<item>American Cafe</item>
 		<item>Popular American</item>
+		<item>Business Etiquette</item>
+		<item>Sports English</item>
+		<item>Words And Idioms</item>
 	</string-array>
 	
 	<string-array name="prefs_list_count">

@@ -35,7 +35,7 @@ public class StandardEnglishListParser extends AbstractListParser {
 			String title = matcher.group(4);
 			String date = matcher.group(5);
 			
-			Log.d(CLASSTAG, "haslrc -- " + haslrc + " hastextzh -- " + hastextzh + " urltext -- " + urltext + " title -- " + title + " date -- " + date);
+//			Log.d(CLASSTAG, "haslrc -- " + haslrc + " hastextzh -- " + hastextzh + " urltext -- " + urltext + " title -- " + title + " date -- " + date);
 			
 			Article article = new Article();
 			

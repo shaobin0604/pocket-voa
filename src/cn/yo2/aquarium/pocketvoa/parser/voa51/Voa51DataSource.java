@@ -7,35 +7,38 @@ import cn.yo2.aquarium.pocketvoa.parser.IListParser;
 import cn.yo2.aquarium.pocketvoa.parser.IPageParser;
 
 public class Voa51DataSource implements IDataSource {
+	private static final String SEPERATOR = "_";
+
 	static final String HOST = "http://www.51voa.com";
 
 	// standard English
-	static final String ENGLISH_NEWS = HOST + "/VOA_Standard_%d.html";
+	static final String URL_ENGLISH_NEWS            = HOST + "/VOA_Standard_%d.html";
 
 	// special English
-	static final String DEVELOPMENT_REPORT = HOST
-			+ "/Development_Report_%d.html";
-	static final String THIS_IS_AMERICA = HOST + "/This_is_America_%d.html";
-	static final String AGRICULTURE_REPORT = HOST
-			+ "/Agriculture_Report_%d.html";
-	static final String SCIENCE_IN_THE_NEWS = HOST
-			+ "/Science_in_the_News_%d.html";
-	static final String HEALTH_REPORT = HOST + "/Health_Report_%d.html";
-	static final String EXPLORATIONS = HOST + "/Explorations_%d.html";
-	static final String EDUCATION_REPORT = HOST + "/Education_Report_%d.html";
-	static final String THE_MAKING_OF_A_NATION = HOST
-			+ "/The_Making_of_a_Nation_%d.html";
-	static final String ECONOMICS_REPORT = HOST + "/Economics_Report_%d.html";
-	static final String AMERICAN_MOSAIC = HOST + "/American_Mosaic_%d.html";
-	static final String IN_THE_NEWS = HOST + "/In_the_News_%d.html";
-	static final String AMERICAN_STORIES = HOST + "/American_Stories_%d.html";
-	static final String WORDS_AND_THEIR_STORIES = HOST
-			+ "/Words_And_Their_Stories_%d.html";
-	static final String PEOPLE_IN_AMERICA = HOST + "/People_in_America_%d.html";
+	static final String URL_DEVELOPMENT_REPORT      = HOST + "/Development_Report_%d.html";
+	static final String URL_THIS_IS_AMERICA         = HOST + "/This_is_America_%d.html";
+	static final String URL_AGRICULTURE_REPORT      = HOST + "/Agriculture_Report_%d.html";
+	static final String URL_SCIENCE_IN_THE_NEWS     = HOST + "/Science_in_the_News_%d.html";
+	static final String URL_HEALTH_REPORT           = HOST + "/Health_Report_%d.html";
+	static final String URL_EXPLORATIONS            = HOST + "/Explorations_%d.html";
+	static final String URL_EDUCATION_REPORT        = HOST + "/Education_Report_%d.html";
+	static final String URL_THE_MAKING_OF_A_NATION  = HOST+ "/The_Making_of_a_Nation_%d.html";
+	static final String URL_ECONOMICS_REPORT        = HOST + "/Economics_Report_%d.html";
+	static final String URL_AMERICAN_MOSAIC         = HOST + "/American_Mosaic_%d.html";
+	static final String URL_IN_THE_NEWS             = HOST + "/In_the_News_%d.html";
+	static final String URL_AMERICAN_STORIES        = HOST + "/American_Stories_%d.html";
+	static final String URL_WORDS_AND_THEIR_STORIES = HOST + "/Words_And_Their_Stories_%d.html";
+	static final String URL_PEOPLE_IN_AMERICA       = HOST + "/People_in_America_%d.html";
 
 	// English learning
-	static final String POPULAR_AMERICAN = HOST
-			+ "/Popular_American_%d.html";
+	static final String URL_GO_ENGLISH              = HOST + "/Go_English_%d.html";
+	static final String URL_WORD_MASTER             = HOST + "/Word_Master_%d.html";
+	static final String URL_AMERICAN_CAFE           = HOST + "/American_Cafe_%d.html";
+	static final String URL_POPULAR_AMERICAN        = HOST + "/Popular_American_%d.html";
+	static final String URL_BUSINESS_ETIQUETTE      = HOST + "/Business_Etiquette_%d.html";
+	static final String URL_SPORTS_ENGLISH          = HOST + "/Sports_English_%d.html";
+	static final String URL_WORDS_AND_IDIOMS        = HOST + "/Words_And_Idioms_%d.html";
+	
 
 	// Article type_subtype ->
 	private final HashMap<String, String> mListUrls = new HashMap<String, String>();
@@ -76,164 +79,183 @@ public class Voa51DataSource implements IDataSource {
 
 	private void setupListUrls() {
 		// standard English
-		mListUrls.put("Standard English_English News", ENGLISH_NEWS);
+		mListUrls.put(STANDARD_ENGLISH + SEPERATOR + ENGLISH_NEWS, URL_ENGLISH_NEWS);
 
 		// special English
-		mListUrls.put("Special English_Development Report", DEVELOPMENT_REPORT);
-		mListUrls.put("Special English_This is America", THIS_IS_AMERICA);
-		mListUrls.put("Special English_Agriculture Report", AGRICULTURE_REPORT);
-		mListUrls.put("Special English_Science in the News",
-				SCIENCE_IN_THE_NEWS);
-		mListUrls.put("Special English_Health Report", HEALTH_REPORT);
-		mListUrls.put("Special English_Explorations", EXPLORATIONS);
-		mListUrls.put("Special English_Education Report", EDUCATION_REPORT);
-		mListUrls.put("Special English_The Making of a Nation",
-				THE_MAKING_OF_A_NATION);
-		mListUrls.put("Special English_Economics Report", ECONOMICS_REPORT);
-		mListUrls.put("Special English_American Mosaic", AMERICAN_MOSAIC);
-		mListUrls.put("Special English_In the News", IN_THE_NEWS);
-		mListUrls.put("Special English_American Stories", AMERICAN_STORIES);
-		mListUrls.put("Special English_Words And Their Stories",
-				WORDS_AND_THEIR_STORIES);
-		mListUrls.put("Special English_People in America", PEOPLE_IN_AMERICA);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,      URL_DEVELOPMENT_REPORT);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,         URL_THIS_IS_AMERICA);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + AGRICULTURE_REPORT,      URL_AGRICULTURE_REPORT);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + SCIENCE_IN_THE_NEWS,     URL_SCIENCE_IN_THE_NEWS);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + HEALTH_REPORT,           URL_HEALTH_REPORT);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + EXPLORATIONS,            URL_EXPLORATIONS);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + EDUCATION_REPORT,        URL_EDUCATION_REPORT);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + THE_MAKING_OF_A_NATION,  URL_THE_MAKING_OF_A_NATION);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + ECONOMICS_REPORT,        URL_ECONOMICS_REPORT);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_MOSAIC,         URL_AMERICAN_MOSAIC);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + IN_THE_NEWS,             URL_IN_THE_NEWS);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_STORIES,        URL_AMERICAN_STORIES);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + WORDS_AND_THEIR_STORIES, URL_WORDS_AND_THEIR_STORIES);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + PEOPLE_IN_AMERICA,       URL_PEOPLE_IN_AMERICA);
 
 		// English learning
-		mListUrls.put("English Learning_Popular American",
-				POPULAR_AMERICAN);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + GO_ENGLISH,         URL_GO_ENGLISH);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + WORD_MASTER,        URL_WORD_MASTER);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + AMERICAN_CAFE,      URL_AMERICAN_CAFE);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + POPULAR_AMERICAN,   URL_POPULAR_AMERICAN);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + BUSINESS_ETIQUETTE, URL_BUSINESS_ETIQUETTE);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + SPORTS_ENGLISH,     URL_SPORTS_ENGLISH);
+		mListUrls.put(ENGLISH_LEARNING + SEPERATOR + WORDS_AND_IDIOMS,   URL_WORDS_AND_IDIOMS);
 	}
 
 	private void setupListParsers(int maxCount) {
 		/*
 		 *  standard English
 		 */
-		mListParsers.put("Standard English_English News",
-				new StandardEnglishListParser("Standard English", "English News"));
+		mListParsers.put(STANDARD_ENGLISH + SEPERATOR + ENGLISH_NEWS,
+				new StandardEnglishListParser(STANDARD_ENGLISH, ENGLISH_NEWS));
 		/*
 		 *  special English
 		 */
-		mListParsers.put("Special English_Development Report",
-				new StandardEnglishListParser("Special English", "Development Report"));
-		mListParsers.put("Special English_This is America",
-				new StandardEnglishListParser("Special English", "This is America"));
-		mListParsers.put("Special English_Agriculture Report",
-				new StandardEnglishListParser("Special English",
-						"Agriculture Report"));
-		mListParsers.put("Special English_Science in the News",
-				new StandardEnglishListParser("Special English",
-						"Science in the News"));
-		mListParsers.put("Special English_Health Report",
-				new StandardEnglishListParser("Special English",
-						"Health Report"));
-		mListParsers.put("Special English_Explorations",
-				new StandardEnglishListParser("Special English",
-						"Explorations"));
-		mListParsers.put("Special English_Education Report",
-				new StandardEnglishListParser("Special English",
-						"Education Report"));
-		mListParsers.put("Special English_The Making of a Nation",
-				new StandardEnglishListParser("Special English",
-						"The Making of a Nation"));
-		mListParsers.put("Special English_Economics Report",
-				new StandardEnglishListParser("Special English",
-						"Economics Report"));
-		mListParsers.put("Special English_American Mosaic",
-				new StandardEnglishListParser("Special English",
-						"American Mosaic"));
-		mListParsers.put("Special English_In the News",
-				new StandardEnglishListParser("Special English",
-						"In the News"));
-		mListParsers.put("Special English_American Stories",
-				new StandardEnglishListParser("Special English",
-						"American Stories"));
-		mListParsers.put("Special English_Words And Their Stories",
-				new StandardEnglishListParser("Special English", "Words And Their Stories"));
-		mListParsers.put("Special English_People in America",
-				new StandardEnglishListParser("Special English", "People in America"));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, DEVELOPMENT_REPORT));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, THIS_IS_AMERICA));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + AGRICULTURE_REPORT,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, AGRICULTURE_REPORT));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + SCIENCE_IN_THE_NEWS,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, SCIENCE_IN_THE_NEWS));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + HEALTH_REPORT,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, HEALTH_REPORT));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + EXPLORATIONS,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, EXPLORATIONS));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + EDUCATION_REPORT,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, EDUCATION_REPORT));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + THE_MAKING_OF_A_NATION,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, THE_MAKING_OF_A_NATION));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + ECONOMICS_REPORT,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, ECONOMICS_REPORT));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_MOSAIC,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, AMERICAN_MOSAIC));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + IN_THE_NEWS,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, IN_THE_NEWS));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_STORIES,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, AMERICAN_STORIES));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + WORDS_AND_THEIR_STORIES,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, WORDS_AND_THEIR_STORIES));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + PEOPLE_IN_AMERICA,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, PEOPLE_IN_AMERICA));
 		/*
 		 *  English learning
 		 */
-		mListParsers.put("English Learning_Popular American",
-				new PopularAmericanListParser("English Learning", "Popular American"));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + GO_ENGLISH, 
+				new PopularAmericanListParser(ENGLISH_LEARNING, GO_ENGLISH));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + WORD_MASTER, 
+				new PopularAmericanListParser(ENGLISH_LEARNING, WORD_MASTER));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + AMERICAN_CAFE, 
+				new PopularAmericanListParser(ENGLISH_LEARNING, AMERICAN_CAFE));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + POPULAR_AMERICAN,
+				new PopularAmericanListParser(ENGLISH_LEARNING, POPULAR_AMERICAN));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + BUSINESS_ETIQUETTE, 
+				new PopularAmericanListParser(ENGLISH_LEARNING, BUSINESS_ETIQUETTE));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + SPORTS_ENGLISH, 
+				new PopularAmericanListParser(ENGLISH_LEARNING, SPORTS_ENGLISH));
+		mListParsers.put(ENGLISH_LEARNING + SEPERATOR + WORDS_AND_IDIOMS, 
+				new PopularAmericanListParser(ENGLISH_LEARNING, WORDS_AND_IDIOMS));
+		
 	}
 
 	private void setupPageParsers() {
 		/*
 		 *  standard English
 		 */
-		mPageParsers.put("Standard English_English News",
+		mPageParsers.put(STANDARD_ENGLISH + SEPERATOR + ENGLISH_NEWS,
 				new StandardEnglishPageParser());
 
 		/*
 		 *  special English
 		 */
-		mPageParsers.put("Special English_Development Report",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_This is America",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Agriculture Report",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + AGRICULTURE_REPORT,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Science in the News",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + SCIENCE_IN_THE_NEWS,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Health Report",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + HEALTH_REPORT,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Explorations",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + EXPLORATIONS,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Education Report",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + EDUCATION_REPORT,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_The Making of a Nation",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + THE_MAKING_OF_A_NATION,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Economics Report",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + ECONOMICS_REPORT,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_American Mosaic",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_MOSAIC,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_In the News",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + IN_THE_NEWS,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_American Stories",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_STORIES,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_Words And Their Stories",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + WORDS_AND_THEIR_STORIES,
 				new StandardEnglishPageParser());
-		mPageParsers.put("Special English_People in America",
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + PEOPLE_IN_AMERICA,
 				new StandardEnglishPageParser());
 		
 		/*
 		 *  English learning
 		 */
-		mPageParsers.put("English Learning_Popular American",
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + GO_ENGLISH, 
+				new PopularAmericanPageParser());
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + WORD_MASTER, 
+				new PopularAmericanPageParser());
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + AMERICAN_CAFE, 
+				new PopularAmericanPageParser());
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + POPULAR_AMERICAN,
+				new PopularAmericanPageParser());
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + BUSINESS_ETIQUETTE,
+				new PopularAmericanPageParser());
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + SPORTS_ENGLISH,
+				new PopularAmericanPageParser());
+		mPageParsers.put(ENGLISH_LEARNING + SEPERATOR + WORDS_AND_IDIOMS,
 				new PopularAmericanPageParser());
 	}
 	
 	private void setupPageZhParsers() {
 		// standard English
 		
-
-		// special English
-		mPageZhParsers.put("Special English_Development Report",
+		
+		/*=====================================================================
+		 *  special English
+		 ====================================================================*/
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_This is America",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Agriculture Report",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + AGRICULTURE_REPORT,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Science in the News",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + SCIENCE_IN_THE_NEWS,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Health Report",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + HEALTH_REPORT,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Explorations",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + EXPLORATIONS,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Education Report",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + EDUCATION_REPORT,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_The Making of a Nation",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + THE_MAKING_OF_A_NATION,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Economics Report",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + ECONOMICS_REPORT,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_American Mosaic",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_MOSAIC,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_In the News",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + IN_THE_NEWS,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_American Stories",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + AMERICAN_STORIES,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_Words And Their Stories",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + WORDS_AND_THEIR_STORIES,
 				new StandardEnglishPageZhParser());
-		mPageZhParsers.put("Special English_People in America",
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + PEOPLE_IN_AMERICA,
 				new StandardEnglishPageZhParser());
 		
 		// English learning

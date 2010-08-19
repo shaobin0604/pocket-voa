@@ -3,6 +3,8 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -59,49 +61,94 @@ public class MainActivity extends Activity {
 	private static final int MENU_BACKUP   = Menu.FIRST + 2;
 	private static final int MENU_EXIT     = Menu.FIRST + 3;
 
-	private static final int DLG_ERROR = 0;
-	private static final int DLG_PROGRESS = 1;
-	private static final int DLG_MENU_LOCAL_LIST = 2;
-	private static final int DLG_MENU_REMOTE_LIST = 3;
-	private static final int DLG_CONFIRM_DELETE = 4;
-	private static final int DLG_CONFIRM_DOWNLOAD = 5;
-	private static final int DLG_INTERNET_STATUS_CONNECTED = 6;
+	private static final int DLG_ERROR                        = 0;
+	private static final int DLG_PROGRESS                     = 1;
+	private static final int DLG_MENU_LOCAL_LIST              = 2;
+	private static final int DLG_MENU_REMOTE_LIST             = 3;
+	private static final int DLG_CONFIRM_DELETE               = 4;
+	private static final int DLG_CONFIRM_DOWNLOAD             = 5;
+	private static final int DLG_INTERNET_STATUS_CONNECTED    = 6;
 	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 7;
-	private static final int DLG_CHANGE_LOG = 8;
+	private static final int DLG_CHANGE_LOG                   = 8;
 
-	private static final int WHAT_SUCCESS = 0;
-	private static final int WHAT_FAIL_IO = 1;
+	private static final int WHAT_SUCCESS    = 0;
+	private static final int WHAT_FAIL_IO    = 1;
 	private static final int WHAT_FAIL_PARSE = 2;
 
 	private static final int CMD_REFRESH_REMOTE_LIST = 0;
-	private static final int CMD_REFRESH_LOCAL_LIST = 1;
-	private static final int CMD_DOWNLOAD_ARTICLE = 2;
-	private static final int CMD_SHOW_ARTICLE = 3;
+	private static final int CMD_REFRESH_LOCAL_LIST  = 1;
+	private static final int CMD_DOWNLOAD_ARTICLE    = 2;
+	private static final int CMD_SHOW_ARTICLE        = 3;
 
-	private static final String[] TYPES_REMOTE = { "Standard English",
-			"Special English", "English Learning", };
+	private static final String[] TYPES_REMOTE = { IDataSource.STANDARD_ENGLISH,
+			IDataSource.SPECIAL_ENGLISH, IDataSource.ENGLISH_LEARNING, };
 
 	private static final String[][] SUBTYPES_REMOTE = {
-			{ "English News", },
-			{ "Development Report", "This is America", "Agriculture Report",
-					"Science in the News", "Health Report", "Explorations",
-					"Education Report", "The Making of a Nation",
-					"Economics Report", "American Mosaic", "In the News",
-					"American Stories", "Words And Their Stories",
-					"People in America", }, { "Popular American", }, };
+		{   
+			IDataSource.ENGLISH_NEWS, 
+		},
+		{   
+			IDataSource.DEVELOPMENT_REPORT, 
+			IDataSource.THIS_IS_AMERICA,
+			IDataSource.AGRICULTURE_REPORT,
+			IDataSource.SCIENCE_IN_THE_NEWS, 
+			IDataSource.HEALTH_REPORT,
+			IDataSource.EXPLORATIONS, 
+			IDataSource.EDUCATION_REPORT,
+			IDataSource.THE_MAKING_OF_A_NATION,
+			IDataSource.ECONOMICS_REPORT, 
+			IDataSource.AMERICAN_MOSAIC,
+			IDataSource.IN_THE_NEWS, 
+			IDataSource.AMERICAN_STORIES,
+			IDataSource.WORDS_AND_THEIR_STORIES,
+			IDataSource.PEOPLE_IN_AMERICA, 
+		},
+		{ 	IDataSource.GO_ENGLISH, 
+			IDataSource.WORD_MASTER, 
+			IDataSource.AMERICAN_CAFE,
+			IDataSource.POPULAR_AMERICAN,
+			IDataSource.BUSINESS_ETIQUETTE,
+			IDataSource.SPORTS_ENGLISH,
+			IDataSource.WORDS_AND_IDIOMS,
+		}, 
+	};
 
-	private static final String[] TYPES_LOCAL = { "Standard English",
-			"Special English", "English Learning", };
+	private static final String[] TYPES_LOCAL = { IDataSource.STANDARD_ENGLISH,
+		IDataSource.SPECIAL_ENGLISH, IDataSource.ENGLISH_LEARNING, };
 
 	private static final String[][] SUBTYPES_LOCAL = {
-			{ "All", "English News", },
-			{ "All", "Development Report", "This is America",
-					"Agriculture Report", "Science in the News",
-					"Health Report", "Explorations", "Education Report",
-					"The Making of a Nation", "Economics Report",
-					"American Mosaic", "In the News", "American Stories",
-					"Words And Their Stories", "People in America", },
-			{ "All", "Popular American", }, };
+		{ 
+			"All", 
+			IDataSource.ENGLISH_NEWS, 
+		},
+		{ 
+			"All", 
+			IDataSource.DEVELOPMENT_REPORT, 
+			IDataSource.THIS_IS_AMERICA,
+			IDataSource.AGRICULTURE_REPORT,
+			IDataSource.SCIENCE_IN_THE_NEWS, 
+			IDataSource.HEALTH_REPORT,
+			IDataSource.EXPLORATIONS, 
+			IDataSource.EDUCATION_REPORT,
+			IDataSource.THE_MAKING_OF_A_NATION,
+			IDataSource.ECONOMICS_REPORT, 
+			IDataSource.AMERICAN_MOSAIC,
+			IDataSource.IN_THE_NEWS, 
+			IDataSource.AMERICAN_STORIES,
+			IDataSource.WORDS_AND_THEIR_STORIES,
+			IDataSource.PEOPLE_IN_AMERICA, 
+		},
+		{ 
+			"All", 
+			IDataSource.GO_ENGLISH, 
+			IDataSource.WORD_MASTER,
+			IDataSource.AMERICAN_CAFE,
+			IDataSource.POPULAR_AMERICAN, 
+			IDataSource.BUSINESS_ETIQUETTE,
+			IDataSource.SPORTS_ENGLISH,
+			IDataSource.WORDS_AND_IDIOMS,
+		}, 
+	};
 
 	
 	private static final int ERROR_LOAD_LIST = 1;

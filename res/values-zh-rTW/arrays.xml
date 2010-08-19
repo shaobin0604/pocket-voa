@@ -25,8 +25,15 @@
 		<item>詞彙掌故</item>
 		<item>美國人物誌</item>
 	</string-array>
+	
 	<string-array name="english_learning">
+		<item>美語三級跳</item>
+		<item>詞匯大師</item>
+		<item>美語咖啡屋</item>
 		<item>流行美語教學</item>
+		<item>禮節美語</item>
+		<item>體育美語</item>
+		<item>美國習慣用語</item>
 	</string-array>
 	
 	<string-array name="type_local">
@@ -60,7 +67,13 @@
 	
 	<string-array name="english_learning_local">
 		<item>全部</item>
+		<item>美語三級跳</item>
+		<item>詞匯大師</item>
+		<item>美語咖啡屋</item>
 		<item>流行美語教學</item>
+		<item>禮節美語</item>
+		<item>體育美語</item>
+		<item>美國習慣用語</item>
 	</string-array>
 	
 	<string-array name="prefs_list_count">

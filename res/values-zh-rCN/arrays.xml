@@ -26,7 +26,13 @@
 		<item>美国人物志</item>
 	</string-array>
 	<string-array name="english_learning">
+		<item>美语三级跳</item>
+		<item>词汇大师</item>
+		<item>美语咖啡屋</item>
 		<item>流行美语教学</item>
+		<item>礼节美语</item>
+		<item>体育美語</item>
+		<item>美国习惯用語</item>
 	</string-array>
 	
 	<string-array name="type_local">
@@ -60,7 +66,13 @@
 	
 	<string-array name="english_learning_local">
 		<item>全部</item>
+		<item>美语三级跳</item>
+		<item>词汇大师</item>
+		<item>美语咖啡屋</item>
 		<item>流行美语教学</item>
+		<item>礼节美语</item>
+		<item>体育美語</item>
+		<item>美国习惯用語</item>
 	</string-array>
 	
 	<string-array name="prefs_list_count">

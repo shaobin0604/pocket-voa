@@ -79,15 +79,7 @@ public class App extends CrashReportingApplication {
 	}
 	
 	private String getVersionName() {
-		PackageManager manager = getPackageManager();
-		String packageName = getPackageName();
-		// Log.d(CLASSTAG, "package name -- " + packageName);
-		try {
-			PackageInfo info = manager.getPackageInfo(packageName, 0);
-			return info.versionName;
-		} catch (NameNotFoundException e) {
-			return "not available";
-		}
+		return getString(R.string.app_version);
 	}
 
 	public final DefaultHttpClient mHttpClient = setupHttpClient();

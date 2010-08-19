@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import cn.yo2.aquarium.pocketvoa.Article;
 import cn.yo2.aquarium.pocketvoa.IllegalContentFormatException;
+import cn.yo2.aquarium.pocketvoa.Utils;
 import cn.yo2.aquarium.pocketvoa.parser.AbstractListParser;
 
 public class PopularAmericanListParser extends AbstractListParser {
@@ -28,23 +29,29 @@ public class PopularAmericanListParser extends AbstractListParser {
 		// int ulStart = body.indexOf("id=\"list\"");
 		
 		Pattern pattern = Pattern
-				.compile("<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>");
+				.compile("<li>\\s*<a href=\"([^\\s]+)\" target=_blank>([^<]+)</a>\\s*(?:\\((\\d+-\\d+-\\d+)\\)){0,1}\\s*</li>");
 		Matcher matcher = pattern.matcher(body);
 		
 		while (matcher.find()) {
 			
 			String url = matcher.group(1);
 			String title = matcher.group(2);
+			String date = matcher.group(3);
 			
-			Log.d(CLASSTAG, "url -- " + url + " title -- " + title);
+			Log.d(CLASSTAG, "url -- " + url + " title -- " + title + " date -- " + date);
 			
 			Article article = new Article();
 			
 			article.id = -1;
 			article.urltext = Voa51DataSource.HOST + (url.startsWith("/") ? url : "/" + url);
 			article.title = title;
-			article.type = this.mType;
-			article.subtype = this.mSubtype;
+			article.type = mType;
+			article.subtype = mSubtype;
+			article.haslrc = false;
+			article.hastextzh = false;
+			
+			if (date != null)
+				article.date = Utils.formatDateString(date);
 			
 			list.add(article);
 		}
