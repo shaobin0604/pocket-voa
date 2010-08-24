@@ -128,21 +128,14 @@ public class LyricView extends View {
 	public boolean update(long time) {
 		Log.d(TAG, "[update] time -- " + time);
 		
-//		if (mCurrentLineIndex == mLyric.getSize() - 1)
-//			return false;
-
-		// if (mCurrentSentence == null) {
-		// mCurrentIndex = 0;
-		// } else if (time > mCurrentSentence.mToTime) {
-		// mCurrentIndex++;
-		// }
-		
 		mCurrentLineIndex = mLyric.getSentenceIndexInTimeFast(time);
-
-//		mCurrentLineIndex = mLyric.getSentenceIndexInTime(time);
-		mCurrentSentence = mLyric.getSentence(mCurrentLineIndex);
-		mCurrentVerticalOffset = getVerticalOffset(mCurrentSentence.mFromTime,
-				mCurrentSentence.mToTime, time);
+//		mCurrentLineIndex = mLyric.getSentenceIndexInTime(time);		
+		if (mCurrentLineIndex == -1) {
+			mLyricLoaded = false;
+		} else {
+			mCurrentSentence = mLyric.getSentence(mCurrentLineIndex);
+			mCurrentVerticalOffset = getVerticalOffset(mCurrentSentence.mFromTime, mCurrentSentence.mToTime, time);
+		}
 
 		invalidate();
 		return true;
