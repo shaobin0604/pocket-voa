@@ -162,4 +162,5 @@
 	<string name="toast_restore_failed">数据库恢复失败！</string>
 	
 	<string name="prefs_title_font_size">字体大小</string>
+<string name="menu_main">主页</string>
 </resources>

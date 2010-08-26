@@ -182,4 +182,5 @@
 	<string name="prefs_default_font_size">NORMAL</string>
 	
 	<string name="prefs_title_font_size">Text size</string>
+<string name="menu_main">Home</string>
 </resources>

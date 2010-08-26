@@ -72,10 +72,14 @@ public class ShowActivity extends Activity {
 	private static final int MENU_REMOTE_TRANSLATION = Menu.FIRST + 1;
 	private static final int MENU_REMOTE_LYRIC = Menu.FIRST + 2;
 	private static final int MENU_REMOTE_DOWNLOAD = Menu.FIRST + 3;
+	
 
 	private static final int MENU_LOCAL_ORIGINAL = Menu.FIRST + 4;
 	private static final int MENU_LOCAL_TRANSLATION = Menu.FIRST + 5;
 	private static final int MENU_LOCAL_LYRIC = Menu.FIRST + 6;
+	
+	private static final int MENU_REMOTE_HOME = Menu.FIRST + 7;
+	private static final int MENU_LOCAL_HOME = Menu.FIRST + 8;
 
 	// Load remote page handler message type
 	private static final int WHAT_LOAD_REMOTE_ORIGINAL_SUCCESS = 0;
@@ -105,6 +109,8 @@ public class ShowActivity extends Activity {
 	private static final int WHAT_REFRESH_LYRIC = 0;
 
 	private static final int PROGRESS_MAX = 1000;
+
+	
 
 	private enum Error {
 		LoadRemotePageError, LoadLocalPageError, PlayRemoteAudioError, PlayLocalAudioError, DownloadAudioError, DownloadTextError,
@@ -364,6 +370,7 @@ public class ShowActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
 
+		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_HOME, Menu.NONE, R.string.menu_main);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_ORIGINAL, Menu.NONE,
 				R.string.menu_original);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_TRANSLATION, Menu.NONE,
@@ -373,6 +380,7 @@ public class ShowActivity extends Activity {
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
 				R.string.menu_download);
 
+		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_HOME, Menu.NONE, R.string.menu_main);
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_ORIGINAL, Menu.NONE,
 				R.string.menu_original);
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_TRANSLATION, Menu.NONE,
@@ -555,7 +563,11 @@ public class ShowActivity extends Activity {
 			commandLoadLocalLyric();
 
 			return true;
-
+		case MENU_REMOTE_HOME:
+		case MENU_LOCAL_HOME:
+			finish();
+			startActivity(new Intent(this, MainActivity.class));
+			break;
 		default:
 			break;
 		}
