@@ -255,9 +255,7 @@ public class MainActivity extends Activity {
 			case WHAT_SUCCESS:
 				dismissDialog(DLG_PROGRESS);
 				bindRemoteList();
-				if (mIsRemoteTypeChanged) {
-					updatePageSpinner();
-				}
+				updatePageSpinner();
 				break;
 			case WHAT_FAIL_IO:
 			case WHAT_FAIL_PARSE:
@@ -960,8 +958,19 @@ public class MainActivity extends Activity {
 	}
 
 	private void bindRemoteList() {
-		RowAdapter adapter = new RowAdapter(this, mList);
-		lvRemote.setAdapter(adapter);
+		if (lvRemote.getAdapter() == null) {
+			Log.d(CLASSTAG, "new remote adapter");
+			
+			RowAdapter adapter = new RowAdapter(this, mList);
+			lvRemote.setAdapter(adapter);
+			
+		} else {
+			Log.d(CLASSTAG, "change remote adapter");
+			
+			RowAdapter adapter = (RowAdapter) lvRemote.getAdapter();
+			adapter.setArticleList(mList);
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	private void bindLocalList() {
@@ -1222,6 +1231,7 @@ public class MainActivity extends Activity {
 
 class RowAdapter extends BaseAdapter {
 
+	protected static final String TAG = RowAdapter.class.getSimpleName();
 	private ArrayList<Article> mList;
 	private Context mContext;
 	private LayoutInflater mInflater;
@@ -1231,6 +1241,10 @@ class RowAdapter extends BaseAdapter {
 		mContext = context;
 		mList = list;
 		mInflater = LayoutInflater.from(mContext);
+	}
+	
+	public void setArticleList(ArrayList<Article> list) {
+		mList = list;
 	}
 
 	public int getCount() {

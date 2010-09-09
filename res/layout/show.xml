@@ -50,15 +50,10 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal" android:paddingTop="5dip">
-		<ImageButton
-			android:id="@+id/btn_pause"
+		<LinearLayout android:orientation="vertical"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@android:drawable/ic_media_play"
-			/>
-		<LinearLayout android:orientation="vertical"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+			android:layout_weight="1.0">
 			<LinearLayout android:orientation="horizontal"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content">
@@ -85,6 +80,12 @@
         		android:progress="0"
         		android:secondaryProgress="0" />
         </LinearLayout>
+        <ImageButton
+			android:id="@+id/btn_pause"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@android:drawable/ic_media_play"
+			/>
 	</LinearLayout>
 	<!-- 
 	<com.admob.android.ads.AdView
