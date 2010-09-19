@@ -14,6 +14,11 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 			throws IllegalContentFormatException {
 		int contentStart = body.indexOf("<div id=\"content\"");
 		int listadsStart = body.indexOf("<div id=\"listads\"");
+		if (listadsStart < 0)
+			listadsStart = body.indexOf("<div id=\"Bottom_Import\"");
+		if (listadsStart < 0)
+			listadsStart = body.indexOf("<div id=\"Bottom_VOA\"");
+		
 
 		if (contentStart < 0 || listadsStart < 0)
 			throw new IllegalContentFormatException("Cannot find content");
