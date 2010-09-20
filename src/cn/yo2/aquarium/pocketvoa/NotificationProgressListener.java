@@ -14,6 +14,8 @@ public class NotificationProgressListener implements IProgressListener {
 	
 	private Article mArticle;
 	
+	private final int mTaskId;
+	
 	private Notification mNotificationProgress;
 	private Notification mNotificationSuccess;
 	private Notification mNotificationError;
@@ -22,24 +24,32 @@ public class NotificationProgressListener implements IProgressListener {
 	
 	private NotificationManager mNotificationManager;
 
-	public NotificationProgressListener(Context context, Article article) {
+	public NotificationProgressListener(Context context, Article article, int taskId) {
 		super();
 		this.mContext = context;
 		this.mArticle = article;
+		this.mTaskId = taskId;
 		
 		Intent mainIntent = new Intent(
 				mContext, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
 				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		
-		long threadId = Thread.currentThread().getId();
-		
-		mMainPendingIntent = PendingIntent.getActivity(mContext, (int) threadId, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		mMainPendingIntent = PendingIntent.getActivity(mContext, taskId, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		
 		mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		
 	}
-
+	
+	
+	public void setWait() {
+		Notification notification = new Notification(R.drawable.media_pause, "等待下载...", System.currentTimeMillis());
+		notification.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+		notification.setLatestEventInfo(mContext, mArticle.title, "等待下载...", mMainPendingIntent);
+		
+		mNotificationManager.notify(mTaskId, notification);
+	}
+	
 	public void setError(int which, String message) {
 		int icon = android.R.drawable.stat_sys_warning;
 		CharSequence tickerText = null;
@@ -71,12 +81,8 @@ public class NotificationProgressListener implements IProgressListener {
 		}
 		
 		mNotificationError.flags = Notification.FLAG_AUTO_CANCEL;
-		     	
 		mNotificationError.setLatestEventInfo(mContext, contentTitle, contentText, mMainPendingIntent);
-		
-		long threadId = Thread.currentThread().getId();
-
-		mNotificationManager.notify((int)threadId, mNotificationError);
+		mNotificationManager.notify(mTaskId, mNotificationError);
 	}
 
 	public void setSuccess(int which) {
@@ -111,12 +117,8 @@ public class NotificationProgressListener implements IProgressListener {
 		}
 		 	
 		mNotificationSuccess.flags = Notification.FLAG_AUTO_CANCEL;
-		
 		mNotificationSuccess.setLatestEventInfo(mContext, contentTitle, contentText, mMainPendingIntent);
-		
-		long threadId = Thread.currentThread().getId();
-
-		mNotificationManager.notify((int)threadId, mNotificationSuccess);
+		mNotificationManager.notify(mTaskId, mNotificationSuccess);
 	}
 
 	public void updateProgress(int which, long pos, long total) {
@@ -155,11 +157,7 @@ public class NotificationProgressListener implements IProgressListener {
 		}
 		
 		mNotificationProgress.flags = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-		    	
 		mNotificationProgress.setLatestEventInfo(mContext, contentTitle, contentText, mMainPendingIntent);
-		
-		long threadId = Thread.currentThread().getId();
-		
-		mNotificationManager.notify((int)threadId, mNotificationProgress);
+		mNotificationManager.notify(mTaskId, mNotificationProgress);
 	}
 }

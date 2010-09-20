@@ -950,11 +950,11 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		super.onDestroy();
+		
 		if (null != mCursor && !mCursor.isClosed())
 			mCursor.close();
 		mDatabaseHelper.close();
-
-		super.onDestroy();
 	}
 
 	private void bindRemoteList() {

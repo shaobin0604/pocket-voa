@@ -77,12 +77,20 @@ public class DatabaseHelper {
 	 * @return true if exist
 	 */
 	public boolean isArticleExist(Article article) {
+		boolean ret = false;
+		
 		if (article == null)
-			return false;
+			return ret;
 		
 		Cursor cursor = mDb.query(T_ARTICLES, new String[] { C_ID }, C_URLTEXT
 				+ "=?", new String[] { article.urltext }, null, null, null);
-		return (cursor != null && cursor.moveToFirst());
+		
+		if (cursor != null) {
+			ret = cursor.getCount() > 0;
+			cursor.close();
+		}
+		
+		return ret;
 	}
 
 	/**

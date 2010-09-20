@@ -1,6 +1,12 @@
 package cn.yo2.aquarium.pocketvoa;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
@@ -8,14 +14,16 @@ public class DownloadService extends Service {
 	private static final String CLASSTAG = DownloadService.class.getSimpleName();
 	
 	private App mApp;
-	
 	private DatabaseHelper mDatabaseHelper;
+	private ExecutorService mExecutorService;
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
 
 	@Override
 	public void onCreate() {
@@ -24,6 +32,8 @@ public class DownloadService extends Service {
 		
 		mDatabaseHelper = new DatabaseHelper(this);
 		mDatabaseHelper.open();
+		
+		mExecutorService = Executors.newSingleThreadExecutor();
 	}
 
 	@Override
@@ -36,14 +46,18 @@ public class DownloadService extends Service {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		
+		long now = System.currentTimeMillis();
+		
 		Article article = Utils.getArticleFromIntent(intent);
 		DownloadTask task = new DownloadTask(mApp.mHttpClient, mDatabaseHelper, article);
-		task.addProgressListener(new NotificationProgressListener(this, article));
-		new Thread(task).start();
+		NotificationProgressListener listener = new NotificationProgressListener(this, article, (int) now);
+		listener.setWait();
+		task.addProgressListener(listener);
+		// add to execution queue
+		mExecutorService.execute(task);
 	}
 	
 	
-
 	@Override
 	public boolean onUnbind(Intent intent) {
 		// TODO Auto-generated method stub
