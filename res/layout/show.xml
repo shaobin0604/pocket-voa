@@ -76,9 +76,17 @@
         		style="?android:attr/progressBarStyleHorizontal"
         		android:layout_width="fill_parent"
         		android:layout_height="wrap_content"
-        		android:max="100"
+        		android:max="1000"
         		android:progress="0"
         		android:secondaryProgress="0" />
+        	<SeekBar 
+        		android:id="@+id/sb_audio"
+        		android:layout_width="fill_parent"
+        		android:layout_height="wrap_content"
+        		android:max="1000"
+        		android:progress="0"
+        		android:secondaryProgress="0"/>
+        		
         </LinearLayout>
         <ImageButton
 			android:id="@+id/btn_pause"

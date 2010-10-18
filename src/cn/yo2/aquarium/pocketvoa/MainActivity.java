@@ -351,6 +351,8 @@ public class MainActivity extends Activity {
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
+		dismissDialog(DLG_PROGRESS);
+		
 		super.onSaveInstanceState(outState);
 		//TODO more state to save. current list, tab state, selection
 		Log.d(CLASSTAG, "[onSaveInstanceState]");
@@ -370,6 +372,8 @@ public class MainActivity extends Activity {
 		mCurrArticle = savedInstanceState.getParcelable(KEY_SAVED_ARTICLE);
 		mLastCommand = savedInstanceState.getInt(KEY_SAVED_COMMAND);
 		mLastError = savedInstanceState.getInt(KEY_SAVED_ERROR);
+		
+		dismissDialog(DLG_PROGRESS);
 	}
 
 	/** Called when the activity is first created. */

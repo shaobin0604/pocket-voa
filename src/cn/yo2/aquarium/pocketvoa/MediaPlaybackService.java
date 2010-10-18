@@ -1,6 +1,7 @@
 package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -693,58 +694,60 @@ public class MediaPlaybackService extends Service {
 	
 	private Article mArticle;
 	
-	private final IMediaPlaybackService.Stub mBinder = new IMediaPlaybackService.Stub()
-    {
+	private final IMediaPlaybackService.Stub mBinder = new ServiceStub(this);
+	
+	static class ServiceStub extends IMediaPlaybackService.Stub {
+		WeakReference<MediaPlaybackService> mService;
+        
+        ServiceStub(MediaPlaybackService service) {
+            mService = new WeakReference<MediaPlaybackService>(service);
+        }
+		
 		@Override
 		public Article getArticle(){
-			return MediaPlaybackService.this.mArticle;
+			return mService.get().mArticle;
 		}
 		
 		@Override
 		public int getState() {
-			return MediaPlaybackService.this.getState();
+			return mService.get().getState();
 		}
 		
 		@Override
 		public boolean isInitialized() throws RemoteException {
-			return MediaPlaybackService.this.isInitialized();
+			return mService.get().isInitialized();
 		}
-		
 		
 		@Override
 		public void init() throws RemoteException {
-			MediaPlaybackService.this.init();
+			mService.get().init();
 		}
-		
-		
 		
 		@Override
 		public void setArticle(Article article)  {
-			MediaPlaybackService.this.mArticle = article;
+			mService.get().mArticle = article;
 		}
 		
-		
-		
 		public boolean isPlaying() {
-            return MediaPlaybackService.this.isPlaying();
+            return mService.get().isPlaying();
         }
         public void stop() {
-            MediaPlaybackService.this.stop();
+            mService.get().stop();
         }
         public void pause() {
-            MediaPlaybackService.this.pause();
+            mService.get().pause();
         }
         public void play() {
-            MediaPlaybackService.this.play();
+            mService.get().play();
         }
         public long position() {
-            return MediaPlaybackService.this.position();
+            return mService.get().position();
         }
         public long duration() {
-            return MediaPlaybackService.this.duration();
+            return mService.get().duration();
         }
         public long seek(long pos) {
-            return MediaPlaybackService.this.seek(pos);
+            return mService.get().seek(pos);
         }
     };
 }

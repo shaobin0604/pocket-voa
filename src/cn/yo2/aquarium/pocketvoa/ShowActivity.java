@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -37,9 +38,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 
 //import com.admob.android.ads.AdView;
@@ -72,12 +75,11 @@ public class ShowActivity extends Activity {
 	private static final int MENU_REMOTE_TRANSLATION = Menu.FIRST + 1;
 	private static final int MENU_REMOTE_LYRIC = Menu.FIRST + 2;
 	private static final int MENU_REMOTE_DOWNLOAD = Menu.FIRST + 3;
-	
 
 	private static final int MENU_LOCAL_ORIGINAL = Menu.FIRST + 4;
 	private static final int MENU_LOCAL_TRANSLATION = Menu.FIRST + 5;
 	private static final int MENU_LOCAL_LYRIC = Menu.FIRST + 6;
-	
+
 	private static final int MENU_REMOTE_HOME = Menu.FIRST + 7;
 	private static final int MENU_LOCAL_HOME = Menu.FIRST + 8;
 
@@ -109,8 +111,6 @@ public class ShowActivity extends Activity {
 	private static final int WHAT_REFRESH_LYRIC = 0;
 
 	private static final int PROGRESS_MAX = 1000;
-
-	
 
 	private enum Error {
 		LoadRemotePageError, LoadLocalPageError, PlayRemoteAudioError, PlayLocalAudioError, DownloadAudioError, DownloadTextError,
@@ -285,12 +285,12 @@ public class ShowActivity extends Activity {
 
 					if (mService.isPlaying()) {
 						mService.pause();
-						refreshProgress();
+						refreshNow();
 						if (mCurrentView == VIEW_LYRIC)
 							stopRefreshLyric();
 					} else {
 						mService.play();
-						long next = refreshProgress();
+						long next = refreshNow();
 						queueNextRefreshProgress(next);
 
 						if (mCurrentView == VIEW_LYRIC) {
@@ -304,13 +304,15 @@ public class ShowActivity extends Activity {
 					mService.init();
 					mBtnPause.setEnabled(false);
 				}
-			} 
+			}
 		} catch (RemoteException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	private void refreshLyric() {
+		if (mService == null)
+			return;
 		try {
 			long position = mService.position();
 			if (position < 0)
@@ -370,7 +372,8 @@ public class ShowActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
 
-		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_HOME, Menu.NONE, R.string.menu_main);
+		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_HOME, Menu.NONE,
+				R.string.menu_main);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_ORIGINAL, Menu.NONE,
 				R.string.menu_original);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_TRANSLATION, Menu.NONE,
@@ -380,7 +383,8 @@ public class ShowActivity extends Activity {
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
 				R.string.menu_download);
 
-		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_HOME, Menu.NONE, R.string.menu_main);
+		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_HOME, Menu.NONE,
+				R.string.menu_main);
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_ORIGINAL, Menu.NONE,
 				R.string.menu_original);
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_TRANSLATION, Menu.NONE,
@@ -770,11 +774,13 @@ public class ShowActivity extends Activity {
 
 		mWebViewEn = (WebView) findViewById(R.id.webview_en);
 		mWebViewZh = (WebView) findViewById(R.id.webview_zh);
-		
-		String fontSize = mApp.mSharedPreferences.getString(getString(R.string.prefs_key_font_size), getString(R.string.prefs_default_font_size));
-		
+
+		String fontSize = mApp.mSharedPreferences.getString(
+				getString(R.string.prefs_key_font_size),
+				getString(R.string.prefs_default_font_size));
+
 		TextSize[] textSizeValues = WebSettings.TextSize.values();
-		
+
 		WebSettings settingsEn = mWebViewEn.getSettings();
 		WebSettings settingsZh = mWebViewZh.getSettings();
 		for (int i = 0; i < textSizeValues.length; i++) {
@@ -782,13 +788,13 @@ public class ShowActivity extends Activity {
 			if (textSize.toString().equalsIgnoreCase(fontSize)) {
 				settingsEn.setTextSize(textSize);
 				settingsZh.setTextSize(textSize);
-				
+
 				break;
 			}
 		}
 		settingsEn.setSupportZoom(true);
 		settingsEn.setBuiltInZoomControls(true);
-		
+
 		settingsZh.setSupportZoom(true);
 		settingsZh.setBuiltInZoomControls(true);
 
@@ -804,13 +810,56 @@ public class ShowActivity extends Activity {
 		mTvEllapsedTime = (TextView) findViewById(R.id.tv_ellapsed_time);
 		mTvTotalTime = (TextView) findViewById(R.id.tv_total_time);
 
-		mProgressBar = (ProgressBar) findViewById(R.id.pb_audio);
-		mProgressBar.setMax(PROGRESS_MAX);
+		ProgressBar progressBar = (ProgressBar) findViewById(R.id.pb_audio);
+		SeekBar seekBar = (SeekBar) findViewById(R.id.sb_audio);
 
-		if (!isRemote()) {
-			mProgressBar.setSecondaryProgress(PROGRESS_MAX);
+		if (isRemote()) {
+			progressBar.setVisibility(View.VISIBLE);
+			seekBar.setVisibility(View.GONE);
+			
+			mProgressBar = progressBar;
+		} else {
+			progressBar.setVisibility(View.GONE);
+			seekBar.setVisibility(View.VISIBLE);
+			seekBar.setOnSeekBarChangeListener(mSeekListener);
+			seekBar.setSecondaryProgress(PROGRESS_MAX);
+			mProgressBar = seekBar;
 		}
+		
+		mProgressBar.setMax(PROGRESS_MAX);
 	}
+	
+	private long mLastSeekEventTime;
+    private boolean mFromTouch = false;
+	
+	private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
+        public void onStartTrackingTouch(SeekBar bar) {
+            mLastSeekEventTime = 0;
+            mFromTouch = true;
+        }
+        public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
+            if (!fromuser || (mService == null)) return;
+            long now = SystemClock.elapsedRealtime();
+            if ((now - mLastSeekEventTime) > 250) {
+                mLastSeekEventTime = now;
+                mPosOverride = mDuration * progress / 1000;
+                try {
+                    mService.seek(mPosOverride);
+                } catch (RemoteException ex) {
+                }
+
+                // trackball event, allow progress updates
+                if (!mFromTouch) {
+                    refreshNow();
+                    mPosOverride = -1;
+                }
+            }
+        }
+        public void onStopTrackingTouch(SeekBar bar) {
+            mPosOverride = -1;
+            mFromTouch = false;
+        }
+    };
 
 	private View.OnClickListener mToolBarBtnOnClickListener = new View.OnClickListener() {
 
@@ -978,6 +1027,18 @@ public class ShowActivity extends Activity {
 		}
 		return super.onCreateDialog(id);
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		dismissDialog(DLG_PROGRESS_SPIN);
+		super.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		dismissDialog(DLG_PROGRESS_SPIN);
+	}
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
@@ -1060,12 +1121,12 @@ public class ShowActivity extends Activity {
 						case MediaPlaybackService.STATE_PAUSED:
 							setPauseButtonImage();
 							updateTrackInfo();
-							long next = refreshProgress();
+							long next = refreshNow();
 							queueNextRefreshProgress(next);
 							break;
 						case MediaPlaybackService.STATE_PLAYBACK_COMPLETED:
 							setPauseButtonImage();
-							refreshProgress();
+							refreshNow();
 							break;
 						default:
 							break;
@@ -1124,9 +1185,11 @@ public class ShowActivity extends Activity {
 	@Override
 	protected void onStop() {
 		paused = true;
+
 		mHandler.removeMessages(REFRESH);
 		unregisterReceiver(mStatusListener);
 		Utils.unbindFromService(this);
+		mService = null;
 		super.onStop();
 	}
 
@@ -1156,7 +1219,7 @@ public class ShowActivity extends Activity {
 		mHandler.removeMessages(REFRESH);
 	}
 
-	private long refreshProgress() {
+	private long refreshNow() {
 		if (mService == null)
 			return 500;
 		try {
@@ -1199,7 +1262,7 @@ public class ShowActivity extends Activity {
 			switch (msg.what) {
 
 			case REFRESH:
-				long next = refreshProgress();
+				long next = refreshNow();
 				queueNextRefreshProgress(next);
 				break;
 
