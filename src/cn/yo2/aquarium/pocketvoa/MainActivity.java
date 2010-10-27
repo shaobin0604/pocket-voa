@@ -643,7 +643,7 @@ public class MainActivity extends Activity {
 		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, MENU_TEST, Menu.NONE, R.string.menu_internet_status).setIcon(R.drawable.signal);
 		menu.add(Menu.NONE, MENU_BACKUP, Menu.NONE, R.string.menu_backup).setIcon(R.drawable.backup_48);
-		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(R.drawable.exit_48);
 
 		return super.onCreateOptionsMenu(menu);
 	}

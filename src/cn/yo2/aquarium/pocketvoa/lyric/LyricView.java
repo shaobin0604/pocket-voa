@@ -66,26 +66,26 @@ public class LyricView extends View {
 		mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
 		TypedArray params = context.obtainStyledAttributes(attrs,
-				R.styleable.cn_yo2_aquarium_pocketvoa_lyric_LyricView);
+				R.styleable.LyricView);
 
 		mErrorMessage = params
-				.getString(R.styleable.cn_yo2_aquarium_pocketvoa_lyric_LyricView_errorMessage);
+				.getString(R.styleable.LyricView_errorMessage);
 
 		if (mErrorMessage == null)
 			mErrorMessage = DEFAULT_ERROR_MESSAGE;
 
 		mFocusLineColor = params
 				.getColor(
-						R.styleable.cn_yo2_aquarium_pocketvoa_lyric_LyricView_focusLineColor,
+						R.styleable.LyricView_focusLineColor,
 						DEFAULT_FOCUSED_LINE_COLOR);
 
 		mOtherLineColor = params
 				.getColor(
-						R.styleable.cn_yo2_aquarium_pocketvoa_lyric_LyricView_otherLineColor,
+						R.styleable.LyricView_otherLineColor,
 						DEFAULT_OTHER_LINE_COLOR);
 
 		float textSize = params.getDimension(
-				R.styleable.cn_yo2_aquarium_pocketvoa_lyric_LyricView_textSize,
+				R.styleable.LyricView_textSize,
 				DEFAULT_TEXT_SIZE);
 		mTextPaint.setTextSize(textSize);
 

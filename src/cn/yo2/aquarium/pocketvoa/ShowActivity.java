@@ -29,12 +29,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebSettings.TextSize;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,11 +46,14 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
+import cn.yo2.aquarium.pocketvoa.ui.TabBar;
+import cn.yo2.aquarium.pocketvoa.ui.TabBar.OnTabChangeListener;
 
-//import com.admob.android.ads.AdView;
 import com.wooboo.adlib_android.WoobooAdView;
 
 public class ShowActivity extends Activity {
+	private static final int MAX_TABS = 3;
+
 	private static final String TAG = ShowActivity.class.getSimpleName();
 
 	private static final String[] ADMOB_KEYWORDS = { "android game farm",
@@ -130,6 +135,8 @@ public class ShowActivity extends Activity {
 	private ProgressDialog mProgressDialogBar;
 
 	// private AdView mAdView;
+	
+	private TabBar mTabBar;
 	private ViewFlipper mViewFlipper;
 	private WebView mWebViewEn;
 	private WebView mWebViewZh;
@@ -145,11 +152,8 @@ public class ShowActivity extends Activity {
 	private boolean mLocalOriginalLoaded;
 	private boolean mLocalTranslationLoaded;
 	private boolean mLocalLyricLoaded;
-
-	private Button mBtnOriginal;
-	private Button mBtnTranslation;
-	private Button mBtnLyric;
-	private Button mBtnDownload;
+	
+	private int[] mCommand = new int[MAX_TABS];
 
 	private StringBuilder mRecycle = new StringBuilder(10);
 
@@ -359,6 +363,36 @@ public class ShowActivity extends Activity {
 		}
 	};
 
+	private OnTabChangeListener mOnTabChangeListener = new OnTabChangeListener() {
+		
+		@Override
+		public void onTabChanged(int index) {
+			mLastCommand = mCommand[index];
+			switch (mLastCommand) {
+			case MENU_REMOTE_ORIGINAL:
+				commandLoadRemoteOriginal();
+				break;
+			case MENU_REMOTE_TRANSLATION:
+				commandLoadRemoteTranslation();
+				break;
+			case MENU_REMOTE_LYRIC:
+				commandLoadRemoteLyric();
+				break;
+			case MENU_LOCAL_ORIGINAL:
+				commandLoadLocalOriginal();
+				break;
+			case MENU_LOCAL_TRANSLATION:
+				commandLoadLocalTranslation();
+				break;
+			case MENU_LOCAL_LYRIC:
+				commandLoadLocalLyric();
+				break;
+			default:
+				break;
+			}
+		}
+	};
+
 	protected void resetLyricView() {
 		if (mLyricView.isLyricLoaded())
 			mLyricView.resetLyric();
@@ -373,24 +407,12 @@ public class ShowActivity extends Activity {
 		boolean result = super.onCreateOptionsMenu(menu);
 
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_HOME, Menu.NONE,
-				R.string.menu_main);
-		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_ORIGINAL, Menu.NONE,
-				R.string.menu_original);
-		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_TRANSLATION, Menu.NONE,
-				R.string.menu_translation);
-		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_LYRIC, Menu.NONE,
-				R.string.menu_lrc);
+				R.string.menu_main).setIcon(R.drawable.home_48);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
-				R.string.menu_download);
+				R.string.menu_download).setIcon(R.drawable.download_48);
 
 		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_HOME, Menu.NONE,
-				R.string.menu_main);
-		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_ORIGINAL, Menu.NONE,
-				R.string.menu_original);
-		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_TRANSLATION, Menu.NONE,
-				R.string.menu_translation);
-		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_LYRIC, Menu.NONE,
-				R.string.menu_lrc);
+				R.string.menu_main).setIcon(R.drawable.home_48);
 
 		return result;
 	}
@@ -400,61 +422,30 @@ public class ShowActivity extends Activity {
 		if (isRemote()) {
 			menu.setGroupVisible(MENU_REMOTE_GROUP, true);
 			menu.setGroupVisible(MENU_LOCAL_GROUP, false);
-
-			switch (mCurrentView) {
-			case 0:
-				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(false);
-				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(
-						mArticle.hastextzh);
-				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(mArticle.haslrc);
-				break;
-			case 1:
-				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(true);
-				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(false);
-				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(mArticle.haslrc);
-				break;
-			case 2:
-				menu.findItem(MENU_REMOTE_ORIGINAL).setEnabled(true);
-				menu.findItem(MENU_REMOTE_TRANSLATION).setEnabled(
-						mArticle.hastextzh);
-				menu.findItem(MENU_REMOTE_LYRIC).setEnabled(false);
-				break;
-			default:
-				throw new RuntimeException("mCurrentView invalid -- "
-						+ mCurrentView);
-			}
 		} else {
 			menu.setGroupVisible(MENU_REMOTE_GROUP, false);
 			menu.setGroupVisible(MENU_LOCAL_GROUP, true);
-
-			switch (mCurrentView) {
-			case 0:
-				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(false);
-				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(
-						mArticle.hastextzh);
-				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(mArticle.haslrc);
-				break;
-			case 1:
-				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(true);
-				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(false);
-				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(mArticle.haslrc);
-				break;
-			case 2:
-				menu.findItem(MENU_LOCAL_ORIGINAL).setEnabled(true);
-				menu.findItem(MENU_LOCAL_TRANSLATION).setEnabled(
-						mArticle.hastextzh);
-				menu.findItem(MENU_LOCAL_LYRIC).setEnabled(false);
-				break;
-			default:
-				throw new RuntimeException("mCurrentView invalid -- "
-						+ mCurrentView);
-			}
 		}
 
 		return super.onPrepareOptionsMenu(menu);
 	}
-
+	
+	private Animation mAniPushLeftIn;
+	private Animation mAniPushLeftOut;
+	private Animation mAniPushRightIn;
+	private Animation mAniPushRightOut;
+	
 	private void setCurrentView(int view) {
+		if (view > mCurrentView) {
+			mViewFlipper.setInAnimation(mAniPushLeftIn);
+			mViewFlipper.setOutAnimation(mAniPushLeftOut);
+		} else if (view < mCurrentView) {
+			mViewFlipper.setInAnimation(mAniPushRightIn);
+			mViewFlipper.setOutAnimation(mAniPushRightOut);
+		} else {
+			mViewFlipper.clearAnimation();
+		}
+		
 		mCurrentView = view;
 		mViewFlipper.setDisplayedChild(mCurrentView);
 	}
@@ -533,39 +524,8 @@ public class ShowActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		mLastCommand = item.getItemId();
 		switch (mLastCommand) {
-		case MENU_REMOTE_ORIGINAL:
-			commandLoadRemoteOriginal();
-
-			return true;
-
-		case MENU_REMOTE_TRANSLATION:
-			commandLoadRemoteTranslation();
-
-			return true;
-
-		case MENU_REMOTE_LYRIC:
-			commandLoadRemoteLyric();
-
-			return true;
-
 		case MENU_REMOTE_DOWNLOAD:
 			commandRemoteDownload();
-
-			return true;
-
-		case MENU_LOCAL_ORIGINAL:
-			commandLoadLocalOriginal();
-
-			return true;
-
-		case MENU_LOCAL_TRANSLATION:
-			commandLoadLocalTranslation();
-
-			return true;
-
-		case MENU_LOCAL_LYRIC:
-			commandLoadLocalLyric();
-
 			return true;
 		case MENU_REMOTE_HOME:
 		case MENU_LOCAL_HOME:
@@ -710,7 +670,7 @@ public class ShowActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		// no title bar
-		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
@@ -724,6 +684,9 @@ public class ShowActivity extends Activity {
 
 		// set up controls
 		setupWidgets();
+		
+		// set up animation
+		setupAnimation();
 
 		// set up database
 		mDatabaseHelper = new DatabaseHelper(this);
@@ -748,17 +711,6 @@ public class ShowActivity extends Activity {
 		// Log.d(TAG, "keywords -- " + keywords);
 		// mAdView.setKeywords(keywords);
 
-		// /////////////////////////////////////////////////////////////////////
-		// top button bar widget
-		// /////////////////////////////////////////////////////////////////////
-		// mBtnOriginal = (Button) findViewById(R.id.btn_original);
-		// mBtnTranslation = (Button) findViewById(R.id.btn_translation);
-		// mBtnLyric = (Button) findViewById(R.id.btn_lyric);
-		// mBtnDownload = (Button) findViewById(R.id.btn_download);
-		// if (!isRemote()) {
-		// mBtnDownload.setVisibility(View.GONE);
-		// }
-
 		LinearLayout root = (LinearLayout) findViewById(R.id.root);
 
 		WoobooAdView ad = new WoobooAdView(this,
@@ -769,6 +721,37 @@ public class ShowActivity extends Activity {
 		ad.setLayoutParams(params);
 
 		root.addView(ad);
+		
+		mTabBar = (TabBar) findViewById(R.id.tab_bar);
+		
+		int tabCount = 0;
+		mTabBar.addTab(new TabBar.TabSpec(getString(R.string.tab_origin), null));
+		if (isRemote()) {
+			mCommand[tabCount] = MENU_REMOTE_ORIGINAL;
+		} else {
+			mCommand[tabCount] = MENU_LOCAL_ORIGINAL;
+		}
+		tabCount++;
+		if (mArticle.hastextzh) {
+			mTabBar.addTab(new TabBar.TabSpec(getString(R.string.tab_translation), null));
+			if (isRemote()) {
+				mCommand[tabCount] = MENU_REMOTE_TRANSLATION;
+			} else {
+				mCommand[tabCount] = MENU_LOCAL_TRANSLATION;
+			}
+		}
+		tabCount++;
+		if (mArticle.haslrc) {
+			mTabBar.addTab(new TabBar.TabSpec(getString(R.string.tab_lyric), null));
+			if (isRemote()) {
+				mCommand[tabCount] = MENU_REMOTE_LYRIC;
+			} else {
+				mCommand[tabCount] = MENU_LOCAL_LYRIC;
+			}
+		} 
+		mTabBar.pack();
+		mTabBar.setOnTabChangeListener(mOnTabChangeListener);
+		mTabBar.setCurrentTab(0);
 
 		mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
 
@@ -829,6 +812,17 @@ public class ShowActivity extends Activity {
 		mProgressBar.setMax(PROGRESS_MAX);
 	}
 	
+	private void setupAnimation() {
+		mAniPushLeftIn = AnimationUtils.loadAnimation(this,
+	            R.anim.push_left_in);
+		mAniPushLeftOut = AnimationUtils.loadAnimation(this,
+	            R.anim.push_left_out);
+		mAniPushRightIn = AnimationUtils.loadAnimation(this, 
+				R.anim.push_right_in);
+		mAniPushRightOut = AnimationUtils.loadAnimation(this, 
+				R.anim.push_right_out);
+	}
+	
 	private long mLastSeekEventTime;
     private boolean mFromTouch = false;
 	
@@ -860,22 +854,6 @@ public class ShowActivity extends Activity {
             mFromTouch = false;
         }
     };
-
-	private View.OnClickListener mToolBarBtnOnClickListener = new View.OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			if (v == mBtnOriginal) {
-
-			} else if (v == mBtnTranslation) {
-
-			} else if (v == mBtnLyric) {
-
-			} else if (v == mBtnDownload) {
-
-			}
-		}
-	};
 
 	private void loadLocalOriginal() {
 		showDialog(DLG_PROGRESS_SPIN);

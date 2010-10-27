@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
 	<string name="app_name">口袋VOA</string>
 	<string name="app_version_label">版本: </string>
@@ -163,4 +163,7 @@
 	
 	<string name="prefs_title_font_size">字体大小</string>
 <string name="menu_main">主页</string>
+<string name="tab_translation">译文</string>
+    <string name="tab_origin">原文</string>
+    <string name="tab_lyric">字幕</string>
 </resources>

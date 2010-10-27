@@ -9,10 +9,23 @@
 		<attr name="isGoneWithoutAd" format="boolean" />
 	</declare-styleable>
 	
-	<declare-styleable name="cn.yo2.aquarium.pocketvoa.lyric.LyricView">
+	<declare-styleable name="LyricView">
 		<attr name="focusLineColor" format="color" />
 		<attr name="otherLineColor" format="color" />
 		<attr name="textSize" format="dimension" />
 		<attr name="errorMessage" format="string" />
 	</declare-styleable>
+	
+	<declare-styleable name="TabBar">
+        <attr name="tabTextColor" format="color"/>
+        <attr name="tabTextSize" format="dimension"/>
+        <attr name="tabWidth" format="dimension"/>
+        <attr name="tabHeight" format="dimension"/>
+        <attr name="tabSpacing" format="dimension"/>
+        <attr name="tabButtonDrawable" format="reference"/>
+        <attr name="tabBarDrawable" format="reference"/>
+        <attr name="tabHorizontalPadding" format="dimension"/>
+        <attr name="tabSeperatorDrawable" format="reference"/>
+        <attr name="tabSeperatorHeight" format="dimension"/>
+    </declare-styleable>
 </resources>

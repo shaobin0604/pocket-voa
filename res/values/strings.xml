@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
 	
 	
@@ -183,4 +183,7 @@
 	
 	<string name="prefs_title_font_size">Text size</string>
 <string name="menu_main">Home</string>
+<string name="tab_translation">Translation</string>
+    <string name="tab_origin">Original</string>
+    <string name="tab_lyric">Lyric</string>
 </resources>
