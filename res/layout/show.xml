@@ -11,7 +11,7 @@
 		android:layout_height="wrap_content"
 		pocketvoa:tabHorizontalPadding="1dip"
 		pocketvoa:tabHeight="40dip"
-		pocketvoa:tabSpacing="1dip"
+		pocketvoa:tabSpacing="0dip"
 		pocketvoa:tabTextSize="16sp"
 		pocketvoa:tabButtonDrawable="@drawable/tab_indicator"
 		pocketvoa:tabSeperatorDrawable="@color/tab_bar_seperator"
@@ -46,9 +46,11 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal" android:padding="5dip"
 		android:background="@drawable/tab_unselected">
+
 		<LinearLayout android:orientation="vertical"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
 			android:layout_weight="1.0">
 			<LinearLayout android:orientation="horizontal"
 				android:layout_width="fill_parent"
@@ -71,7 +73,7 @@
 				android:id="@+id/pb_audio"
         		style="?android:attr/progressBarStyleHorizontal"
         		android:layout_width="fill_parent"
-        		android:layout_height="wrap_content"
+        		android:layout_height="6.0dip"
         		android:max="1000"
         		android:progress="0"
         		android:secondaryProgress="0" />
@@ -81,6 +83,7 @@
         		android:layout_height="wrap_content"
         		android:max="1000"
         		android:progress="0"
+        		android:maxHeight="6.0dip"
         		android:secondaryProgress="0"/>
         		
         </LinearLayout>
@@ -88,7 +91,8 @@
 			android:id="@+id/btn_pause"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@android:drawable/ic_media_play"
+			android:layout_gravity="center_vertical"
+			android:background="@drawable/nowplaying_play_button"
 			/>
 	</LinearLayout>
 	<!-- 

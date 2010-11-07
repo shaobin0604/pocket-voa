@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
 	
 	
@@ -186,4 +186,13 @@
 <string name="tab_translation">Translation</string>
     <string name="tab_origin">Original</string>
     <string name="tab_lyric">Lyric</string>
+	<string name="title_update">Info</string>
+    <string name="msg_update_new_version">New release available, upgrade?\n Version: %1$s\n Release date: %2$s</string>
+	<string name="toast_no_network">No network connection</string>
+    
+    <string name="toast_no_need_upgrade">You have the latest version.</string>
+<string name="prefs_title_more_apps">More Apps</string>
+    <string name="menu_upgrade">Upgrade</string>
+    <string name="prefs_key_more_apps">prefs_key_more_apps</string>
+    <string name="msg_checking_update">Checking upgrade...</string>
 </resources>

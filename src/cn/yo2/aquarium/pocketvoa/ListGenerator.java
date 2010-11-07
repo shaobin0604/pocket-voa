@@ -1,7 +1,6 @@
 package cn.yo2.aquarium.pocketvoa;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;

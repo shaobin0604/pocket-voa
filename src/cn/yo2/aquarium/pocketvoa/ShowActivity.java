@@ -1307,9 +1307,9 @@ public class ShowActivity extends Activity {
 	private void setPauseButtonImage() {
 		try {
 			if (mService != null && mService.isPlaying()) {
-				mBtnPause.setImageResource(android.R.drawable.ic_media_pause);
+				mBtnPause.setBackgroundResource(R.drawable.nowplaying_pause_button);;
 			} else {
-				mBtnPause.setImageResource(android.R.drawable.ic_media_play);
+				mBtnPause.setBackgroundResource(R.drawable.nowplaying_play_button);
 			}
 		} catch (RemoteException ex) {
 			Log.e(TAG, "[setPauseButtonImage] RemoteException ", ex);

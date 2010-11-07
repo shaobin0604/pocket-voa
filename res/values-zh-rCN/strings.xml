@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
 	<string name="app_name">口袋VOA</string>
 	<string name="app_version_label">版本: </string>
@@ -123,8 +123,8 @@
     <string name="prefs_title_help">帮助</string>
     <string name="prefs_title_about">关于</string>
     
-    <string name="prefs_key_whatsnew">prefs_key_whatsnew</string>
-    <string name="prefs_key_help">prefs_key_help</string>
+    
+    
     <string name="prefs_key_about">prefs_key_about</string>
     
     
@@ -166,4 +166,11 @@
 <string name="tab_translation">译文</string>
     <string name="tab_origin">原文</string>
     <string name="tab_lyric">字幕</string>
+<string name="title_update">更新</string>
+    <string name="msg_update_new_version">发现新版本，立即更新？\n 版本号：%1$s\n发布日期：%2$s</string>
+<string name="toast_no_network">网络连接不可用</string>
+    <string name="menu_upgrade">升级</string>
+<string name="toast_no_need_upgrade">您当前的版本已经是最新的！</string>
+<string name="prefs_title_more_apps">更多应用</string>
+    <string name="msg_checking_update">正在检查更新...</string>
 </resources>

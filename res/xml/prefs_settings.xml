@@ -52,5 +52,9 @@
   		<Preference android:title="@string/prefs_title_help" 
   			android:key="@string/prefs_key_help" 
   			android:persistent="false"/>
+  		
+  		<Preference android:title="@string/prefs_title_more_apps" 
+  			android:key="@string/prefs_key_more_apps" 
+  			android:persistent="false"/>
 	</PreferenceCategory>
 </PreferenceScreen>

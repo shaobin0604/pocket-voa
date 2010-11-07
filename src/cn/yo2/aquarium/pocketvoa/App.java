@@ -39,6 +39,12 @@ public class App extends CrashReportingApplication {
 	private static final int MAX_TOTAL_CONN = 10;
 
 	private static final String DEFAULT_CHARSET = "utf-8";
+	
+	public static final String SITE_HOST = "http://aquarium-apps.heroku.com/";
+	public static final String URL_MY_APPS = SITE_HOST + "my_apps.html";
+	public static final String URL_CHECK_UPGRADE = SITE_HOST + "pocketvoa-version";
+	public static final String URL_DOWNLOAD_URL = SITE_HOST + "download/";
+	
 
 	public SharedPreferences mSharedPreferences;
 	

@@ -24,17 +24,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class Utils {
 	
 	private static final String TAG = Utils.class.getSimpleName();
 	private static final String PKG = Utils.class.getPackage().getName();
+	
+	private static final String KEY_VERSION_CODE = "versionCode";
 	
 	public static IMediaPlaybackService sService = null;
     private static HashMap<Context, ServiceBinder> sConnectionMap = new HashMap<Context, ServiceBinder>();
@@ -193,7 +202,7 @@ public class Utils {
 
 		NetworkInfo[] info = cm.getAllNetworkInfo();
 		if (info != null) {
-			int len = info.length;
+			final int len = info.length;
 			for (int i = 0; i < len; i++) {
 				if (info[i].getState() == NetworkInfo.State.CONNECTED) {
 					return true;
@@ -202,6 +211,66 @@ public class Utils {
 		}
 
 		return false;
+	}
+	
+	public static boolean isNetworkConnected(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		if (cm == null) 
+			return false;
+		
+		NetworkInfo info = cm.getActiveNetworkInfo();
+		
+		return (info != null && info.isConnected());
+	}
+	
+	public static int getCurrentVersionCode(Context context) {
+		PackageManager manager = context.getPackageManager();
+		String packageName = context.getPackageName();
+		// Log.d(CLASSTAG, "package name -- " + packageName);
+		try {
+			PackageInfo info = manager.getPackageInfo(packageName, 0);
+			return info.versionCode;
+		} catch (NameNotFoundException e) {
+			return 1;
+		}
+	}
+
+	/**
+	 * Check if application is just upgraded
+	 * 
+	 * @return
+	 */
+	public static boolean isJustUpgraded(Context context) {
+		int currentVersionCode = getCurrentVersionCode(context);
+		int savedVersionCode = getSavedVersionCode(context);
+		// Log.d(CLASSTAG, "current version code -- " + currentVersionCode);
+		// Log.d(CLASSTAG, "saved version code -- " + savedVersionCode);
+		return currentVersionCode != savedVersionCode;
+	}
+
+	/**
+	 * Get saved package version code from preferences
+	 * 
+	 * @return the saved package version code
+	 */
+	public static int getSavedVersionCode(Context context) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return preferences.getInt(KEY_VERSION_CODE, 0);
+	}
+
+	/**
+	 * Save current package version code to preferences
+	 */
+	public static void setSavedVersionCode(Context context) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor editor = preferences.edit();
+		editor.putInt(KEY_VERSION_CODE, getCurrentVersionCode(context));
+		editor.commit();
+	}
+	
+	public static void showNoNetworkToast(Context context) {
+		Toast.makeText(context, R.string.toast_no_network, Toast.LENGTH_SHORT).show();
 	}
 
 	public static File getAppDir() {

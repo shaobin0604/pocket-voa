@@ -3,6 +3,16 @@ package cn.yo2.aquarium.pocketvoa;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Entity;
+
 import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 
 import android.app.Activity;
@@ -20,6 +30,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -52,12 +64,11 @@ public class MainActivity extends Activity {
 	private static final String KEY_SAVED_ERROR = "key_saved_error";
 	private static final String KEY_SAVED_COMMAND = "key_saved_command";
 	private static final String KEY_SAVED_ARTICLE = "key_saved_article";
-	private static final String KEY_VERSION_CODE = "versionCode";
 	
 	private static final String CLASSTAG = MainActivity.class.getSimpleName();
 
 	private static final int MENU_SETTINGS = Menu.FIRST;
-	private static final int MENU_TEST     = Menu.FIRST + 1;
+	private static final int MENU_UPDATE     = Menu.FIRST + 1;
 	private static final int MENU_BACKUP   = Menu.FIRST + 2;
 	private static final int MENU_EXIT     = Menu.FIRST + 3;
 
@@ -410,10 +421,12 @@ public class MainActivity extends Activity {
 
 		commandRefreshLocalList();
 
-		if (isJustUpgraded()) {
-			setSavedVersionCode();
+		if (Utils.isJustUpgraded(this)) {
+			Utils.setSavedVersionCode(this);
 			showDialog(DLG_CHANGE_LOG);
 		}
+		
+		checkUpdateInBackground();
 	}
 
 	@Override
@@ -426,6 +439,119 @@ public class MainActivity extends Activity {
 	private void updateTitle() {
 		setTitle(getString(R.string.app_name) + " - "
 				+ mApp.mDataSource.getName());
+	}
+
+	private void checkUpdateInBackground() {
+		new CheckNewVersionTask(false).execute((Void)null);
+	}
+	
+	private void checkUpdateInForeground() {
+		new CheckNewVersionTask(true).execute((Void)null);
+	}
+	
+	private class CheckNewVersionTask extends AsyncTask<Void, Void, String[]> {
+		
+		private final boolean mShowProgress;
+		private ProgressDialog mProgressDialog;
+		
+		public CheckNewVersionTask(boolean showProgress) {
+			mShowProgress = showProgress;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			if (mShowProgress) {
+				if (mProgressDialog == null) {
+					mProgressDialog = new ProgressDialog(MainActivity.this);
+					mProgressDialog.setMessage(MainActivity.this.getString(R.string.msg_checking_update));
+				}
+				
+				if (!mProgressDialog.isShowing())
+					mProgressDialog.show();
+			}
+		}
+		
+		
+		
+		@Override
+		protected String[] doInBackground(Void... params) {
+			if (!Utils.isNetworkConnected(MainActivity.this)) {
+				Utils.showNoNetworkToast(MainActivity.this);
+			} else {
+				HttpGet get = new HttpGet(App.URL_CHECK_UPGRADE);
+				HttpClient client = mApp.mHttpClient;
+				
+				try {
+					HttpResponse response = client.execute(get);
+					HttpEntity entity = response.getEntity();
+					
+					String body = EntityUtils.toString(entity, "utf-8");
+					
+					JSONObject json = new JSONObject(body);
+					
+					String versionName = json.getString("versionName");
+					String versionCode = json.getString("versionCode");
+					String file = json.getString("file");
+					
+					Log.d(CLASSTAG, "versionName -> " + versionName);
+					Log.d(CLASSTAG, "versionCode -> " + versionCode);
+					Log.d(CLASSTAG, "file -> " + file);
+					
+					return new String[] {versionName, versionCode, file};
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String[] result) {
+			if (mShowProgress && mProgressDialog != null && mProgressDialog.isShowing()) {
+				mProgressDialog.dismiss();
+			}
+			
+			if (result != null) {
+				final String serverVersionName = result[0];
+				final Long serverVersionCode = Long.valueOf(result[1]);
+				final String serverFile = result[2];
+				
+				StringBuilder sb = new StringBuilder(result[1]);
+				sb.insert(4, '-');
+				sb.insert(7, '-');
+				
+				final String serverReleaseDate = sb.toString();
+				
+				if (Utils.getCurrentVersionCode(MainActivity.this) < serverVersionCode) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+					
+					builder.setIcon(android.R.drawable.ic_dialog_info);
+					builder.setTitle(R.string.title_update);
+					builder.setMessage(MainActivity.this.getString(R.string.msg_update_new_version, serverVersionName, serverReleaseDate));
+					builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(App.URL_DOWNLOAD_URL + serverFile));
+							startActivity(intent);
+						}
+					});
+					builder.setNegativeButton(android.R.string.cancel, null);
+					builder.create().show();
+				} else {
+					if (mShowProgress)
+						Toast.makeText(MainActivity.this, R.string.toast_no_need_upgrade, Toast.LENGTH_LONG).show();
+				}
+			}
+		}
 	}
 
 	private void setupRemoteTabWidgets() {
@@ -577,6 +703,7 @@ public class MainActivity extends Activity {
 		mTabHost.setCurrentTab(0);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void extractTypesRemote() {
 		// mTypesRemote = getResources().getStringArray(R.array.type);
 		//
@@ -607,6 +734,7 @@ public class MainActivity extends Activity {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void extractTypesLocal() {
 		// local types: add all option
 		// mTypesLocal = getResources().getStringArray(R.array.type_local);
@@ -641,7 +769,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(Menu.NONE, MENU_SETTINGS, Menu.NONE, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, MENU_TEST, Menu.NONE, R.string.menu_internet_status).setIcon(R.drawable.signal);
+		menu.add(Menu.NONE, MENU_UPDATE, Menu.NONE, R.string.menu_upgrade).setIcon(R.drawable.signal);
 		menu.add(Menu.NONE, MENU_BACKUP, Menu.NONE, R.string.menu_backup).setIcon(R.drawable.backup_48);
 		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit).setIcon(R.drawable.exit_48);
 
@@ -655,8 +783,8 @@ public class MainActivity extends Activity {
 		case MENU_SETTINGS:
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
-		case MENU_TEST:
-			testInternet();
+		case MENU_UPDATE:
+			checkUpdateInForeground();
 			return true;
 		case MENU_BACKUP:
 			finish();
@@ -1166,49 +1294,7 @@ public class MainActivity extends Activity {
 		}.start();
 	}
 
-	private int getCurrentVersionCode() {
-		PackageManager manager = getPackageManager();
-		String packageName = getPackageName();
-		// Log.d(CLASSTAG, "package name -- " + packageName);
-		try {
-			PackageInfo info = manager.getPackageInfo(packageName, 0);
-			return info.versionCode;
-		} catch (NameNotFoundException e) {
-			return 1;
-		}
-	}
-
-	/**
-	 * Check if application is just upgraded
-	 * 
-	 * @return
-	 */
-	private boolean isJustUpgraded() {
-		int currentVersionCode = getCurrentVersionCode();
-		int savedVersionCode = getSavedVersionCode();
-		// Log.d(CLASSTAG, "current version code -- " + currentVersionCode);
-		// Log.d(CLASSTAG, "saved version code -- " + savedVersionCode);
-		return currentVersionCode != savedVersionCode;
-	}
-
-	/**
-	 * Get saved package version code from preferences
-	 * 
-	 * @return the saved package version code
-	 */
-	private int getSavedVersionCode() {
-		return getPreferences(MODE_PRIVATE).getInt(KEY_VERSION_CODE, 0);
-	}
-
-	/**
-	 * Save current package version code to preferences
-	 */
-	private void setSavedVersionCode() {
-		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-		Editor editor = preferences.edit();
-		editor.putInt(KEY_VERSION_CODE, getCurrentVersionCode());
-		editor.commit();
-	}
+	
 
 	private void parseArticleInfo(final Article article) throws IOException,
 			IllegalContentFormatException {

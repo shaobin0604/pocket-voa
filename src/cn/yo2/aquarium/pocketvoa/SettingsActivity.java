@@ -2,6 +2,7 @@ package cn.yo2.aquarium.pocketvoa;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -16,6 +17,7 @@ public class SettingsActivity extends PreferenceActivity {
 	private Preference mHelp;
 	private Preference mAbout;
 	private Preference mChangeLog;
+	private Preference mMoreApps;
 	
 	
 
@@ -56,7 +58,10 @@ public class SettingsActivity extends PreferenceActivity {
 
 		mHelp = findPreference(getString(R.string.prefs_key_help));
 		mHelp.setIntent(new Intent(this, HelpActivity.class));
-
+		
+		mMoreApps = findPreference(getString(R.string.prefs_key_more_apps));
+		mMoreApps.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(App.URL_MY_APPS)));
+		
 		mAbout = findPreference(getString(R.string.prefs_key_about));
 		mAbout.setOnPreferenceClickListener(mOnPreferenceClickListener);
 
