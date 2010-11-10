@@ -453,6 +453,7 @@ public class MainActivity extends Activity {
 		
 		private final boolean mShowProgress;
 		private ProgressDialog mProgressDialog;
+		private boolean mNetworkConnected;
 		
 		public CheckNewVersionTask(boolean showProgress) {
 			mShowProgress = showProgress;
@@ -475,9 +476,8 @@ public class MainActivity extends Activity {
 		
 		@Override
 		protected String[] doInBackground(Void... params) {
-			if (!Utils.isNetworkConnected(MainActivity.this)) {
-				Utils.showNoNetworkToast(MainActivity.this);
-			} else {
+			mNetworkConnected = Utils.isNetworkConnected(MainActivity.this);
+			if (mNetworkConnected) {
 				HttpGet get = new HttpGet(App.URL_CHECK_UPGRADE);
 				HttpClient client = mApp.mHttpClient;
 				
@@ -491,13 +491,15 @@ public class MainActivity extends Activity {
 					
 					String versionName = json.getString("versionName");
 					String versionCode = json.getString("versionCode");
+					String whatsnew = json.getString("whatsnew");
 					String file = json.getString("file");
 					
 					Log.d(CLASSTAG, "versionName -> " + versionName);
 					Log.d(CLASSTAG, "versionCode -> " + versionCode);
+					Log.d(CLASSTAG, "whatsnew -> " + whatsnew);
 					Log.d(CLASSTAG, "file -> " + file);
 					
-					return new String[] {versionName, versionCode, file};
+					return new String[] {versionName, versionCode, whatsnew, file};
 				} catch (ClientProtocolException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -517,25 +519,32 @@ public class MainActivity extends Activity {
 		protected void onPostExecute(String[] result) {
 			if (mShowProgress && mProgressDialog != null && mProgressDialog.isShowing()) {
 				mProgressDialog.dismiss();
+				
+				if (!mNetworkConnected) {
+					Utils.showNoNetworkToast(MainActivity.this);
+				}
 			}
 			
+			
 			if (result != null) {
-				final String serverVersionName = result[0];
+//				final String serverVersionName = result[0];
 				final Long serverVersionCode = Long.valueOf(result[1]);
-				final String serverFile = result[2];
+				final String whatsnew = result[2];
+				final String serverFile = result[3];
 				
-				StringBuilder sb = new StringBuilder(result[1]);
-				sb.insert(4, '-');
-				sb.insert(7, '-');
+//				StringBuilder sb = new StringBuilder(result[1]);
+//				sb.insert(4, '-');
+//				sb.insert(7, '-');
 				
-				final String serverReleaseDate = sb.toString();
+//				final String serverReleaseDate = sb.toString();
 				
 				if (Utils.getCurrentVersionCode(MainActivity.this) < serverVersionCode) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 					
 					builder.setIcon(android.R.drawable.ic_dialog_info);
 					builder.setTitle(R.string.title_update);
-					builder.setMessage(MainActivity.this.getString(R.string.msg_update_new_version, serverVersionName, serverReleaseDate));
+					builder.setMessage(MainActivity.this.getString(R.string.msg_update_new_version, whatsnew));
+
 					builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 						
 						@Override

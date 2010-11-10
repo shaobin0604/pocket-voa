@@ -57,7 +57,7 @@
 	
 	<string name="toast_open_context_menu">长按列表项弹出环境菜单</string>
 	<string name="toast_article_deleted">文章已删除</string>
-	<string name="toast_download_start">开始下载...</string>
+	<string name="toast_download_start">已加入下载队列</string>
 	<string name="toast_download_audio_complete">音频下载完成</string>
 	<string name="toast_download_text_complete">文本下载完成</string>
 	
@@ -166,8 +166,8 @@
 <string name="tab_translation">译文</string>
     <string name="tab_origin">原文</string>
     <string name="tab_lyric">字幕</string>
-<string name="title_update">更新</string>
-    <string name="msg_update_new_version">发现新版本，立即更新？\n 版本号：%1$s\n发布日期：%2$s</string>
+<string name="title_update">软件升级</string>
+    <string name="msg_update_new_version">发现新版本，立即更新？\n\n%1$s</string>
 <string name="toast_no_network">网络连接不可用</string>
     <string name="menu_upgrade">升级</string>
 <string name="toast_no_need_upgrade">您当前的版本已经是最新的！</string>
