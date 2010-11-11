@@ -1,6 +1,6 @@
 Pocket VOA - An online/offline reader for Voice of America news program.
 
-Version 1.2.5 [10/11/2010]
+Version 1.2.5 [10/11/2011]
 	- New: Add SeekBar for local audio.
 	- New: Improve UI.
 	- New: Check new version release.

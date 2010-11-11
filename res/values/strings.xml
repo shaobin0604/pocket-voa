@@ -195,4 +195,5 @@
     <string name="menu_upgrade">Upgrade</string>
     <string name="prefs_key_more_apps">prefs_key_more_apps</string>
     <string name="msg_checking_update">Checking upgrade...</string>
+<string name="btn_more_apps">More Apps</string>
 </resources>

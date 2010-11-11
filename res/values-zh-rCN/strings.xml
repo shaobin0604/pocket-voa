@@ -173,4 +173,5 @@
 <string name="toast_no_need_upgrade">您当前的版本已经是最新的！</string>
 <string name="prefs_title_more_apps">更多应用</string>
     <string name="msg_checking_update">正在检查更新...</string>
+<string name="btn_more_apps">更多软件</string>
 </resources>

@@ -16,8 +16,7 @@
 	</ImageView>
 	<TextView
 		android:id="@+id/tv_app_name"
-		android:textStyle="bold"
-		android:textColor="#FFFFFFFF"
+		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft="20.0dip"
@@ -28,7 +27,7 @@
 		>
 	</TextView>
 	<TextView
-		android:textSize="12.0dip"
+		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:id="@+id/tv_app_version_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -38,7 +37,7 @@
 		>
 	</TextView>
 	<TextView
-		android:textSize="12.0dip"
+		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:id="@+id/tv_app_version"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -56,29 +55,29 @@
 		android:layout_below="@id/iv_icon"
 		android:gravity="center_horizontal" >
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/app_author_label" />
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/app_author" />
 		<TextView
 			android:layout_marginLeft="5.0dip"
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="[" />
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:autoLink="email"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/app_email" />
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="]" />
@@ -91,12 +90,12 @@
 		android:layout_below="@id/author" 
 		android:gravity="center_horizontal" >
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/app_license_label" />
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/app_license" />
@@ -110,12 +109,12 @@
 		android:layout_below="@id/license"
 		android:gravity="center_horizontal" >
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/app_website_label" />
 		<TextView
-			android:textSize="12.0dip"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:autoLink="web"
 			android:linksClickable="true"
 			android:layout_width="wrap_content"

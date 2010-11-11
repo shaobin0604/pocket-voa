@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -510,20 +511,20 @@ public class Utils {
 		return sb;
 	}
 	
-	public static Dialog createAboutDialog(Context context) {
+	public static Dialog createAboutDialog(final Context context) {
 		LayoutInflater inflater = LayoutInflater.from(context);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setView(inflater.inflate(R.layout.about, null));
 		builder.setTitle(R.string.alert_title_about);
-		builder.setNeutralButton(R.string.btn_ok,
+		builder.setNeutralButton(R.string.btn_more_apps,
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
-						// 
-
+						context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(App.URL_MY_APPS)));
 					}
 				});
+		builder.setPositiveButton(R.string.btn_ok, null);
 		return builder.create();
 	}
 	
