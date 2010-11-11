@@ -49,7 +49,7 @@ import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
 import cn.yo2.aquarium.pocketvoa.ui.TabBar;
 import cn.yo2.aquarium.pocketvoa.ui.TabBar.OnTabChangeListener;
 
-import com.wooboo.adlib_android.WoobooAdView;
+//import com.wooboo.adlib_android.WoobooAdView;
 
 public class ShowActivity extends Activity {
 	private static final int MAX_TABS = 3;
@@ -713,14 +713,14 @@ public class ShowActivity extends Activity {
 
 		LinearLayout root = (LinearLayout) findViewById(R.id.root);
 
-		WoobooAdView ad = new WoobooAdView(this,
-				"190d2111a7d140fc8ca9deea453b9003", Color.TRANSPARENT,
-				Color.WHITE, false, 30, 48, 8);
-		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
-				LayoutParams.WRAP_CONTENT);
-		ad.setLayoutParams(params);
+//		WoobooAdView ad = new WoobooAdView(this,
+//				"190d2111a7d140fc8ca9deea453b9003", Color.TRANSPARENT,
+//				Color.WHITE, false, 30, 48, 8);
+//		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
+//				LayoutParams.WRAP_CONTENT);
+//		ad.setLayoutParams(params);
 
-		root.addView(ad);
+//		root.addView(ad);
 		
 		mTabBar = (TabBar) findViewById(R.id.tab_bar);
 		

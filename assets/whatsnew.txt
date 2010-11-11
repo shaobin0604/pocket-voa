@@ -5,6 +5,7 @@ Version 1.2.5 [10/11/2011]
 	- New: Improve UI.
 	- New: Check new version release.
 	- New: Disable concurrent download task.
+	- New: Remove Wooboo AD.
 	
 Version 1.2.4 [19/09/2010]
 	- Fix: Cannot view article due to data source content format changed.

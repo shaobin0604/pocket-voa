@@ -3,8 +3,9 @@ Pocket VOA - An online/offline reader for Voice of America news program.
 Version 1.2.5 [11/11/2010]
 	- New: Add SeekBar for local audio.
 	- New: Improve UI.
-	- New: Check new version release.
+	- New: Automatic upgrade.
 	- New: Disable concurrent download task.
+	- New: Remove Wooboo AD.
 	
 Version 1.2.4 [19/09/2010]
 	- Fix: Cannot view article due to data source content format changed.
