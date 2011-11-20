@@ -33,7 +33,16 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent" 
 			/>
+		<!-- 
 		<cn.yo2.aquarium.pocketvoa.lyric.LyricView
+			android:id="@+id/lyricview" 
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			pocketvoa:textSize="16dip"
+			pocketvoa:errorMessage="@string/no_lyric"
+			/>
+		 -->		
+		<cn.yo2.aquarium.pocketvoa.lyric.LyricView2
 			android:id="@+id/lyricview" 
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
@@ -95,14 +104,9 @@
 			android:background="@drawable/nowplaying_play_button"
 			/>
 	</LinearLayout>
-	<!-- 
-	<com.admob.android.ads.AdView
-    	android:id="@+id/ad" 
-    	android:layout_width="fill_parent" 
-    	android:layout_height="wrap_content"
-    	pocketvoa:backgroundColor="#000000"
-    	pocketvoa:textColor="#FFFFFF" 
-    	pocketvoa:isGoneWithoutAd="true" 
-    	pocketvoa:refreshInterval="60" />
-     -->
+	
+	<LinearLayout
+	    android:id="@+id/adLayout"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"/>
 </LinearLayout>

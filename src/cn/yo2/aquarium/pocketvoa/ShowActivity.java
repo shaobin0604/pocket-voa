@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,13 +24,13 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
@@ -45,13 +44,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import cn.yo2.aquarium.pocketvoa.lyric.LyricView;
+import cn.yo2.aquarium.pocketvoa.lyric.LyricView2;
 import cn.yo2.aquarium.pocketvoa.ui.TabBar;
 import cn.yo2.aquarium.pocketvoa.ui.TabBar.OnTabChangeListener;
 
-//import com.wooboo.adlib_android.WoobooAdView;
+import com.adview.AdViewInterface;
+import com.adview.AdViewLayout;
+import com.adview.AdViewTargeting;
+import com.adview.AdViewTargeting.RunMode;
+import com.adview.AdViewTargeting.UpdateMode;
 
-public class ShowActivity extends Activity {
+
+public class ShowActivity extends Activity implements AdViewInterface {
 	private static final int MAX_TABS = 3;
 
 	private static final String TAG = ShowActivity.class.getSimpleName();
@@ -133,6 +137,8 @@ public class ShowActivity extends Activity {
 
 	private ProgressDialog mProgressDialogSpin;
 	private ProgressDialog mProgressDialogBar;
+	
+	private int mPannelWidth;
 
 	// private AdView mAdView;
 	
@@ -338,7 +344,8 @@ public class ShowActivity extends Activity {
 		mLyricHandler.removeMessages(WHAT_REFRESH_LYRIC);
 	}
 
-	private LyricView mLyricView;
+//	private LyricView mLyricView;
+	private LyricView2 mLyricView;
 
 	private OnClickListener mStopButtonClickListener = new View.OnClickListener() {
 
@@ -516,8 +523,9 @@ public class ShowActivity extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else
+		} else {
 			loadLocalLyricView();
+		}
 	}
 
 	@Override
@@ -547,7 +555,7 @@ public class ShowActivity extends Activity {
 				try {
 					mLocalLyricLoaded = mLyricView
 							.loadLyric(new FileInputStream(Utils
-									.localLyricFile(mArticle)));
+									.localLyricFile(mArticle)), mPannelWidth);
 					if (mLocalLyricLoaded)
 						mLoadLocalHandler
 								.sendEmptyMessage(WHAT_LOAD_LOCAL_LYRIC_SUCCESS);
@@ -573,7 +581,7 @@ public class ShowActivity extends Activity {
 				try {
 					mRemoteLyricLoaded = mLyricView.loadLyric(Utils
 							.getInputStreamFromUrl(mApp.mHttpClient,
-									mArticle.urllrc));
+									mArticle.urllrc), mPannelWidth);
 					Log.d(TAG, "loadRemoteLyricView: " + mRemoteLyricLoaded);
 					if (mRemoteLyricLoaded) {
 						mLoadRemoteHandler
@@ -687,6 +695,14 @@ public class ShowActivity extends Activity {
 		
 		// set up animation
 		setupAnimation();
+		
+		// set up AdView
+		setupAdView();
+		
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		
+		mPannelWidth = metrics.widthPixels - 20;
 
 		// set up database
 		mDatabaseHelper = new DatabaseHelper(this);
@@ -781,7 +797,8 @@ public class ShowActivity extends Activity {
 		settingsZh.setSupportZoom(true);
 		settingsZh.setBuiltInZoomControls(true);
 
-		mLyricView = (LyricView) findViewById(R.id.lyricview);
+		mLyricView = (LyricView2) findViewById(R.id.lyricview);
+//		mlyricview = (LyricView) findViewById(R.id.lyricview);
 
 		mBtnPause = (ImageButton) findViewById(R.id.btn_pause);
 
@@ -810,6 +827,21 @@ public class ShowActivity extends Activity {
 		}
 		
 		mProgressBar.setMax(PROGRESS_MAX);
+	}
+	
+	private void setupAdView() {
+		LinearLayout layout = (LinearLayout)findViewById(R.id.adLayout);
+        if (layout == null) 
+            return;
+        /*下面两行只用于测试,完成后一定要去掉,参考文挡说明*/
+//      AdViewTargeting.setUpdateMode(UpdateMode.EVERYTIME); //保证每次都从服务器取配置
+//      AdViewTargeting.setRunMode(RunMode.TEST);         //保证所有选中的广告公司都为测试状态
+        /*下面这句方便开发者进行发布渠道统计,详细调用可以参考java doc  */
+        //AdViewTargeting.setChannel(Channel.GOOGLEMARKET);
+        AdViewLayout adViewLayout = new AdViewLayout(this, "SDK20112331411026bz86cfvj90oy3iv");
+        adViewLayout.setAdViewInterface(this);
+        layout.addView(adViewLayout);
+        layout.invalidate();   
 	}
 	
 	private void setupAnimation() {
@@ -1337,4 +1369,16 @@ public class ShowActivity extends Activity {
 			finish();
 		}
 	}
+
+	@Override
+	public void onClickAd() {
+		Log.d(TAG, "[onClickAd]");
+	}
+
+	@Override
+	public void onDisplayAd() {
+		Log.d(TAG, "[onDisplayAd]");
+	}
+	
+	
 }

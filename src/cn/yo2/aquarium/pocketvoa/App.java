@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import cn.yo2.aquarium.logutils.MyLog;
 import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 
 public class App extends CrashReportingApplication {
@@ -72,6 +73,8 @@ public class App extends CrashReportingApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		MyLog.initLog("Pocket VOA", true, false);
 
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(this);

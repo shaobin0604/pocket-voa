@@ -3,6 +3,8 @@ package cn.yo2.aquarium.pocketvoa.parser.voa51;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.util.Log;
+
 import cn.yo2.aquarium.pocketvoa.Article;
 import cn.yo2.aquarium.pocketvoa.IllegalContentFormatException;
 import cn.yo2.aquarium.pocketvoa.parser.AbstractPageParser;
@@ -25,7 +27,10 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 		
 		String content = body.substring(contentStart, listadsStart);
 
-		Pattern audioPattern = Pattern.compile("Player\\(\"([^\\s]+)\"\\)",
+//		Pattern audioPattern = Pattern.compile("Player\\(\"([^\\s]+)\"\\)",
+//				Pattern.CASE_INSENSITIVE);
+		
+		Pattern audioPattern = Pattern.compile("href=\"?([^\\s]+\\.mp3)\"?",
 				Pattern.CASE_INSENSITIVE);
 
 		Matcher audioMatcher = audioPattern.matcher(content);
@@ -35,6 +40,8 @@ public class PopularAmericanPageParser extends AbstractPageParser {
 		} else {
 			throw new IllegalContentFormatException("Cannot find match mp3");
 		}
+		
+		Log.d(CLASSTAG, "parse() article.urlmp3 = " + article.urlmp3);
 
 		int textStart = 0;
 

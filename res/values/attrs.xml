@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<attr name="focusLineColor" format="color" />
+	<attr name="otherLineColor" format="color" />
+	<attr name="textSize" format="dimension" />
+	<attr name="errorMessage" format="string" />
+    
 	<declare-styleable name="com.admob.android.ads.AdView">
 		<attr name="testing" format="boolean" />
 		<attr name="backgroundColor" format="color" />
@@ -10,10 +15,17 @@
 	</declare-styleable>
 	
 	<declare-styleable name="LyricView">
-		<attr name="focusLineColor" format="color" />
-		<attr name="otherLineColor" format="color" />
-		<attr name="textSize" format="dimension" />
-		<attr name="errorMessage" format="string" />
+		<attr name="focusLineColor"/>
+		<attr name="otherLineColor"/>
+		<attr name="textSize"/>
+		<attr name="errorMessage"/>
+	</declare-styleable>
+	
+	<declare-styleable name="LyricView2">
+		<attr name="focusLineColor"/>
+		<attr name="otherLineColor"/>
+		<attr name="textSize"/>
+		<attr name="errorMessage"/>
 	</declare-styleable>
 	
 	<declare-styleable name="TabBar">

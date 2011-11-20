@@ -4,5 +4,11 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="libs/acra-2.0.3.jar"/>
+	<classpathentry kind="lib" path="libs/adlib_android.jar"/>
+	<classpathentry kind="lib" path="libs/AdViewSDK_Android.jar"/>
+	<classpathentry kind="lib" path="libs/adwosdk2.5.1.jar"/>
+	<classpathentry kind="lib" path="libs/domob_android_sdk.jar"/>
+	<classpathentry kind="lib" path="libs/youmi-android.jar"/>
+	<classpathentry kind="src" path="LogUtils_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<manifest android:versionCode="20101111"
+<manifest 
+	android:versionCode="20111120"
     android:versionName="@string/app_version"
     package="cn.yo2.aquarium.pocketvoa" xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:icon="@drawable/icon"
@@ -28,14 +29,44 @@
         <!-- 
         <meta-data android:value="a14b2909c8cc25e" android:name="ADMOB_PUBLISHER_ID" />
 		 -->
-        <activity android:name=".SplashActivity" android:screenOrientation="portrait">
-        </activity>
+        <activity android:name=".SplashActivity" android:screenOrientation="portrait"/>
+        
+        <!-- AdView SDK for AdWo -->  
+		<activity android:name="com.adwo.adsdk.AdwoAdBrowserActivity" /> 
+		
+		<!-- AdView SDK for Domob --> 
+		<activity android:name="cn.domob.android.ads.DomobActivity"
+			android:theme =  "@android:style/Theme.Translucent" />
+		
+		<!-- AdView SDK for Wooboo -->
+    	<meta-data android:value="1" android:name="Market_ID"/>
+		<activity android:name="com.wooboo.adlib_android.AdActivity" 
+			android:configChanges="orientation|keyboardHidden" 
+			android:launchMode="singleTask" /> 
+    	<activity android:name="com.wooboo.adlib_android.FullActivity" 
+			android:configChanges="orientation|keyboardHidden" 
+			android:launchMode="singleTask" />
+
+    	<!-- AdView SDK for Youmi --> 
+    	<activity android:name="net.youmi.android.AdActivity"
+			android:configChanges="keyboard|keyboardHidden|orientation"/>
     </application>
-    <uses-sdk android:minSdkVersion="3"/>
+    
+    <uses-sdk android:minSdkVersion="4"/>
+    
+    <supports-screens android:anyDensity="true"
+    	android:smallScreens="true"
+    	android:normalScreens="true"
+    	android:largeScreens="true"/>
+    
+    <!-- AdView SDK mandatory or important permissions -->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-     -->
 </manifest>
