@@ -275,12 +275,12 @@ public class LyricView2 extends FrameLayout {
 		@Override
 		protected void onDraw(Canvas canvas) {
 			super.onDraw(canvas);
-			MyLog.d("onDraw");
+//			MyLog.d("onDraw");
 			
 			final int offsetX = getWidth() / 2;
 			
 			if (mLyricLoaded) {
-				MyLog.d("lyric loaded");
+//				MyLog.d("lyric loaded");
 				LineBreak lineBreak;
 				final int size = mLineBreaks.size();
 				for (int i = 0, offsetY = 0; i < size; i++) {
