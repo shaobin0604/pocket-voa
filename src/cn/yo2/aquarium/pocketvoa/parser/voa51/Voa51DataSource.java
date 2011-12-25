@@ -15,7 +15,7 @@ public class Voa51DataSource implements IDataSource {
 	static final String URL_ENGLISH_NEWS            = HOST + "/VOA_Standard_%d.html";
 
 	// special English
-	static final String URL_DEVELOPMENT_REPORT      = HOST + "/Development_Report_%d.html";
+	static final String URL_TECHNOLOGY_REPORT       = HOST + "/Technology_Report_%d.html";
 	static final String URL_THIS_IS_AMERICA         = HOST + "/This_is_America_%d.html";
 	static final String URL_AGRICULTURE_REPORT      = HOST + "/Agriculture_Report_%d.html";
 	static final String URL_SCIENCE_IN_THE_NEWS     = HOST + "/Science_in_the_News_%d.html";
@@ -82,7 +82,7 @@ public class Voa51DataSource implements IDataSource {
 		mListUrls.put(STANDARD_ENGLISH + SEPERATOR + ENGLISH_NEWS, URL_ENGLISH_NEWS);
 
 		// special English
-		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,      URL_DEVELOPMENT_REPORT);
+		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + TECHNOLOGY_REPORT,      URL_TECHNOLOGY_REPORT);
 		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,         URL_THIS_IS_AMERICA);
 		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + AGRICULTURE_REPORT,      URL_AGRICULTURE_REPORT);
 		mListUrls.put(SPECIAL_ENGLISH + SEPERATOR + SCIENCE_IN_THE_NEWS,     URL_SCIENCE_IN_THE_NEWS);
@@ -116,8 +116,8 @@ public class Voa51DataSource implements IDataSource {
 		/*
 		 *  special English
 		 */
-		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,
-				new StandardEnglishListParser(SPECIAL_ENGLISH, DEVELOPMENT_REPORT));
+		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + TECHNOLOGY_REPORT,
+				new StandardEnglishListParser(SPECIAL_ENGLISH, TECHNOLOGY_REPORT));
 		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,
 				new StandardEnglishListParser(SPECIAL_ENGLISH, THIS_IS_AMERICA));
 		mListParsers.put(SPECIAL_ENGLISH + SEPERATOR + AGRICULTURE_REPORT,
@@ -174,7 +174,7 @@ public class Voa51DataSource implements IDataSource {
 		/*
 		 *  special English
 		 */
-		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,
+		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + TECHNOLOGY_REPORT,
 				new StandardEnglishPageParser());
 		mPageParsers.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,
 				new StandardEnglishPageParser());
@@ -229,7 +229,7 @@ public class Voa51DataSource implements IDataSource {
 		/*=====================================================================
 		 *  special English
 		 ====================================================================*/
-		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + DEVELOPMENT_REPORT,
+		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + TECHNOLOGY_REPORT,
 				new StandardEnglishPageZhParser());
 		mPageZhParsers.put(SPECIAL_ENGLISH + SEPERATOR + THIS_IS_AMERICA,
 				new StandardEnglishPageZhParser());

@@ -19,6 +19,10 @@
 	<string name="alert_title_internet_status">網路連接狀態</string>
 	<string name="alert_msg_internet_status_connected">已連接</string>
 	<string name="alert_msg_internet_status_disconnected">已斷開</string>
+	
+	<string name="alert_title_confirm_exit">退出應用?</string>
+	<string name="alert_button_exit">退出</string>
+	<string name="alert_button_go_background">後臺</string>
 
 	<string name="alert_title_about">關於</string>
 

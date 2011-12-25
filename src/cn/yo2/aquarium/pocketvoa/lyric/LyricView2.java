@@ -71,6 +71,19 @@ public class LyricView2 extends FrameLayout {
 		
 	};
 	
+	public boolean loadLyric(String lyricText, int width) {
+		MyLog.d("in loadLyric");
+		mLyricLoaded = mLyric.parseLyric(lyricText);
+		if (mLyricLoaded) {
+			resetLyric();
+			
+			breakLyrics(width);
+			
+			mHandler.sendEmptyMessage(WHAT_LYRIC_LOAD_OK);
+		}
+		return mLyricLoaded;
+	}
+	
 	public boolean loadLyric(InputStream is, int width) {
 		MyLog.d("in loadLyric");
 		mLyricLoaded = mLyric.parseLyric(is);
@@ -350,18 +363,54 @@ public class LyricView2 extends FrameLayout {
 			int maxlen = text.length();
 			int totallen = 0;
 			int measured = 0;
-			
+			int wordCompletePos = 0;
 			while (totallen < maxlen) {
 				measured = paint.breakText(text, totallen, maxlen, true, width, null);
-				
+				wordCompletePos = findPrevWordCompletePos(text, totallen + measured);
+				measured = wordCompletePos - totallen;
 				lineBreak.addLine(text.substring(totallen, totallen + measured));
-				
 				totallen += measured;
 			}
 			
 			lineBreak.setHeight(height * lineBreak.getLineCount());
 			
 			return lineBreak;
+		}
+		
+		private static boolean isWordComplete(String text, int index) {
+			int len = text.length();
+			
+			if (index < len) {
+				char c = text.charAt(index);
+				switch (c) {
+				case ' ':
+				case '\t':
+				case '\r':
+				case '\n':
+					return true;
+				default:
+					return false;
+				}
+			} else {
+				return true;
+			}
+		}
+		
+		private static int findPrevWordCompletePos(String text, int index) {
+			int length = text.length();
+			
+			if (index < length) {
+			
+				for (int i = index; i >= 0; i--) {
+					if (isWordComplete(text, i)) {
+						return i;
+					}
+				}
+				
+				return index;
+			} else {
+				return index;
+			}
 		}
 	}
 }

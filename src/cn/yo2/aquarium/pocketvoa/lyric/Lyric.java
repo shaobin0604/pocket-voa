@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,46 @@ public class Lyric {
 			s.mFromTime -= time;
 			s.mToTime -= time;
 		}
+	}
+	
+	public boolean parseLyric(String lyricText) {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new StringReader(lyricText));
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				parseLine(line);
+			}
+		} catch (Exception ex) {
+			Log.e(TAG, "Error in parseLyric");
+			return false;
+		} finally {
+			if (br != null)
+				try {
+					br.close();
+				} catch (IOException e) {
+					// Omit it
+				}
+		}
+		// sort sentence by mBgnTime
+		Collections.sort(list);
+
+		// set mEndTime attribute of each line
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			Sentence next = null;
+			if (i + 1 < size) {
+				next = list.get(i + 1);
+			}
+			Sentence now = list.get(i);
+			if (next != null) {
+				now.mToTime = next.mFromTime - 1;
+			}
+		}
+		Sentence last = list.get(list.size() - 1);
+		last.mToTime = Integer.MAX_VALUE;
+		
+		return true;
 	}
 	
 	/**

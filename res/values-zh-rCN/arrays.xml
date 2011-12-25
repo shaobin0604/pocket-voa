@@ -10,7 +10,7 @@
 		<item>英语新闻</item>
 	</string-array>
 	<string-array name="special_english">
-		<item>发展报道</item>
+		<item>科技报道</item>
 		<item>今日美国</item>
 		<item>农业报道</item>
 		<item>科学报道</item>
@@ -48,7 +48,7 @@
 	
 	<string-array name="special_english_local">
 		<item>全部</item>
-		<item>发展报道</item>
+		<item>科技报道</item>
 		<item>今日美国</item>
 		<item>农业报道</item>
 		<item>科学报道</item>

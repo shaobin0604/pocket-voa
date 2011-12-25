@@ -60,9 +60,6 @@ public class ShowActivity extends Activity implements AdViewInterface {
 
 	private static final String TAG = ShowActivity.class.getSimpleName();
 
-	private static final String[] ADMOB_KEYWORDS = { "android game farm",
-			"food sport", "life auto outdoor", "iphone", };
-
 	// Current View in ViewFlipper
 	private static final int VIEW_INVALID = -1;
 	private static final int VIEW_ORIGINAL = 0;
@@ -88,9 +85,6 @@ public class ShowActivity extends Activity implements AdViewInterface {
 	private static final int MENU_LOCAL_ORIGINAL = Menu.FIRST + 4;
 	private static final int MENU_LOCAL_TRANSLATION = Menu.FIRST + 5;
 	private static final int MENU_LOCAL_LYRIC = Menu.FIRST + 6;
-
-	private static final int MENU_REMOTE_HOME = Menu.FIRST + 7;
-	private static final int MENU_LOCAL_HOME = Menu.FIRST + 8;
 
 	// Load remote page handler message type
 	private static final int WHAT_LOAD_REMOTE_ORIGINAL_SUCCESS = 0;
@@ -412,15 +406,8 @@ public class ShowActivity extends Activity implements AdViewInterface {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
-
-		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_HOME, Menu.NONE,
-				R.string.menu_main).setIcon(R.drawable.home_48);
 		menu.add(MENU_REMOTE_GROUP, MENU_REMOTE_DOWNLOAD, Menu.NONE,
 				R.string.menu_download).setIcon(R.drawable.download_48);
-
-		menu.add(MENU_LOCAL_GROUP, MENU_LOCAL_HOME, Menu.NONE,
-				R.string.menu_main).setIcon(R.drawable.home_48);
-
 		return result;
 	}
 
@@ -535,15 +522,22 @@ public class ShowActivity extends Activity implements AdViewInterface {
 		case MENU_REMOTE_DOWNLOAD:
 			commandRemoteDownload();
 			return true;
-		case MENU_REMOTE_HOME:
-		case MENU_LOCAL_HOME:
-			finish();
-			startActivity(new Intent(this, MainActivity.class));
-			break;
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		
+		if (isTaskRoot()) {
+			finish();
+		}
 	}
 
 	private void loadLocalLyricView() {
@@ -580,8 +574,7 @@ public class ShowActivity extends Activity implements AdViewInterface {
 			public void run() {
 				try {
 					mRemoteLyricLoaded = mLyricView.loadLyric(Utils
-							.getInputStreamFromUrl(mApp.mHttpClient,
-									mArticle.urllrc), mPannelWidth);
+							.getBodyFromUrl(mArticle.urllrc), mPannelWidth);
 					Log.d(TAG, "loadRemoteLyricView: " + mRemoteLyricLoaded);
 					if (mRemoteLyricLoaded) {
 						mLoadRemoteHandler
@@ -834,8 +827,8 @@ public class ShowActivity extends Activity implements AdViewInterface {
         if (layout == null) 
             return;
         /*下面两行只用于测试,完成后一定要去掉,参考文挡说明*/
-//      AdViewTargeting.setUpdateMode(UpdateMode.EVERYTIME); //保证每次都从服务器取配置
-//      AdViewTargeting.setRunMode(RunMode.TEST);         //保证所有选中的广告公司都为测试状态
+//	      AdViewTargeting.setUpdateMode(UpdateMode.EVERYTIME); //保证每次都从服务器取配置
+//	      AdViewTargeting.setRunMode(RunMode.TEST);         //保证所有选中的广告公司都为测试状态
         /*下面这句方便开发者进行发布渠道统计,详细调用可以参考java doc  */
         //AdViewTargeting.setChannel(Channel.GOOGLEMARKET);
         AdViewLayout adViewLayout = new AdViewLayout(this, "SDK20112331411026bz86cfvj90oy3iv");

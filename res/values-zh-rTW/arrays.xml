@@ -10,7 +10,7 @@
 		<item>英語新聞</item>
 	</string-array>
 	<string-array name="special_english">
-		<item>發展報導</item>
+		<item>科技報導</item>
 		<item>今日美國</item>
 		<item>農業報導</item>
 		<item>科學報導</item>
@@ -49,7 +49,7 @@
 	
 	<string-array name="special_english_local">
 		<item>全部</item>
-		<item>發展報導</item>
+		<item>科技報導</item>
 		<item>今日美國</item>
 		<item>農業報導</item>
 		<item>科學報導</item>

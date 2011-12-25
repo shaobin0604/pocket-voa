@@ -1,14 +1,9 @@
 package cn.yo2.aquarium.pocketvoa;
 
-import java.io.IOException;
-
 import org.acra.CrashReportingApplication;
 import org.acra.ErrorReporter;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpVersion;
-import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -19,12 +14,8 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HttpContext;
 
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -34,10 +25,6 @@ import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 
 public class App extends CrashReportingApplication {
 	private static final String CLASSTAG = App.class.getSimpleName();
-
-	private static final int CONN_TIME_OUT = 1000 * 3; // millis
-	private static final int READ_TIME_OUT = 1000 * 10; // millis
-	private static final int MAX_TOTAL_CONN = 10;
 
 	private static final String DEFAULT_CHARSET = "utf-8";
 	
@@ -91,16 +78,14 @@ public class App extends CrashReportingApplication {
 		return getString(R.string.app_version);
 	}
 
-	public final DefaultHttpClient mHttpClient = setupHttpClient();
-
 	public final ResponseHandler mResponseHandler = new ResponseHandler(
 			DEFAULT_CHARSET);
 
 	public final ListGenerator mListGenerator = new ListGenerator(
-			mResponseHandler, mHttpClient);
+			mResponseHandler);
 
 	public final PageGenerator mPageGenerator = new PageGenerator(
-			mResponseHandler, mHttpClient);
+			mResponseHandler);
 
 	public IDataSource mDataSource;
 
@@ -142,35 +127,67 @@ public class App extends CrashReportingApplication {
 
 		return dataSource;
 	}
-
-	private DefaultHttpClient setupHttpClient() {
+	
+	public static DefaultHttpClient createHttpClient() {
 		HttpParams params = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(params, CONN_TIME_OUT);
-		HttpConnectionParams.setSoTimeout(params, READ_TIME_OUT);
-		ConnManagerParams.setMaxTotalConnections(params, MAX_TOTAL_CONN);
-		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 
-		SchemeRegistry schemeRegistry = new SchemeRegistry();
-		schemeRegistry.register(new Scheme("http", PlainSocketFactory
-				.getSocketFactory(), 80));
-		schemeRegistry.register(new Scheme("https", SSLSocketFactory
-				.getSocketFactory(), 443));
+        // Turn off stale checking.  Our connections break all the time anyway,
+        // and it's not worth it to pay the penalty of checking every time.
+        HttpConnectionParams.setStaleCheckingEnabled(params, false);
 
-		ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(
-				params, schemeRegistry);
+        // Default connection and socket timeout of 20 seconds.  Tweak to taste.
+        HttpConnectionParams.setConnectionTimeout(params, 20 * 1000);
+        HttpConnectionParams.setSoTimeout(params, 20 * 1000);
+        HttpConnectionParams.setSocketBufferSize(params, 8192);
 
-		DefaultHttpClient client = new DefaultHttpClient(cm, params);
+        HttpClientParams.setRedirecting(params, true);
 
-		client.addRequestInterceptor(new HttpRequestInterceptor() {
+        // Set the specified user agent and register standard protocols.
+        HttpProtocolParams.setUserAgent(params, "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 GTB6 (.NET CLR 3.5.30729)");
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(new Scheme("http",
+                PlainSocketFactory.getSocketFactory(), 80));
+        schemeRegistry.register(new Scheme("https",
+                SSLSocketFactory.getSocketFactory(), 443));
 
-			public void process(HttpRequest request, HttpContext context)
-					throws HttpException, IOException {
-				request.addHeader("User-Agent",
-								"Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 GTB6 (.NET CLR 3.5.30729)");
-
-			}
-		});
-		return client;
+        ClientConnectionManager manager =
+                new ThreadSafeClientConnManager(params, schemeRegistry);
+        
+        return new DefaultHttpClient(manager, params);
 	}
+	
+//	private static final int CONN_TIME_OUT = 1000 * 20; // millis
+//	private static final int READ_TIME_OUT = 1000 * 20; // millis
+//	private static final int MAX_TOTAL_CONN = 10;
+	
+//	private DefaultHttpClient setupHttpClient() {
+//		HttpParams params = new BasicHttpParams();
+//		HttpConnectionParams.setConnectionTimeout(params, CONN_TIME_OUT);
+//		HttpConnectionParams.setSoTimeout(params, READ_TIME_OUT);
+//		ConnManagerParams.setMaxTotalConnections(params, MAX_TOTAL_CONN);
+//		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+//
+//		SchemeRegistry schemeRegistry = new SchemeRegistry();
+//		schemeRegistry.register(new Scheme("http", PlainSocketFactory
+//				.getSocketFactory(), 80));
+//		schemeRegistry.register(new Scheme("https", SSLSocketFactory
+//				.getSocketFactory(), 443));
+//
+//		ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(
+//				params, schemeRegistry);
+//
+//		DefaultHttpClient client = new DefaultHttpClient(cm, params);
+//
+//		client.addRequestInterceptor(new HttpRequestInterceptor() {
+//
+//			public void process(HttpRequest request, HttpContext context)
+//					throws HttpException, IOException {
+//				request.addHeader("User-Agent",
+//								"Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 GTB6 (.NET CLR 3.5.30729)");
+//
+//			}
+//		});
+//		return client;
+//	}
 
 }

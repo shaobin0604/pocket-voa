@@ -21,7 +21,7 @@ public interface IDataSource {
 	/*
 	 * Special English
 	 */
-	public static final String DEVELOPMENT_REPORT = "Development Report";
+	public static final String TECHNOLOGY_REPORT = "Technology Report";
 	public static final String THIS_IS_AMERICA = "This is America";
 	public static final String AGRICULTURE_REPORT = "Agriculture Report";
 	public static final String SCIENCE_IN_THE_NEWS = "Science in the News";

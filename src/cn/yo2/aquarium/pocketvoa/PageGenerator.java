@@ -18,13 +18,9 @@ public class PageGenerator {
 	
 	private ResponseHandler<String> mResponseHandler;
 	
-	private DefaultHttpClient mHttpClient;
-
-	public PageGenerator(ResponseHandler<String> responseHandler,
-			DefaultHttpClient httpClient) {
+	public PageGenerator(ResponseHandler<String> responseHandler) {
 		super();
 		this.mResponseHandler = responseHandler;
-		this.mHttpClient = httpClient;
 	}
 
 	public void getArticle(Article article, boolean translate) throws IOException,
@@ -32,12 +28,17 @@ public class PageGenerator {
 		if (TextUtils.isEmpty(article.urltext))
 			throw new IllegalArgumentException("article's url should not be blank.");
 		HttpGet get = null;
-		if (translate)
+		if (translate) {
+			Log.i(CLASSTAG, "getArticle urltextzh --> " + article.urltextzh);
 			get = new HttpGet(article.urltextzh);
-		else 
+		} else {
+			Log.i(CLASSTAG, "getArticle urltext --> " + article.urltext);
 			get = new HttpGet(article.urltext);
+		}
+		
+		DefaultHttpClient httpClient = App.createHttpClient();
 		try {
-			String body = mHttpClient.execute(get, mResponseHandler);
+			String body = httpClient.execute(get, mResponseHandler);
 			mParser.parse(article, body);
 		} catch (IOException e) {
 			get.abort();
@@ -48,6 +49,8 @@ public class PageGenerator {
 			Log.e(CLASSTAG, "Content format Error when get list from " + article.urltext,
 					e);
 			throw e;
-		} 
+		} finally {
+			httpClient.getConnectionManager().shutdown();
+		}
 	}
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest 
-	android:versionCode="20111120"
+	android:versionCode="20111225"
     android:versionName="@string/app_version"
     package="cn.yo2.aquarium.pocketvoa" xmlns:android="http://schemas.android.com/apk/res/android">
     <application android:icon="@drawable/icon"
@@ -46,13 +46,15 @@
     	<activity android:name="com.wooboo.adlib_android.FullActivity" 
 			android:configChanges="orientation|keyboardHidden" 
 			android:launchMode="singleTask" />
-
-    	<!-- AdView SDK for Youmi --> 
-    	<activity android:name="net.youmi.android.AdActivity"
-			android:configChanges="keyboard|keyboardHidden|orientation"/>
+		
+		<!-- AdView SDK for AirAd -->
+		<activity android:name="com.mt.airad.MultiAD"
+		android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		android:configChanges="orientation|keyboard|keyboardHidden"/>
+		
     </application>
     
-    <uses-sdk android:minSdkVersion="4"/>
+    <uses-sdk android:minSdkVersion="7"/>
     
     <supports-screens android:anyDensity="true"
     	android:smallScreens="true"

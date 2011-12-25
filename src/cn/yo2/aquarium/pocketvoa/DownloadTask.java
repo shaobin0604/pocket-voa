@@ -25,8 +25,6 @@ public class DownloadTask implements Runnable {
 	public static final int WHICH_DOWNLOAD_TEXTZH = 2;
 	public static final int WHICH_DOWNLOAD_LYRIC = 3;
 
-	private DefaultHttpClient mClient;
-
 	private Article mArticle;
 
 	private DatabaseHelper mDatabaseHelper;
@@ -45,11 +43,9 @@ public class DownloadTask implements Runnable {
 		mListeners.clear();
 	}
 
-	public DownloadTask(DefaultHttpClient httpClient,
-			DatabaseHelper databaseHelper, Article article) {
+	public DownloadTask(DatabaseHelper databaseHelper, Article article) {
 		super();
 		this.mDatabaseHelper = databaseHelper;
-		this.mClient = httpClient;
 		this.mArticle = article;
 	}
 
@@ -153,12 +149,14 @@ public class DownloadTask implements Runnable {
 	private boolean downloadFile(String url, File local, int which, String error) {
 		FileOutputStream fos = null;
 		InputStream is = null;
+		Log.i(CLASSTAG, "downloadFile url --> " + url);
 		HttpGet get = new HttpGet(url);
+		DefaultHttpClient httpClient = App.createHttpClient();
 		try {
 			if (!local.exists())
 				local.createNewFile();
 			fos = new FileOutputStream(local);
-			HttpResponse response = mClient.execute(get);
+			HttpResponse response = httpClient.execute(get);
 			HttpEntity entity = response.getEntity();
 			long length = entity.getContentLength();
 			// Log.d(CLASSTAG, "content-length: " + length);
@@ -185,18 +183,22 @@ public class DownloadTask implements Runnable {
 			}
 			return false;
 		} finally {
-			if (fos != null)
+			if (fos != null) {
 				try {
 					fos.close();
 				} catch (IOException e) {
 					// ignore
 				}
-			if (is != null)
+			}
+			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
 					// ignore
 				}
+			}
+			
+			httpClient.getConnectionManager().shutdown();
 		}
 	}
 

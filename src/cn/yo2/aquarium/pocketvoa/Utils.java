@@ -12,9 +12,13 @@ import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Locale;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -417,11 +421,11 @@ public class Utils {
 		return sb.toString();
 	}
 
-	public static InputStream getInputStreamFromUrl(HttpClient client,
-			String url) throws IOException {
+	public static InputStream getInputStreamFromUrl(String url) throws IOException {
 		HttpGet get = new HttpGet(url);
+		DefaultHttpClient httpClient = App.createHttpClient();
 		try {
-			return client.execute(get).getEntity().getContent();
+			return httpClient.execute(get).getEntity().getContent();
 		} catch (IllegalStateException e) {
 			get.abort();
 			throw e;
@@ -431,6 +435,29 @@ public class Utils {
 		} catch (IOException e) {
 			get.abort();
 			throw e;
+		}
+	}
+	
+	public static String getBodyFromUrl(String url) throws IOException {
+		HttpGet get = new HttpGet(url);
+		DefaultHttpClient httpClient = App.createHttpClient();
+		try {
+			HttpResponse response = httpClient.execute(get);
+			
+			HttpEntity entity = response.getEntity();
+			
+			return EntityUtils.toString(entity, "utf-8");
+		} catch (IllegalStateException e) {
+			get.abort();
+			throw e;
+		} catch (ClientProtocolException e) {
+			get.abort();
+			throw e;
+		} catch (IOException e) {
+			get.abort();
+			throw e;
+		} finally {
+			httpClient.getConnectionManager().shutdown();
 		}
 	}
 	

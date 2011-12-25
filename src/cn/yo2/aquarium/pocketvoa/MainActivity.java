@@ -11,9 +11,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Entity;
-
-import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,11 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -37,6 +30,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,6 +52,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.SimpleCursorAdapter.ViewBinder;
+import cn.yo2.aquarium.pocketvoa.parser.IDataSource;
 
 public class MainActivity extends Activity {
 
@@ -81,6 +76,7 @@ public class MainActivity extends Activity {
 	private static final int DLG_INTERNET_STATUS_CONNECTED    = 6;
 	private static final int DLG_INTERNET_STATUS_DISCONNECTED = 7;
 	private static final int DLG_CHANGE_LOG                   = 8;
+	private static final int DLG_CONFIRM_EXIT                 = 9;
 
 	private static final int WHAT_SUCCESS    = 0;
 	private static final int WHAT_FAIL_IO    = 1;
@@ -99,7 +95,7 @@ public class MainActivity extends Activity {
 			IDataSource.ENGLISH_NEWS, 
 		},
 		{   
-			IDataSource.DEVELOPMENT_REPORT, 
+			IDataSource.TECHNOLOGY_REPORT, 
 			IDataSource.THIS_IS_AMERICA,
 			IDataSource.AGRICULTURE_REPORT,
 			IDataSource.SCIENCE_IN_THE_NEWS, 
@@ -134,7 +130,7 @@ public class MainActivity extends Activity {
 		},
 		{ 
 			"All", 
-			IDataSource.DEVELOPMENT_REPORT, 
+			IDataSource.TECHNOLOGY_REPORT, 
 			IDataSource.THIS_IS_AMERICA,
 			IDataSource.AGRICULTURE_REPORT,
 			IDataSource.SCIENCE_IN_THE_NEWS, 
@@ -164,6 +160,7 @@ public class MainActivity extends Activity {
 	
 	private static final int ERROR_LOAD_LIST = 1;
 	private static final int ERROR_DOWNLOAD = 2;
+
 
 	private int mLastError;
 
@@ -479,13 +476,13 @@ public class MainActivity extends Activity {
 			mNetworkConnected = Utils.isNetworkConnected(MainActivity.this);
 			if (mNetworkConnected) {
 				HttpGet get = new HttpGet(App.URL_CHECK_UPGRADE);
-				HttpClient client = mApp.mHttpClient;
-				
+				HttpClient httpClient = App.createHttpClient();
+				String body = null;
 				try {
-					HttpResponse response = client.execute(get);
+					HttpResponse response = httpClient.execute(get);
 					HttpEntity entity = response.getEntity();
 					
-					String body = EntityUtils.toString(entity, "utf-8");
+					body = EntityUtils.toString(entity, "utf-8");
 					
 					JSONObject json = new JSONObject(body);
 					
@@ -501,14 +498,16 @@ public class MainActivity extends Activity {
 					
 					return new String[] {versionName, versionCode, whatsnew, file};
 				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.e(CLASSTAG, "Error when check update info", e);
+					get.abort();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.e(CLASSTAG, "Error when check update info", e);
+					get.abort();
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.d(CLASSTAG, "Error when parse json -> " + body, e);
+					get.abort();
+				} finally {
+					httpClient.getConnectionManager().shutdown();
 				}
 			}
 			
@@ -800,14 +799,22 @@ public class MainActivity extends Activity {
 			startActivity(new Intent(this, BackupActivity.class));
 			return true;
 		case MENU_EXIT:
-			stopService(new Intent(this, DownloadService.class));
-			stopService(new Intent(this, MediaPlaybackService.class));
-			finish();
+			showDialog(DLG_CONFIRM_EXIT);
 			return true;
 		default:
 			break;
 		}
 		return result;
+	}
+
+	private void exitApp() {
+		stopService(new Intent(this, DownloadService.class));
+		stopService(new Intent(this, MediaPlaybackService.class));
+		finish();
+	}
+	
+	private void exitActivity() {
+		finish();
 	}
 
 	private void testInternet() {
@@ -859,7 +866,7 @@ public class MainActivity extends Activity {
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 
-		case DLG_ERROR:
+		case DLG_ERROR: {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.alert_title_error);
@@ -897,16 +904,16 @@ public class MainActivity extends Activity {
 						}
 					});
 			return builder.create();
-
+		}
 		case DLG_PROGRESS:
 			ProgressDialog progressDialog = new ProgressDialog(this);
 			progressDialog
 					.setMessage(getString(R.string.progressspin_loadlist_msg));
 			return progressDialog;
-		case DLG_MENU_LOCAL_LIST:
-			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-			builder2.setTitle(R.string.alert_title_select_action);
-			builder2.setItems(R.array.local_list_action,
+		case DLG_MENU_LOCAL_LIST: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.alert_title_select_action);
+			builder.setItems(R.array.local_list_action,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -924,11 +931,12 @@ public class MainActivity extends Activity {
 
 						}
 					});
-			return builder2.create();
-		case DLG_MENU_REMOTE_LIST:
-			AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-			builder3.setTitle(R.string.alert_title_select_action);
-			builder3.setItems(R.array.remote_list_action,
+			return builder.create();
+		}
+		case DLG_MENU_REMOTE_LIST: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.alert_title_select_action);
+			builder.setItems(R.array.remote_list_action,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -946,15 +954,16 @@ public class MainActivity extends Activity {
 
 						}
 					});
-			return builder3.create();
-		case DLG_CONFIRM_DELETE:
-			AlertDialog.Builder builder4 = new AlertDialog.Builder(this);
-			builder4.setIcon(android.R.drawable.ic_dialog_alert);
-			builder4.setTitle(R.string.alert_title_confirm_delete);
+			return builder.create();
+		}
+		case DLG_CONFIRM_DELETE: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
+			builder.setTitle(R.string.alert_title_confirm_delete);
 			// without this statement, you would not be able to change
 			// AlertDialog's message in onPrepareDialog
-			builder4.setMessage("");
-			builder4.setPositiveButton(R.string.btn_yes,
+			builder.setMessage("");
+			builder.setPositiveButton(R.string.btn_yes,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -981,22 +990,23 @@ public class MainActivity extends Activity {
 						}
 					});
 
-			builder4.setNegativeButton(R.string.btn_no,
+			builder.setNegativeButton(R.string.btn_no,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.cancel();
 						}
 					});
-			return builder4.create();
-		case DLG_CONFIRM_DOWNLOAD:
-			AlertDialog.Builder builder6 = new AlertDialog.Builder(this);
-			builder6.setIcon(android.R.drawable.ic_dialog_alert);
-			builder6.setTitle(R.string.alert_title_confirm_download);
+			return builder.create();
+		}
+		case DLG_CONFIRM_DOWNLOAD: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
+			builder.setTitle(R.string.alert_title_confirm_download);
 			// without this statement, you would not be able to change
 			// AlertDialog's message in onPrepareDialog
-			builder6.setMessage("");
-			builder6.setPositiveButton(R.string.btn_yes,
+			builder.setMessage("");
+			builder.setPositiveButton(R.string.btn_yes,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -1008,7 +1018,7 @@ public class MainActivity extends Activity {
 						}
 					});
 
-			builder6.setNegativeButton(R.string.btn_no,
+			builder.setNegativeButton(R.string.btn_no,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -1017,29 +1027,31 @@ public class MainActivity extends Activity {
 						}
 					});
 
-			return builder6.create();
-		case DLG_INTERNET_STATUS_CONNECTED:
-			AlertDialog.Builder builder7 = new AlertDialog.Builder(this);
-			builder7.setIcon(android.R.drawable.ic_dialog_info);
-			builder7.setTitle(R.string.alert_title_internet_status);
-			builder7.setView(mInflater.inflate(R.layout.connect_established,
+			return builder.create();
+		}
+		case DLG_INTERNET_STATUS_CONNECTED: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_info);
+			builder.setTitle(R.string.alert_title_internet_status);
+			builder.setView(mInflater.inflate(R.layout.connect_established,
 					null));
-			builder7.setNeutralButton(R.string.btn_ok,
+			builder.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// 
 						}
 					});
-			return builder7.create();
-		case DLG_INTERNET_STATUS_DISCONNECTED:
-			AlertDialog.Builder builder8 = new AlertDialog.Builder(this);
-			builder8.setIcon(android.R.drawable.ic_dialog_info);
-			builder8.setTitle(R.string.alert_title_internet_status);
+			return builder.create();
+		}
+		case DLG_INTERNET_STATUS_DISCONNECTED: {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_info);
+			builder.setTitle(R.string.alert_title_internet_status);
 
-			builder8.setView(mInflater.inflate(R.layout.connect_no, null));
+			builder.setView(mInflater.inflate(R.layout.connect_no, null));
 
-			builder8.setNeutralButton(R.string.btn_ok,
+			builder.setNeutralButton(R.string.btn_ok,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -1047,9 +1059,32 @@ public class MainActivity extends Activity {
 
 						}
 					});
-			return builder8.create();
+			return builder.create();
+		}
 		case DLG_CHANGE_LOG:
 			return Utils.createWhatsNewDialog(this);
+		case DLG_CONFIRM_EXIT:{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
+			builder.setTitle(R.string.alert_title_confirm_exit);
+			builder.setPositiveButton(R.string.alert_button_exit, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					exitApp();
+				}
+			});
+			builder.setNegativeButton(R.string.alert_button_go_background, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					exitActivity();
+				}
+			});
+			
+			return builder.create();
+		}
+			
 		default:
 			break;
 		}
@@ -1096,6 +1131,11 @@ public class MainActivity extends Activity {
 		if (null != mCursor && !mCursor.isClosed())
 			mCursor.close();
 		mDatabaseHelper.close();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		showDialog(DLG_CONFIRM_EXIT);
 	}
 
 	private void bindRemoteList() {
@@ -1230,8 +1270,7 @@ public class MainActivity extends Activity {
 				}
 				
 				// Log.d(CLASSTAG, "key -- " + key);
-				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers()
-						.get(key);
+				mApp.mListGenerator.mParser = mApp.mDataSource.getListParsers().get(key);
 				try {
 					ArticleList list = mApp.mListGenerator.getArticleList(String.format(mApp.mDataSource
 							.getListUrls().get(key), mCurrentPage));

@@ -18,13 +18,9 @@ public class ListGenerator {
 
 	private ResponseHandler<String> mResponseHandler;
 	
-	private DefaultHttpClient mHttpClient;
-	
-	public ListGenerator(ResponseHandler<String> responseHandler,
-			DefaultHttpClient httpClient) {
+	public ListGenerator(ResponseHandler<String> responseHandler) {
 		super();
 		this.mResponseHandler = responseHandler;
-		this.mHttpClient = httpClient;
 	}
 
 	public ArticleList getArticleList(String url) throws IOException,
@@ -33,9 +29,13 @@ public class ListGenerator {
 			throw new IllegalArgumentException("Argument url should not be blank.");
 		if (mParser == null) 
 			throw new IllegalStateException("You should set a IListParser first.");
+		
+		Log.i(CLASSTAG, "getArticleList --> " + url);
+		
 		HttpGet get = new HttpGet(url);
+		DefaultHttpClient httpClient = App.createHttpClient();
 		try {
-			String body = mHttpClient.execute(get, mResponseHandler);
+			String body = httpClient.execute(get, mResponseHandler);
 			return new ArticleList(mParser.parse(body), mParser.parsePageCount(body));
 		} catch (IOException e) {
 			get.abort();
@@ -45,6 +45,8 @@ public class ListGenerator {
 			get.abort();
 			Log.e(CLASSTAG, "Content format Error when get list from " + url, e);
 			throw e;
-		} 
+		} finally {
+			httpClient.getConnectionManager().shutdown();
+		}
 	}
 }

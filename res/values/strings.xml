@@ -2,7 +2,7 @@
 <resources>
 	
 	
-	<string name="app_version">1.2.6</string>
+	<string name="app_version">1.2.7</string>
 	
 	
 	<string name="app_website">http://pocketvoa.72pines.com</string>
@@ -30,6 +30,11 @@
 	<string name="alert_title_internet_status">Internet Connection Status</string>
 	<string name="alert_msg_internet_status_connected">Connected</string>
 	<string name="alert_msg_internet_status_disconnected">Disconnected</string>
+	
+	<string name="alert_title_confirm_exit">Exit App?</string>
+	<string name="alert_button_exit">Exit</string>
+	<string name="alert_button_go_background">Background</string>
+	
 	
 	<string name="alert_title_about">About</string>
 	

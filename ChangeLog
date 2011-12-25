@@ -1,5 +1,8 @@
 Pocket VOA - An online/offline reader for Voice of America news program.
 
+Version 1.2.7 [12/25/2011]
+	- Fix: Better line breaks for lyric view.
+
 Version 1.2.6 [11/20/2011]
 	- New: Smooth scroll for lyric view.
 	- New: Line breaks for lyric view.

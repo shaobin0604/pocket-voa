@@ -20,6 +20,11 @@
 	<string name="alert_msg_internet_status_connected">已连接</string>
 	<string name="alert_msg_internet_status_disconnected">已断开</string>
 	
+	<string name="alert_title_confirm_exit">退出应用?</string>
+	<string name="alert_button_exit">退出</string>
+	<string name="alert_button_go_background">后台</string>
+	
+	
 	<string name="alert_title_about">关于</string>
 	
 	<string name="alert_title_select_action">请选择操作方式</string>
