@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest 
-	android:versionCode="20111225"
+	android:versionCode="20120530"
     android:versionName="@string/app_version"
     package="cn.yo2.aquarium.pocketvoa" xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="9"/>
+   	
+   	<supports-screens android:anyDensity="true"
+    	android:smallScreens="true"
+    	android:normalScreens="true"
+    	android:largeScreens="true"/>
+    
     <application android:icon="@drawable/icon"
         android:label="@string/app_name" android:name=".App">
         <activity android:label="@string/app_name" android:launchMode="singleTask"
@@ -54,13 +62,7 @@
 		
     </application>
     
-    <uses-sdk android:minSdkVersion="7"/>
-    
-    <supports-screens android:anyDensity="true"
-    	android:smallScreens="true"
-    	android:normalScreens="true"
-    	android:largeScreens="true"/>
-    
+
     <!-- AdView SDK mandatory or important permissions -->
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

@@ -46,7 +46,12 @@ public class StandardEnglishPageParser extends AbstractPageParser {
 		Matcher audioMatcher = audioPattern.matcher(content);
 		
 		if (audioMatcher.find()) {
-			article.urlmp3 = Voa51DataSource.HOST + audioMatcher.group(1);
+			String urlmp3 = audioMatcher.group(1);
+			if (urlmp3.startsWith("http://")) {
+				article.urlmp3 = urlmp3;
+			} else {
+				article.urlmp3 = Voa51DataSource.HOST + urlmp3;
+			}
 		} else {
 			throw new IllegalContentFormatException("Cannot find match mp3");
 		}
