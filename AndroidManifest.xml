@@ -4,9 +4,10 @@
     android:versionName="@string/app_version"
     package="cn.yo2.aquarium.pocketvoa" xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14"/>
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="9"/>
    	
-   	<supports-screens android:anyDensity="true"
+   	<supports-screens
+   	    android:anyDensity="true"
     	android:smallScreens="true"
     	android:normalScreens="true"
     	android:largeScreens="true"/>

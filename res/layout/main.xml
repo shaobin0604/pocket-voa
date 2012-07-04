@@ -1,121 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:admob="http://schemas.android.com/apk/res/cn.yo2.aquarium.pocketvoa"
-	android:orientation="vertical" 
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-	<TabHost android:id="@+id/tabhost"
-    	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent">
-    	<TabWidget android:id="@android:id/tabs"
-      		android:layout_width="fill_parent"
-      		android:layout_height="wrap_content"
-    	/>
-    	<FrameLayout android:id="@android:id/tabcontent"
-      		android:layout_width="fill_parent"
-      		android:layout_height="fill_parent"
-      		android:paddingTop="62px">
-      		<!-- tab 0, local -->
-      		<LinearLayout
-      			android:id="@+id/tab_local" 
-				android:orientation="vertical" 
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:paddingTop="2sp">
-				<LinearLayout
-					android:orientation="horizontal"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content">
-				<Spinner
-					android:id="@+id/spinner_type_local"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_weight="1.0"
-					android:entries="@array/type_local" />
-				<Spinner
-					android:id="@+id/spinner_subtype_local"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_weight="1.0 "/>
-				</LinearLayout>
-				<ListView 
-					android:id="@+id/list_local"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_weight="1.0" 
-					android:drawSelectorOnTop="false" />
-				<ImageView 
-					android:id="@+id/empty_local"
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-					android:src="@drawable/blank" 
-					android:layout_gravity="center"
-					android:layout_weight="1.5" />
-				<LinearLayout android:layout_width="fill_parent" 
-					android:layout_height="wrap_content" 
-					style="@android:style/ButtonBar">
-				<Button
-					android:id="@+id/btn_refresh_local"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/btn_refresh" />
-				</LinearLayout>
-			</LinearLayout>
-			
-			<!-- tab 1, remote -->
-			<LinearLayout
-      			android:id="@+id/tab_remote" 
-				android:orientation="vertical" 
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:paddingTop="2sp">
-				<LinearLayout
-					android:orientation="horizontal"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content">
-				<Spinner
-					android:id="@+id/spinner_type_remote"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_weight="1.0"
-					android:entries="@array/type" />
-				<Spinner
-					android:id="@+id/spinner_subtype_remote"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_weight="1.0" />
-				</LinearLayout>
-				<ListView 
-					android:id="@+id/list_remote"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content" 
-					android:layout_weight="1.0" 
-					android:drawSelectorOnTop="false" />
+    xmlns:admob="http://schemas.android.com/apk/res/cn.yo2.aquarium.pocketvoa"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-				<ImageView 
-					android:id="@+id/empty_remote"
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-					android:src="@drawable/blank" 
-					android:layout_gravity="center"
-					android:layout_weight="1.5" />
-	
-				<LinearLayout android:layout_width="fill_parent" 
-					android:layout_height="wrap_content" 
-					style="@android:style/ButtonBar"
-					android:orientation="horizontal">
-					<Spinner android:id="@+id/spn_page"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"/>
-					<Button
-						android:id="@+id/btn_refresh_remote"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="1"
-						android:text="@string/btn_refresh" />
-				</LinearLayout>
-			</LinearLayout>
-		</FrameLayout>
-	</TabHost>
+    <TabHost
+        android:id="@+id/tabhost"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingTop="62dip" >
+
+            <!-- tab 0, local -->
+
+            <LinearLayout
+                android:id="@+id/tab_local"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:paddingTop="2sp" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/spinner_type_local"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:entries="@array/type_local" />
+
+                    <Spinner
+                        android:id="@+id/spinner_subtype_local"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0 " />
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/list_local"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:drawSelectorOnTop="false" />
+
+                <ImageView
+                    android:id="@+id/empty_local"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.5"
+                    android:src="@drawable/blank" />
+
+                <LinearLayout
+                    style="@android:style/ButtonBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/btn_refresh_local"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btn_refresh" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- tab 1, remote -->
+
+            <LinearLayout
+                android:id="@+id/tab_remote"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:paddingTop="2sp" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/spinner_type_remote"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:entries="@array/type" />
+
+                    <Spinner
+                        android:id="@+id/spinner_subtype_remote"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0" />
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/list_remote"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:drawSelectorOnTop="false" />
+
+                <ImageView
+                    android:id="@+id/empty_remote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.5"
+                    android:src="@drawable/blank" />
+
+                <LinearLayout
+                    style="@android:style/ButtonBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/spn_page"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/btn_refresh_remote"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/btn_refresh" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </TabHost>
+
 </LinearLayout>
