@@ -104,9 +104,4 @@
 			android:background="@drawable/nowplaying_play_button"
 			/>
 	</LinearLayout>
-	
-	<LinearLayout
-	    android:id="@+id/adLayout"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"/>
 </LinearLayout>

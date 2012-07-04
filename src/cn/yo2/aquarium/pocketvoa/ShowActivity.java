@@ -48,14 +48,8 @@ import cn.yo2.aquarium.pocketvoa.lyric.LyricView2;
 import cn.yo2.aquarium.pocketvoa.ui.TabBar;
 import cn.yo2.aquarium.pocketvoa.ui.TabBar.OnTabChangeListener;
 
-import com.adview.AdViewInterface;
-import com.adview.AdViewLayout;
-import com.adview.AdViewTargeting;
-import com.adview.AdViewTargeting.RunMode;
-import com.adview.AdViewTargeting.UpdateMode;
 
-
-public class ShowActivity extends Activity implements AdViewInterface {
+public class ShowActivity extends Activity {
 	private static final int MAX_TABS = 3;
 
 	private static final String TAG = ShowActivity.class.getSimpleName();
@@ -689,9 +683,6 @@ public class ShowActivity extends Activity implements AdViewInterface {
 		// set up animation
 		setupAnimation();
 		
-		// set up AdView
-		setupAdView();
-		
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		
@@ -820,21 +811,6 @@ public class ShowActivity extends Activity implements AdViewInterface {
 		}
 		
 		mProgressBar.setMax(PROGRESS_MAX);
-	}
-	
-	private void setupAdView() {
-		LinearLayout layout = (LinearLayout)findViewById(R.id.adLayout);
-        if (layout == null) 
-            return;
-        /*下面两行只用于测试,完成后一定要去掉,参考文挡说明*/
-//	      AdViewTargeting.setUpdateMode(UpdateMode.EVERYTIME); //保证每次都从服务器取配置
-//	      AdViewTargeting.setRunMode(RunMode.TEST);         //保证所有选中的广告公司都为测试状态
-        /*下面这句方便开发者进行发布渠道统计,详细调用可以参考java doc  */
-        //AdViewTargeting.setChannel(Channel.GOOGLEMARKET);
-        AdViewLayout adViewLayout = new AdViewLayout(this, "SDK20112331411026bz86cfvj90oy3iv");
-        adViewLayout.setAdViewInterface(this);
-        layout.addView(adViewLayout);
-        layout.invalidate();   
 	}
 	
 	private void setupAnimation() {
@@ -1362,16 +1338,4 @@ public class ShowActivity extends Activity implements AdViewInterface {
 			finish();
 		}
 	}
-
-	@Override
-	public void onClickAd() {
-		Log.d(TAG, "[onClickAd]");
-	}
-
-	@Override
-	public void onDisplayAd() {
-		Log.d(TAG, "[onDisplayAd]");
-	}
-	
-	
 }
