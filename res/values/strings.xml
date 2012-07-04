@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="StringFormatMatches">
 	
 	
-	<string name="app_version">1.2.8</string>
+	<string name="app_version">1.2.9</string>
 	
 	
 	<string name="app_website">http://pocketvoa.72pines.com</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest 
-	android:versionCode="20120530"
+	android:versionCode="20120705"
     android:versionName="@string/app_version"
     package="cn.yo2.aquarium.pocketvoa" xmlns:android="http://schemas.android.com/apk/res/android">
     
